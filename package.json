@@ -1,0 +1,58 @@
+{
+  "name": "dubhe-repo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./*": {
+      "import": "./dist/",
+      "require": "./dist/"
+    },
+    "./vite": {
+      "import": "./dist/vite.mjs",
+      "require": "./dist/vite.js",
+      "types": "./dist/vite.d.ts"
+    },
+    "./webpack": {
+      "import": "./dist/webpack.mjs",
+      "require": "./dist/webpack.js",
+      "types": "./dist/webpack.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "types": [
+        "dist/index.d.ts"
+      ],
+      "vite": [
+        "dist/vite.d.ts"
+      ],
+      "webpack": [
+        "dist/webpack.d.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "publish": "npx changeset publish",
+    "build": "tsup && npm run build:view",
+    "build:view": "vite build"
+  },
+
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.31.0",
+    "@changesets/cli": "^2.25.2",
+    "eslint": "^8.28.0"
+
+  }
+}

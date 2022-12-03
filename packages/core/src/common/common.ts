@@ -1,0 +1,15 @@
+import { resolve } from 'path'
+
+export const FEDERATION_RE = /\!(.*)\/([^?]*)/
+export const VIRTUAL_PREFIX = '/@virtual:DUBHE/'
+export const VIRTUAL_EMPTY = '/@virtual:EmptyModule'
+export const VIRTUAL_HMR_PREFIX = 'VIRTUAL-HMR'
+export const ESM_SH_URL = 'https://esm.sh/'
+export const UNPKG_URL = 'https://unpkg.com/'
+
+export const TS_CONFIG_PATH = resolve(
+  process.cwd(), '.dubhe', 'types',
+  'tsconfig.json',
+)
+
+export const HMT_TYPES_TIMEOUT = 3000

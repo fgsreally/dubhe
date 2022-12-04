@@ -3,10 +3,3 @@ export {}
 declare global {
   const app_test_testFromViteRemote: typeof import('!app/test')['testFromViteRemote']
 }
-// for vue template auto import
-import { UnwrapRef } from 'vue'
-declare module 'vue' {
-  interface ComponentCustomProperties {
-    readonly app_test_testFromViteRemote: UnwrapRef<typeof import('!app/test')['testFromViteRemote']>
-  }
-}

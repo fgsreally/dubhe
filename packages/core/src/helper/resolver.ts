@@ -25,7 +25,6 @@ export function DubheResolver() {
       const [_, project, module, imports] = name.match(
         /^([a-zA-Zd]+)_([a-zA-Zd]+)_([a-zA-Zd]+)/,
       ) as string[]
-      console.log(project.toLowerCase(), remote, 'module')
 
       if (project.toLowerCase() in remote) {
         return {

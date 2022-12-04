@@ -19,7 +19,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       Inspect(),
       vue(),
       AutoImport({
-        resolvers: [ElementPlusResolver(), DubheResolver()], vueTemplate: true,
+        resolvers: [ElementPlusResolver(), DubheResolver()],
       }),
       Components({
         resolvers: [ElementPlusResolver(), DubheResolver()],

@@ -1,15 +1,8 @@
 <script setup lang="ts">
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import app from '!app/app.v'// extension .v
+app_test_testFromViteRemote()
 </script>
 
 <template>
-  <app msg="remote app component" />
-  <r-app-hello msg="remote hello component" />
+  <app-app msg="remote app component" />  <app-hello msg="remote hello component" />
 </template>
 
-<style scoped>
-.read-the-docs {
-  color: #888;
-}
-</style>

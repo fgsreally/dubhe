@@ -100,7 +100,7 @@ export function replaceHotImportDeclarations(
   let cssImports = ''
   for (const i of imports as any) {
     if (FEDERATION_RE.test(i.n)) {
-      const [project, moduleName, basename] = resolveModuleAlias(i.n, aliasMap)
+      const [project, moduleName] = resolveModuleAlias(i.n, aliasMap)
 
       if (extname(moduleName) === '.js') {
         newSource.overwrite(
@@ -109,17 +109,18 @@ export function replaceHotImportDeclarations(
           urlResolve(config.remote[project], `core/${moduleName}`),
         )
       }
-      if (extname(moduleName) === '.v') {
-        newSource.overwrite(
-          i.s,
-          i.e,
-          urlResolve(config.remote[project], `core/${basename}.js`),
-        )
-        cssImports += `\nloadCss("${config.remote[project]}/${basename}.css");`
-      }
+      // work for extension in production
+      // if (extname(moduleName) === '.v') {
+      //   newSource.overwrite(
+      //     i.s,
+      //     i.e,
+      //     urlResolve(config.remote[project], `core/${basename}.js`),
+      //   )
+      //   cssImports += `\nloadCss("${config.remote[project]}/${basename}.css");`
+      // }
 
       if (extname(moduleName) === '.css') {
-        cssImports += `\nloadCss("${config.remote[project]}/${moduleName}");`
+        cssImports += `\nloadCss("${config.remote[project]}/core/${moduleName}");`
         newSource.overwrite(i.ss, i.se, '')
       }
     }

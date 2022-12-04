@@ -1,4 +1,9 @@
+import { createRequire } from 'module'
+import { resolve } from 'path'
 import type { ComponentResolver } from 'unplugin-vue-components'
+const require = createRequire(process.cwd())
+
+const { remote } = require(resolve(process.cwd(), 'dubhe.cjs'))
 
 export function kebabCase(key: string) {
   const result = key.replace(/([A-Z])/g, ' $1').trim()
@@ -15,24 +20,33 @@ export function DubheResolver() {
   }
 
   function componentsResolver(name: string) {
-    if (name.match(/^r_[a-zA-Zd]+_[a-zA-Zd]+_[a-zA-Zd]+/)) {
+    if (name.match(/^[a-zA-Zd]+_[a-zA-Zd]+_[a-zA-Zd]+/)) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, project, module, imports] = name.match(
-        /^r_([a-zA-Zd]+)_([a-zA-Zd]+)_([a-zA-Zd]+)/,
+        /^([a-zA-Zd]+)_([a-zA-Zd]+)_([a-zA-Zd]+)/,
       ) as string[]
+      console.log(project.toLowerCase(), remote, 'module')
 
-      return {
-        name: imports,
-        from: `!${project}/${module}`,
+      if (project.toLowerCase() in remote) {
+        return {
+          name: imports,
+          from: `!${project}/${module}`,
+        }
       }
     }
-    if (name.match(/^R[A-Z]/)) {
+    if (name.match(/^([A-Z][a-z]*)([A-Z][a-z]*)$/)) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const [_, project] = name.match(
+        /^([A-Z][a-z]*)([A-Z][a-z]*)/,
+      ) as string[]
       // FOR DEFAULT IMPORT
-      const resolveId = kebabCase((name = name.slice(1)))
+      if (project.toLowerCase() in remote) {
+        const resolveId = kebabCase(name)
 
-      return {
-        sideEffects: getSideEffects(resolveId),
-        from: resolveDirectory(resolveId),
+        return {
+          sideEffects: getSideEffects(resolveId),
+          from: resolveDirectory(resolveId),
+        }
       }
     }
 

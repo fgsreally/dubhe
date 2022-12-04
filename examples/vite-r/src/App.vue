@@ -3,13 +3,13 @@ const { msg } = defineProps<{ msg: string }>()
 </script>
 
 <template>
-  <p class="red">
+  <p class="blue">
     {{ msg }}
   </p>
 </template>
 
 <style scoped>
-.red{
+.blue{
   color:rgb(77, 83, 250)
 }
 </style>

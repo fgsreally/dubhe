@@ -7,6 +7,8 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AppApp: typeof import('!app/app')['default']
+    AppHello: typeof import('!app/hello')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     RAppHello: typeof import('!app/hello')['default']
     Share: typeof import('./src/components/Share.vue')['default']

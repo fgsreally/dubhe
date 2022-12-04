@@ -5,10 +5,11 @@ const colors = require('colors')
 const root = process.cwd()
 const fse = require('fs-extra')
 
+const dubheConfig = require(resolve(root, 'dubhe.cjs'))
+
 cli
   .command('detect', 'contrast cache version & remote version').alias('det')
   .action(async () => {
-    const dubheConfig = require(resolve(root, 'dubhe.cjs'))
     for (const project in dubheConfig.remote) {
       const remoteConfig = await connectProject(dubheConfig.remote[project], project)
 
@@ -36,7 +37,6 @@ cli
     if (!projectId)
       return
     const [project, id] = projectId.split('/')
-    const dubheConfig = require(resolve(root, 'dubhe.cjs'))
 
     if (!dubheConfig.remote[project])
       log(`Project:${project} does't exist in dubhe.cjs`, 'red')
@@ -48,7 +48,7 @@ cli
     if (!file)
       log(`Id:${id} does't exist in ${project}`, 'red')
     for (const i of remoteConfig.sourceGraph[file]) {
-      const outputPath = resolve(root, option.path, i)
+      const outputPath = resolve(root, option.path, project, i)
 
       if (!isExist(outputPath)) {
         try {
@@ -75,12 +75,12 @@ cli
   .action(async (project, option) => {
     if (option.cache) {
       log(`Remove ${project} cache`)
-      fse.remove(resolve(root, '.dubhe', 'cache', project))
+      fse.remove(getCachePath(project))
     }
 
     if (option.types) {
       log(`Remove ${project} types`)
-      fse.remove(resolve(root, '.dubhe', 'types', project))
+      fse.remove(getTypesPath(project))
     }
   })
 
@@ -93,17 +93,15 @@ cli
     default: false,
   })
   .action(async (project, option) => {
-    const dubheConfig = require(resolve(root, 'dubhe.cjs'))
-
     if (option.cache) {
       log(`Update [${project}] cache`)
-      await fse.remove(resolve(root, '.dubhe', 'cache', project))
+      await fse.remove(getCachePath(project))
       installProjectCache(dubheConfig.remote[project], project)
     }
 
     if (option.types) {
       log(`Update [${project}] types`)
-      await fse.remove(resolve(root, '.dubhe', 'types', project))
+      await fse.remove(getTypesPath(project))
       installProjectTypes(dubheConfig.remote[project], project)
     }
   })
@@ -115,8 +113,6 @@ cli
   })
 
   .action(async (option) => {
-    const dubheConfig = require(resolve(root, 'dubhe.cjs'))
-
     for (const project in dubheConfig.remote) {
       try {
         installProjectCache(dubheConfig.remote[project], project)
@@ -142,6 +138,21 @@ cli
     }
   })
 
+/**
+ * experiment
+ */
+// cli
+//   .command('bundle', 'bundle external').alias('b')
+//   .action(async (project, option) => {
+
+//   })
+
+cli
+  .command('analyse', 'analyse dependence').alias('a')
+  .action(async () => {
+    const dep = await analyseDep()
+    console.log(dep)
+  })
 cli.help()
 cli.version(require('../package.json').version)
 
@@ -155,11 +166,11 @@ function isExist(p) {
   return fse.existsSync(p)
 }
 
-function getCachePath(project, file) {
+function getCachePath(project, file = '') {
   return resolve(root, '.dubhe', 'cache', project, file)
 }
 
-function getTypesPath(project, file) {
+function getTypesPath(project, file = '') {
   return resolve(root, '.dubhe', 'types', project, file)
 }
 
@@ -208,4 +219,27 @@ async function connectProject(baseUrl, project) {
     fse.outputJSON(getCachePath(project, 'remoteList.json'), remoteConfig)
 
   return remoteConfig
+}
+
+async function getList(baseUrl, project) {
+  const listPath = getCachePath(project, 'remoteList.json')
+
+  if (isExist(listPath))
+    return require(listPath)
+
+  const { data } = await axios.get(`${baseUrl}/core/remoteList.json`)
+  return data
+}
+
+async function analyseDep() {
+  const ret = {}
+  for (const project in dubheConfig.remote) {
+    const listData = await getList(dubheConfig.remote[project], project)
+    for (const dep in listData.importsGraph) {
+      if (!ret[dep])
+        ret[dep] = new Set()
+      listData.importsGraph[dep].forEach(item => ret[dep].add(item))
+    }
+  }
+  return ret
 }

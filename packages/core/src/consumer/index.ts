@@ -333,7 +333,7 @@ export const HomePlugin = createUnplugin((config: homeConfig): UnpluginOptions =
           sirv(resolve(_dirname, './client'), {
             single: true,
             dev: true,
-          }),
+          }) as any,
         )
         server.middlewares.use('/__dubhe_api', (req, res) => {
           res.setHeader('Content-Type', 'application/json')
@@ -341,8 +341,8 @@ export const HomePlugin = createUnplugin((config: homeConfig): UnpluginOptions =
           res.end()
         })
 
-        server.middlewares.use((req: IncomingMessage, res, next) => {
-          const url = req.url || ''
+        server.middlewares.use((req, res, next) => {
+          const url = (req as any).url || ''
           try {
             const ret = HMRModuleHandler(url)
 

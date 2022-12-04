@@ -4,9 +4,9 @@ const cli = require('cac')()
 const colors = require('colors')
 const root = process.cwd()
 const fse = require('fs-extra')
-
+const { buildExternal } = require('./build')
 const dubheConfig = require(resolve(root, 'dubhe.cjs'))
-
+const pkgs = require(resolve(root, 'package.json'))
 cli
   .command('detect', 'contrast cache version & remote version').alias('det')
   .action(async () => {
@@ -141,11 +141,32 @@ cli
 /**
  * experiment
  */
-// cli
-//   .command('bundle', 'bundle external').alias('b')
-//   .action(async (project, option) => {
+cli
+  .command('bundle <dependence>', 'bundle external dependence for function-level treeshake').alias('b')
+  .option('--outDir, -o [o]', '[string] outDir for vite output', {
+    default: 'dist',
+  })
+  .action(async (dependence, option) => {
+    const dep = await analyseDep()
+    if (dependence in dep) {
+      if (dependence in pkgs.dependencies) {
+        log(`Find ${dependence}@${pkgs.dependencies[dependence]}`)
+        const filePath = getDubheDepJS()
+        log('Create dubhe.dep.js', 'grey')
+        await fse.outputFile(filePath, `export {${[...dep[dependence]].reduce((arr, cur) => `${arr}${cur},`, '')}} from '${dependence}'`)
+        log('Bundle start')
+        await buildExternal(dependence, option.outDir)
+        log('Bundle finsih')
+        fse.remove(filePath)
+        log('Remove dubhe.dep.js', 'grey')
+      }
+      else {
+        log(`${dependence} doesn't exist in package.json`, 'red')
+      }
+    }
 
-//   })
+    else { log(`${dependence} doesn't exist in dubhe-external`, 'red') }
+  })
 
 cli
   .command('analyse', 'analyse dependence').alias('a')
@@ -153,6 +174,7 @@ cli
     const dep = await analyseDep()
     console.log(dep)
   })
+
 cli.help()
 cli.version(require('../package.json').version)
 
@@ -242,4 +264,8 @@ async function analyseDep() {
     }
   }
   return ret
+}
+
+function getDubheDepJS() {
+  return resolve(root, 'dubhe.dep.js')
 }

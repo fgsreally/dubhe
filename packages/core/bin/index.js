@@ -1,12 +1,15 @@
+/* eslint-disable no-console */
 const { resolve } = require('path')
 const axios = require('axios')
 const cli = require('cac')()
 const colors = require('colors')
 const root = process.cwd()
 const fse = require('fs-extra')
-const { buildExternal } = require('./build')
 const dubheConfig = require(resolve(root, 'dubhe.cjs'))
 const pkgs = require(resolve(root, 'package.json'))
+const { getPackageInfo } = require('local-pkg')
+const { buildExternal } = require('./build')
+
 cli
   .command('detect', 'contrast cache version & remote version').alias('det')
   .action(async () => {
@@ -167,14 +170,43 @@ cli
 
     else { log(`${dependence} doesn't exist in dubhe-external`, 'red') }
   })
+  // https://bundlephobia.com/api/size?package=vue@3.2.1&record=true
 
 cli
-  .command('analyse', 'analyse dependence').alias('a')
+  .command('analyse', 'analyse remote dependence').alias('a')
   .action(async () => {
     const dep = await analyseDep()
+
     console.log(dep)
   })
-
+cli
+  .command('size <size>', 'get dependence which is less than <size>').alias('s')
+  .option('--entire, -e [e]', '[boolean]  show entire pkgs info ', {
+    default: false,
+  })
+  .action(async (size, option) => {
+    size = Number(size)
+    if (typeof size !== 'number') {
+      log('size should be a number', 'red')
+      return
+    }
+    const ret = []
+    for (const i in pkgs.dependencies) {
+      try {
+        const { version } = await getPackageInfo(i)
+        const { data } = await axios.get(`https://bundlephobia.com/api/size?package=${i}@${version}`)
+        if (data.gzip < size)
+          ret.push(i)
+        if (option.entire)
+          log(`${i}@${version} cost ${data.gzip}`, 'grey')
+      }
+      catch (e) {
+        log(`find package:${i} fail`, 'red')
+      }
+    }
+    log('There are mini pkg-dependencies:')
+    console.log(ret)
+  })
 cli.help()
 cli.version(require('../package.json').version)
 

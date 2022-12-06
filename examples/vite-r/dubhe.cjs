@@ -5,11 +5,12 @@ const { esmsh } = require('dubhe')
 module.exports = {
   entry: 'src/dubhe.ts',
   types: true,
-  externals: esmsh(['vue']),
+  externals: esmsh(['vue', 'plugin-vue:export-helper']),
   HMR: {
     projectName: 'app',
     homePort: 'http://localhost:4100',
   },
+  vendor: ['\0plugin-vue:export-helper'],
   source: true,
   cssSplit: true,
   importMap: true,

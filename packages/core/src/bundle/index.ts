@@ -1,13 +1,13 @@
 import { basename, relative, resolve } from 'path'
 import fs from 'fs'
-import type { Plugin, PluginOption, UserConfig } from 'vite'
+import type { PluginOption, UserConfig } from 'vite'
 import { init } from 'es-module-lexer'
 import fse from 'fs-extra'
 import contentHash from 'content-hash'
 import { normalizePath } from 'vite'
 import type {
-  NormalizedOutputOptions,
-  OutputBundle,
+  GetManualChunkApi,
+
   OutputChunk,
   OutputOptions,
 } from 'rollup'
@@ -24,6 +24,7 @@ import {
   replaceEntryFile,
   sendHMRInfo,
 } from '../utils'
+import { getSplitChunk } from '../utils/splitPkg'
 interface HMRInfo {
   changeFile: string
   cssFiles: { [key in string]: number }
@@ -54,7 +55,7 @@ function resolveImport(id: string) {
 export function BundlePlugin(config: remoteConfig): PluginOption {
   // metaData = config.meta || {};
   const entryFile = config.entry || 'src/dubhe.ts'
-  const output = config.outDir || '.dubhe'
+  const outDir = config.outDir || '.dubhe'
 
   // 返回的是插件对象
   return {
@@ -65,11 +66,11 @@ export function BundlePlugin(config: remoteConfig): PluginOption {
     // init config
     async config(opts: UserConfig) {
       await init
-
+      const vendor = config.vendor || []
       if (!opts.build)
         opts.build = {}
       if (!opts.build.outDir)
-        opts.build.outDir = `${output}/core`
+        opts.build.outDir = `${outDir}/core`
 
       if (config.cssSplit)
         opts.build.cssCodeSplit = true
@@ -91,20 +92,31 @@ export function BundlePlugin(config: remoteConfig): PluginOption {
         opts.build.rollupOptions = {}
 
       if (!opts.build.rollupOptions.output)
-        opts.build.rollupOptions.output = {};
+        opts.build.rollupOptions.output = {}
 
-      (opts.build.rollupOptions.output as OutputOptions).chunkFileNames
+      const output = opts.build.rollupOptions.output as OutputOptions
+      output.chunkFileNames
         = (ChunkInfo) => {
           if (ChunkInfo.facadeModuleId)
             return '[name].js'
           return '[name]-[hash].js'
-        };
-      (opts.build.rollupOptions.output as OutputOptions).assetFileNames
-        = '[name][extname]';
+        }
+      output.assetFileNames
+        = '[name][extname]'
 
-      (opts.build.rollupOptions.output as OutputOptions).manualChunks = (id) => {
+      let userManualChunks = output.manualChunks
+      const dubheManualChunks = (id: string) => {
+        if (vendor.includes(id))
+          return 'vendor'
+
         if (chunkSet.has(id))
           return basename(id).split('.')[0]
+      }
+
+      output.manualChunks = (id: string, api: GetManualChunkApi) => {
+        if (typeof userManualChunks !== 'function')
+          userManualChunks = () => null
+        return userManualChunks(id, api) ?? dubheManualChunks(id)
       }
     },
 
@@ -237,9 +249,9 @@ export function BundlePlugin(config: remoteConfig): PluginOption {
       })
 
       if (config.source) {
-        fse.ensureDirSync(resolve(process.cwd(), output, 'source'));
+        fse.ensureDirSync(resolve(process.cwd(), outDir, 'source'));
         [...new Set(Object.values(outputSourceGraph).flat())].forEach((item) => {
-          copySourceFile(item, output)
+          copySourceFile(item, outDir)
         })
       }
     },

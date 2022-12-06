@@ -1,3 +1,4 @@
+import type { PluginOption } from 'vite'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 // import { Remote } from 'tianshu/vite'
@@ -12,7 +13,7 @@ export default defineConfig({
   build: {
 
   },
-  plugins: [vue(), Publisher(),
+  plugins: [vue(), Publisher() as PluginOption,
 
   ],
 })

@@ -7,8 +7,11 @@ importers:
       '@antfu/eslint-config': ^0.31.0
       '@changesets/cli': ^2.25.2
       eslint: ^8.28.0
+      local-pkg: ^0.4.2
       vitepress: 1.0.0-alpha.29
       vue: ^3.2.45
+    dependencies:
+      local-pkg: registry.npmmirror.com/local-pkg/0.4.2
     devDependencies:
       '@antfu/eslint-config': registry.npmmirror.com/@antfu/eslint-config/0.31.0_eslint@8.28.0
       '@changesets/cli': registry.npmmirror.com/@changesets/cli/2.25.2
@@ -140,6 +143,7 @@ importers:
       fast-glob: ^3.2.12
       fs-extra: ^10.1.0
       graphology: ^0.25.1
+      local-pkg: ^0.4.2
       magic-string: ^0.26.4
       rollup: 2.78.1
       semver: ^7.3.8
@@ -161,6 +165,7 @@ importers:
       es-module-lexer: registry.npmmirror.com/es-module-lexer/0.10.5
       fast-glob: registry.npmmirror.com/fast-glob/3.2.12
       fs-extra: registry.npmmirror.com/fs-extra/10.1.0
+      local-pkg: registry.npmmirror.com/local-pkg/0.4.2
       magic-string: registry.npmmirror.com/magic-string/0.26.7
       semver: registry.npmmirror.com/semver/7.3.8
       ts-morph: registry.npmmirror.com/ts-morph/17.0.1
@@ -5721,7 +5726,6 @@ packages:
     name: local-pkg
     version: 0.4.2
     engines: {node: '>=14'}
-    dev: true
 
   registry.npmmirror.com/locate-path/5.0.0:
     resolution: {integrity: sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/locate-path/-/locate-path-5.0.0.tgz}

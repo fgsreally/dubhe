@@ -109,15 +109,6 @@ export function replaceHotImportDeclarations(
           urlResolve(config.remote[project], `core/${moduleName}`),
         )
       }
-      // work for extension in production
-      // if (extname(moduleName) === '.v') {
-      //   newSource.overwrite(
-      //     i.s,
-      //     i.e,
-      //     urlResolve(config.remote[project], `core/${basename}.js`),
-      //   )
-      //   cssImports += `\nloadCss("${config.remote[project]}/${basename}.css");`
-      // }
 
       if (extname(moduleName) === '.css') {
         cssImports += `\nloadCss("${config.remote[project]}/core/${moduleName}");`

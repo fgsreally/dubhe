@@ -49,6 +49,7 @@ export interface remoteConfig {
   importMap: boolean
   project?: string
   types?: boolean
+  vendor?: string[]
   // vendor?: string[];
   HMR?: {
     projectName: string

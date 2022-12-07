@@ -242,8 +242,8 @@ export const dtsPlugin = createUnplugin((remoteConf: remoteConfig) => {
       },
       configResolved(config) {
         root = ensureAbsolute(options.root ?? '', config.root)
-        tsConfigPath = ensureAbsolute(tsConfigFilePath, root)
-        outputDir = `${ensureAbsolute(config.build.outDir, root)}/types`
+        tsConfigPath = resolve(root , tsConfigFilePath)
+        outputDir = resolve(root, config.build.outDir, '../', 'types')
       },
     },
 

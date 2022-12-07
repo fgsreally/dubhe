@@ -261,7 +261,7 @@ export function BundlePlugin(config: remoteConfig): Plugin {
       if (importer === normalizePath(resolve(process.cwd(), entryFile))) {
         log(`Find entry file --${id}`)
 
-        const filePath = id.startsWith('.') ? normalizePath(resolve(importer, '../', id)) : id
+        const filePath = id.startsWith('.') ? normalizePath(relative(process.cwd(), resolve(importer, '../', id))) : id
         if (!initEntryFiles.includes(filePath))
           initEntryFiles.push(filePath)
       }

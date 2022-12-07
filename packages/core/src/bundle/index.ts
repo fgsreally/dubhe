@@ -1,6 +1,6 @@
 import { basename, relative, resolve } from 'path'
 import fs from 'fs'
-import type { PluginOption, UserConfig } from 'vite'
+import type { Plugin, UserConfig } from 'vite'
 import { init } from 'es-module-lexer'
 import fse from 'fs-extra'
 import contentHash from 'content-hash'
@@ -24,7 +24,6 @@ import {
   replaceEntryFile,
   sendHMRInfo,
 } from '../utils'
-import { getSplitChunk } from '../utils/splitPkg'
 interface HMRInfo {
   changeFile: string
   cssFiles: { [key in string]: number }
@@ -52,7 +51,7 @@ function resolveImport(id: string) {
   }
 }
 
-export function BundlePlugin(config: remoteConfig): PluginOption {
+export function BundlePlugin(config: remoteConfig): Plugin {
   // metaData = config.meta || {};
   const entryFile = config.entry || 'src/dubhe.ts'
   const outDir = config.outDir || '.dubhe'
@@ -249,6 +248,8 @@ export function BundlePlugin(config: remoteConfig): PluginOption {
       })
 
       if (config.source) {
+        log('Copy source file to source dir')
+
         fse.ensureDirSync(resolve(process.cwd(), outDir, 'source'));
         [...new Set(Object.values(outputSourceGraph).flat())].forEach((item) => {
           copySourceFile(item, outDir)
@@ -259,11 +260,10 @@ export function BundlePlugin(config: remoteConfig): PluginOption {
     resolveId(id, importer) {
       if (importer === normalizePath(resolve(process.cwd(), entryFile))) {
         log(`Find entry file --${id}`)
-        const fileName = normalizePath(
-          relative(process.cwd(), resolve(importer, '../', id)),
-        )
-        if (!initEntryFiles.includes(fileName))
-          initEntryFiles.push(fileName)
+
+        const filePath = id.startsWith('.') ? normalizePath(resolve(importer, '../', id)) : id
+        if (!initEntryFiles.includes(filePath))
+          initEntryFiles.push(filePath)
       }
       if (importer)
         resolveImport(resolve(importer, id))

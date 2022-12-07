@@ -3,7 +3,3 @@ declare module "content-hash" {
   export default contentHash;
 }
 
-declare module "npm-package-size" {
-  let contentHash: any;
-  export default contentHash;
-}

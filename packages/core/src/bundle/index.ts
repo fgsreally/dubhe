@@ -41,6 +41,8 @@ const importsGraph: { [key: string]: Set<string> } = {}
 // let dependenceGraph: { [key: string]: Set<string> } = {};
 const entryDepMap: { [key: string]: number } = {}
 const chunkSet: Set<string> = new Set()
+let vendor: string[]
+const root = process.cwd()
 function resolveImport(id: string) {
   if (fse.existsSync(id) && initEntryFiles.includes(id)) {
     if (!entryDepMap[id])
@@ -65,7 +67,7 @@ export function BundlePlugin(config: remoteConfig): Plugin {
     // init config
     async config(opts: UserConfig) {
       await init
-      const vendor = config.vendor || []
+      vendor = config.vendor || []
       if (!opts.build)
         opts.build = {}
       if (!opts.build.outDir)
@@ -148,7 +150,7 @@ export function BundlePlugin(config: remoteConfig): Plugin {
             module: updateList,
             file: normalizePath(
               relative(
-                resolve(process.cwd(), entryFile, '../'),
+                resolve(root, entryFile, '../'),
                 HMRconfig.changeFile,
               ),
             ),
@@ -177,7 +179,7 @@ export function BundlePlugin(config: remoteConfig): Plugin {
       const code = ((data['remoteEntry.js'] as OutputChunk).code
         = replaceEntryFile(
           (data['remoteEntry.js'] as OutputChunk).code,
-          fs.readFileSync(resolve(process.cwd(), entryFile)).toString(),
+          fs.readFileSync(resolve(root, entryFile)).toString(),
         ))
       alias = ImportExpression(code)
 
@@ -234,7 +236,7 @@ export function BundlePlugin(config: remoteConfig): Plugin {
         externals: Object.keys(config.externals),
         config,
         alias,
-        initEntryFiles,
+        // initEntryFiles,
         entryFileMap,
         sourceGraph: outputSourceGraph,
         importsGraph: outputimportsGraph,
@@ -250,7 +252,7 @@ export function BundlePlugin(config: remoteConfig): Plugin {
       if (config.source) {
         log('Copy source file to source dir')
 
-        fse.ensureDirSync(resolve(process.cwd(), outDir, 'source'));
+        fse.ensureDirSync(resolve(root, outDir, 'source'));
         [...new Set(Object.values(outputSourceGraph).flat())].forEach((item) => {
           copySourceFile(item, outDir)
         })
@@ -258,10 +260,10 @@ export function BundlePlugin(config: remoteConfig): Plugin {
     },
 
     resolveId(id, importer) {
-      if (importer === normalizePath(resolve(process.cwd(), entryFile))) {
+      if (importer === normalizePath(resolve(root, entryFile))) {
         log(`Find entry file --${id}`)
 
-        const filePath = id.startsWith('.') ? normalizePath(relative(process.cwd(), resolve(importer, '../', id))) : id
+        const filePath = id.startsWith('.') ? normalizePath(resolve(importer, '../', id)) : id
         if (!initEntryFiles.includes(filePath))
           initEntryFiles.push(filePath)
       }
@@ -274,6 +276,12 @@ export function BundlePlugin(config: remoteConfig): Plugin {
       else {
         if (id in config.externals)
           return { id: config.externals[id], external: true }
+      }
+    },
+    transform(code, id) {
+      if (config.limit && !initEntryFiles.includes(id) && fse.existsSync(resolve(root, id)) && normalizePath(resolve(root, entryFile)) !== id && code.length < config.limit) {
+        console.log(id)
+        vendor.push(id)
       }
     },
 

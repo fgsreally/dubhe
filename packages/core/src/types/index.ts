@@ -41,6 +41,7 @@ interface remoteVueconfig {
   addTag?: boolean
 }
 export interface remoteConfig {
+  limit?: number
   source?: boolean
   outDir?: string
   entry: string

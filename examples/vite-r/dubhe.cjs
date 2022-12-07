@@ -5,6 +5,7 @@ const { esmsh } = require('dubhe')
 module.exports = {
   entry: 'src/dubhe.ts',
   types: true,
+  limit: 1000,
   externals: esmsh(['vue', 'plugin-vue:export-helper']),
   HMR: {
     projectName: 'app',

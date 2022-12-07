@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import Share from './components/Share.vue'
+
 const { msg } = defineProps<{ msg: string }>()
 </script>
 
 <template>
   <p class="blue">
     {{ msg }}
+    <Share />
   </p>
 </template>
 

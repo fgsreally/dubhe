@@ -1,0 +1,23 @@
+{
+  "name": "@dubhe/runtime",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev":"tsup --watch",
+    "build": "tsup"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mitt": "^3.0.0",
+    "vue": "^3.2.45"
+  },
+  "devDependencies": {
+    "jsdom": "^20.0.3",
+    "tsup": "^6.1.2",
+    "vitest": "^0.25.6"
+  }
+}

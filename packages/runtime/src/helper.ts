@@ -1,5 +1,6 @@
 import type { DebuggerOptions } from 'vue'
 import { computed, reactive, ref } from 'vue'
+import type { DubheModel } from './model'
 import type { DubheNameSpace } from './type'
 
 function init(target: any) {
@@ -81,3 +82,13 @@ export function getModel<Key extends keyof DubheNameSpace>(name: Key): DubheName
   return window.__DUBHE_NAMESPACE__[name]
 }
 
+export function useModel<T extends typeof DubheModel>(Model: T): InstanceType<T> {
+  const instance = new Model()
+  return new Proxy(instance, {
+    get(target: any, key) {
+      if (typeof target[key] === 'function')
+        return target[key].bind(target)
+      return target[key]
+    },
+  })
+}

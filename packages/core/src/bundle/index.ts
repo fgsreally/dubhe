@@ -279,9 +279,8 @@ export function BundlePlugin(config: remoteConfig): PluginOption {
       }
     },
     transform(code, id) {
-      if (config.limit && !initEntryFiles.includes(id) && fse.existsSync(resolve(root, id)) && normalizePath(resolve(root, entryFile)) !== id && code.length < config.limit) {
+      if (config.limit && !initEntryFiles.includes(id) && fse.existsSync(resolve(root, id)) && normalizePath(resolve(root, entryFile)) !== id && code.length < config.limit)
         vendor.push(id)
-      }
     },
 
   }

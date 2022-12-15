@@ -40,7 +40,7 @@ export const dtsPlugin = createUnplugin((remoteConf: remoteConfig) => {
 
   const compilerOptions = options.compilerOptions ?? {}
 
-  let outputDir: string, tsConfigPath: string, root: string
+  let outputDir: string, tsConfigPath: string, root: string, entry: string
   let entryRoot = options.entryRoot ?? ''
 
   let aliases: Alias[]
@@ -222,7 +222,7 @@ export const dtsPlugin = createUnplugin((remoteConf: remoteConfig) => {
       return tjsRE.test(id) || compiler?.some(item => item.key.test(id))
     },
     transform(code, id) {
-      if (id.startsWith(virtualPrefix))
+      if (id.startsWith(virtualPrefix) || id === entry)
         return null
 
       for (const i of compiler || []) {
@@ -259,6 +259,7 @@ export const dtsPlugin = createUnplugin((remoteConf: remoteConfig) => {
         root = ensureAbsolute(options.root ?? '', config.root)
         tsConfigPath = resolve(root, tsConfigFilePath)
         outputDir = resolve(root, config.build.outDir, '../', 'types')
+        entry = normalizePath(ensureAbsolute(remoteConf.entry, root))
       },
     },
   }

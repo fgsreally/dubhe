@@ -221,7 +221,7 @@ export function updateTSconfig(project: string, modulePathMap: ModulePathMap) {
     tsconfig.compilerOptions.paths[`!${project}/${i}.*`] = [jsPath]
     tsconfig.compilerOptions.paths[`!${project}/${i}`] = [jsPath]
   }
-  fse.outputJSONSync(TS_CONFIG_PATH, tsconfig)
+  fse.outputJSON(TS_CONFIG_PATH, tsconfig)
 }
 
 export async function updateTypesFile(

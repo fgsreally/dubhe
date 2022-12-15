@@ -7,7 +7,6 @@ import fse from 'fs-extra'
 import contentHash from 'content-hash'
 import type {
   GetManualChunkApi,
-
   OutputChunk,
   OutputOptions,
 } from 'rollup'
@@ -16,6 +15,7 @@ import type { remoteConfig } from '../types'
 import { VIRTUAL_HMR_PREFIX } from '../common/common'
 import {
   ImportExpression,
+  addExtension,
   copySourceFile,
   getAlias,
   getRelatedPath,
@@ -87,8 +87,8 @@ export function BundlePlugin(config: remoteConfig): PluginOption {
         }
       }
 
-      if (opts.build.emptyOutDir === undefined)
-        opts.build.emptyOutDir = false
+      // if (opts.build.emptyOutDir === undefined)
+      //   opts.build.emptyOutDir = false
       if (!opts.build.rollupOptions)
         opts.build.rollupOptions = {}
 
@@ -263,7 +263,7 @@ export function BundlePlugin(config: remoteConfig): PluginOption {
       if (importer === normalizePath(resolve(root, entryFile))) {
         log(`Find entry file --${id}`)
 
-        const filePath = id.startsWith('.') ? normalizePath(resolve(importer, '../', id)) : id
+        const filePath = id.startsWith('.') ? normalizePath(resolve(importer, '../', addExtension(id))) : id
         if (!initEntryFiles.includes(filePath))
           initEntryFiles.push(filePath)
       }

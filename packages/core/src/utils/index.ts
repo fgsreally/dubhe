@@ -375,3 +375,6 @@ export function isSourceFile(fp: string) {
   return fse.existsSync(fp) && !fp.includes('node_modules')
 }
 
+export function addExtension(p: string) {
+  return p + (extname(p) === '' ? '.ts' : '')
+}

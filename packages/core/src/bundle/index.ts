@@ -1,10 +1,10 @@
 import { basename, relative, resolve } from 'path'
 import fs from 'fs'
-import type { Plugin, UserConfig } from 'vite'
+import { normalizePath } from 'vite'
+import type { PluginOption, UserConfig } from 'vite'
 import { init } from 'es-module-lexer'
 import fse from 'fs-extra'
 import contentHash from 'content-hash'
-import { normalizePath } from 'vite'
 import type {
   GetManualChunkApi,
 
@@ -53,7 +53,7 @@ function resolveImport(id: string) {
   }
 }
 
-export function BundlePlugin(config: remoteConfig): Plugin {
+export function BundlePlugin(config: remoteConfig): PluginOption {
   // metaData = config.meta || {};
   const entryFile = config.entry || 'src/dubhe.ts'
   const outDir = config.outDir || '.dubhe'
@@ -280,7 +280,6 @@ export function BundlePlugin(config: remoteConfig): Plugin {
     },
     transform(code, id) {
       if (config.limit && !initEntryFiles.includes(id) && fse.existsSync(resolve(root, id)) && normalizePath(resolve(root, entryFile)) !== id && code.length < config.limit) {
-        console.log(id)
         vendor.push(id)
       }
     },

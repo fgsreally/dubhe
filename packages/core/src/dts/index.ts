@@ -1,5 +1,6 @@
 import { relative, resolve } from 'path'
 import os from 'os'
+import type { SourceFile } from 'ts-morph'
 import { Project } from 'ts-morph'
 import { createUnplugin } from 'unplugin'
 import fse from 'fs-extra'
@@ -21,7 +22,10 @@ const virtualPrefix = '\0'
 const tsRE = /\.tsx?$/
 const jsRE = /\.jsx?$/
 const tjsRE = /\.(t|j)sx?$/
+const dtsRE = /\.d\.tsx?$/
+
 const watchExtensionRE = /\.(vue|(t|j)sx?)$/
+
 const { readConfigFile } = TS
 export const dtsPlugin = createUnplugin((remoteConf: remoteConfig) => {
   const options: dtsPluginOptions = remoteConf.dts || {}
@@ -89,6 +93,8 @@ export const dtsPlugin = createUnplugin((remoteConf: remoteConfig) => {
 
   async function outputDts() {
     Debug('buildEnd')
+    const sourceDtsFiles = new Set<SourceFile>()
+
     const startTime = Date.now()
     const tsConfig: {
       extends?: string
@@ -121,12 +127,21 @@ export const dtsPlugin = createUnplugin((remoteConf: remoteConfig) => {
       })
 
       files.forEach((file) => {
+        if (dtsRE.test(file)) {
+          includedFileSet.add(file)
+          sourceDtsFiles.add(project.addSourceFileAtPath(file))
+          return
+        }
         includedFileSet.add(`${tjsRE.test(file) ? file.replace(tjsRE, '') : file}.d.ts`)
       })
 
       Debug('collect all TS files under dir')
     }
 
+    const dtsOutputFiles = Array.from(sourceDtsFiles).map(sourceFile => ({
+      path: sourceFile.getFilePath(),
+      content: sourceFile.getFullText(),
+    }))
     project.resolveSourceFileDependencies()
     Debug('resolve source dependence')
 
@@ -145,7 +160,7 @@ export const dtsPlugin = createUnplugin((remoteConf: remoteConfig) => {
             }
           }),
       )
-      .flat()
+      .flat().concat(dtsOutputFiles)
 
     Debug('get output content')
 
@@ -242,24 +257,9 @@ export const dtsPlugin = createUnplugin((remoteConf: remoteConfig) => {
       },
       configResolved(config) {
         root = ensureAbsolute(options.root ?? '', config.root)
-        tsConfigPath = resolve(root , tsConfigFilePath)
+        tsConfigPath = resolve(root, tsConfigFilePath)
         outputDir = resolve(root, config.build.outDir, '../', 'types')
       },
-    },
-
-    webpack(compiler) {
-      // compiler.hooks.afterCompile.tap('dubhe', (compilation) => {
-      //   console.log(compilation)
-      // })
-      // // add entry option
-      // const entryOptions: { [key: string]: { import: string[] } } = {}
-
-      // for (const i in options.entry
-      // )
-      //   entryOptions[i] = { import: [options.entry[i]] }
-
-      // compiler.options.entry = entryOptions
-      // getAlias(compiler.options.resolve.alias as any || {})
     },
   }
 })

@@ -1,6 +1,5 @@
 import { createRequire } from 'module'
 import { resolve } from 'path'
-import type { PluginOption } from 'vite'
 import type { VitePlugin } from 'unplugin'
 import { dtsPlugin } from './dts/index'
 import { HomePlugin } from './consumer'
@@ -15,11 +14,10 @@ export const Dts = dtsPlugin.vite as (options: dtsPluginOptions) => VitePlugin
 
 const require = createRequire(import.meta.url)
 
-export function Publisher(): VitePlugin[] {
-  const config = require(resolve(process.cwd(), 'dubhe.cjs'))
-  const dtsConfig = config.dts
-  const pubConfig = config
-  return [Dts(dtsConfig || {}), Bundle(pubConfig)]
+export function Publisher(): any {
+  const config = require(resolve(process.cwd(), 'dubhe.cjs')) || {}
+
+  return [Dts(config), Bundle(config)]
 }
 
 export function Consumer() {

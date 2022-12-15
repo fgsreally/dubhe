@@ -13,7 +13,7 @@ export default defineConfig({
   build: {
 
   },
-  plugins: [vue(), Publisher() as PluginOption,
+  plugins: [vue(), Publisher(),
 
   ],
 })

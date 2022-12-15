@@ -318,7 +318,7 @@ export const HomePlugin = createUnplugin((config: homeConfig): UnpluginOptions =
             )
           const host
             = server.resolvedUrls?.local[0].replace(/\/$/, '')
-            || `${https ? 'https' : 'http'}://localhost:${port || '5143'}`
+            || `${https ? 'https' : 'http'}://localhost:${port || '5173'}`
 
           printUrls()
           console.log(

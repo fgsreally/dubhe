@@ -1,0 +1,36 @@
+{
+  "name": "dubhe-share",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup"
+  },
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "colors": "^1.4.0",
+    "compare-versions": "6.0.0-rc.1",
+    "debug": "^4.3.4",
+    "env-paths": "2.2.1",
+    "es-module-lexer": "^0.10.5",
+    "fs-extra": "^10.1.0",
+    "hash-string": "^1.0.0",
+    "magic-string": "^0.26.4",
+    "minimatch": "^5.1.2",
+    "ts-morph": "^17.0.1",
+    "vite": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/fs-extra": "^9.0.13",
+    "@types/minimatch": "^5.1.2",
+    "tsup": "^6.1.2",
+    "typescript": "^4.9.4"
+  },
+  "license": "ISC"
+}

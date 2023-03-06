@@ -1,0 +1,24 @@
+{
+  "name": "esbuild-pub",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "pub": "esno esbuild.ts",
+    "preview": "http-server .dubhe --port=8081 --cors"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dubhe-pub": "workspace:*",
+    "esbuild": "^0.16.9",
+    "esbuild-plugin-merge": "file:.yalc/esbuild-plugin-merge",
+    "unplugin-vue": "^4.0.2",
+    "vue": "^3.2.45"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

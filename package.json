@@ -1,0 +1,32 @@
+{
+  "name": "dubhe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "publish": "changeset publish",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "dev": "turbo run dev --filter dubhe-*",
+    "build": "turbo run build --filter dubhe-*",
+    "docs:build": "npm -C docs run build",
+    "example:preview": "turbo run preview --filter dubhe-*",
+    "example:pub": "turbo run pub --filter dubhe-*",
+    "example:dev": "turbo run dev --filter dubhe-*",
+    "example:cold": "npm -C examples/vite-h run build:cold"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.31.0",
+    "@changesets/cli": "^2.25.2",
+    "eslint": "^8.28.0",
+    "execa": "^6.1.0",
+    "turbo": "^1.6.3",
+    "vitest": "^0.25.6"
+  },
+  "dependencies": {
+    "vitepress": "1.0.0-alpha.49"
+  }
+}

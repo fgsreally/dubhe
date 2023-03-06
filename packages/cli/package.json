@@ -1,0 +1,30 @@
+{
+  "name": "dubhe-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "dubhe": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cac": "^6.7.14",
+    "dubhe-lib": "workspace:^1.0.0",
+    "fast-glob": "^3.2.12",
+    "fs-extra": "^10.1.0",
+    "mlly": "^1.1.0",
+    "tsup": "^6.1.2",
+    "unconfig": "^0.3.7",
+    "vite": "^4.1.1"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strictPropertyInitialization": false,
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "skipLibCheck": true
+  },
+  "include": [
+    "packages/**/*.ts",
+    "packages/**/*.d.ts",
+    "packages/core/vite.config.ts"
+  ],
+}

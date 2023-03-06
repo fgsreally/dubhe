@@ -1,4 +1,5 @@
 import { resolve } from 'path'
+import type { remoteListType } from 'dubhe-lib'
 import { CACHE_ROOT, TYPE_ROOT, esmToSystemjs, getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, linkTypes, log, patchVersion, removeLocalCache, removeLocalType, updateLocalRecord } from 'dubhe-lib'
 /* eslint-disable no-console */
 import cac from 'cac'

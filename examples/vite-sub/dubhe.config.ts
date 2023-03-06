@@ -6,7 +6,9 @@ export default {
       mode: 'hot',
     }, // remote static server
   },
-  externals: id => `dubhe${id}`,
+  externals: (id) => {
+
+  },
   systemjs: true,
   cache: true,
   types: true,

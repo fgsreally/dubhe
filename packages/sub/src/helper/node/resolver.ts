@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { SubConfig } from 'dubhe-share'
+import type { SubConfig } from 'dubhe-lib'
 
 import type { ComponentResolver } from 'unplugin-vue-components'
 

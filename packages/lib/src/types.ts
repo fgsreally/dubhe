@@ -1,10 +1,6 @@
 import type { Diagnostic, Project, ts } from 'ts-morph'
 import type { Alias } from 'vite'
 
-export interface externals {
-  [key: string]: string | ((id: string) => string)
-}
-
 interface TransformWriteFile {
   filePath?: string
   content?: string
@@ -41,58 +37,42 @@ export interface dtsPluginOptions {
 //   addTag?: boolean
 // }
 export interface PubConfig {
-  limit?: number
   source?: boolean
   outDir?: string
   entry: Record<string, string>
-  externals: externals
+  externals: (id: string) => boolean | void
   version?: string
-  importMap: boolean
   project?: string
   types?: boolean
-  vendor?: string[]
 
   // vendor?: string[];
   HMR?: { port: string }[]
   dts?: dtsPluginOptions
-  cssSplit?: boolean
-  meta?: Metadata | any
-}
-
-interface Metadata {
-  version?: string
-  author?: string
+  meta?: any
 }
 
 export interface SubConfig {
-  externals?: externals
+  externals: (id: string) => { esm?: string; systemjs?: string } | void
   version?: number
-  remote: Record<string, string>
-  mode?: 'hot' | 'cold'
+  remote: Record<string, {
+    url: string, mode?: 'hot' | 'cold'
+  }>
   cache?: boolean
-  importMap: boolean
   types?: boolean
-  info?: boolean
-  prefetch?: boolean
-  extensions?: extensionType[]
-  injectHtml: {
-    systemjs?: string | false
-    importMap?: string | false
-    systemBabel?: string | false
-  } | false
-}
+  systemjs?: boolean
 
-export interface SubViteDevConfig {
-  externals: externals
-  remote: Record<string, string>
+  injectHtml?: {
+    systemjs?: string | boolean
+    importMap?: string | boolean
+    systemBabel?: string | boolean
+  }
 }
 
 export interface remoteListType {
   from: 'vite' | 'esbuild'
   files: string[]
   version: string
-  config: PubConfig
-  externals: Record<string, string>
+  externals: string[]
   alias: { name: string; url: string }[]
   initEntryFiles: string[]
   entryFileMap: { [key: string]: string }
@@ -109,11 +89,11 @@ interface Options {
   exclude?: string | RegExp | (string | RegExp)[]
 }
 
-export interface devConfig {
-  externals: { [key in string]: string }
-  remote?: { [key in string]: string }
-  opts?: Options
-}
+// export interface devConfig {
+//   externals: { [key in string]: string }
+//   remote?: { [key in string]: string }
+//   opts?: Options
+// }
 
 export interface VisModuleGraph {
   nodes: {
@@ -135,12 +115,6 @@ export interface VisModuleGraph {
       size: number
     }
   }[]
-}
-
-export interface extensionType {
-  key: string
-  color?: string
-  transform: (basename: string) => string
 }
 
 export interface aliasType {

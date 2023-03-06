@@ -16,10 +16,10 @@ import {
   TYPE_ROOT,
   VIRTUAL_HMR_PREFIX,
 } from './common'
-import type {
+// import type {
 
-  extensionType,
-} from './types'
+//   extensionType,
+// } from './types'
 
 export function normalizeFileName(name: string) {
   return `${name}${extname(name) ? '' : '.js'}`
@@ -83,7 +83,7 @@ export async function getLocalContent(project: string,
   moduleName: string) {
   const path = getLocalPath(project, moduleName)
   if (fse.existsSync(path))
-    return fse.readFile(path, 'utf-8')
+    return moduleName.endsWith('.json') ? fse.readJSON(path, 'utf-8') : fse.readFile(path, 'utf-8')
 }
 
 export function setLocalContent(path: string, content: string) {
@@ -95,16 +95,16 @@ export async function getRemoteContent(url: string) {
   return data
 }
 
-export function resolveExtension(
-  extensions: extensionType[],
-  moduleName: string,
-  basename: string,
-) {
-  for (const i of extensions) {
-    if (extname(moduleName) === i.key)
-      return i.transform(basename)
-  }
-}
+// export function resolveExtension(
+//   extensions: extensionType[],
+//   moduleName: string,
+//   basename: string,
+// ) {
+//   for (const i of extensions) {
+//     if (extname(moduleName) === i.key)
+//       return i.transform(basename)
+//   }
+// }
 
 export function getRelatedPath(p: string) {
   return normalizePath(relative(process.cwd(), p))
@@ -136,6 +136,3 @@ export function toReg(input: string) {
   return minimatch.makeRe(input) || input
 }
 
-export function urlResolve(to: string, from: string) {
-  return new URL(to, from).href
-}

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-legacy": "^4.0.1",
-    "dubhe-cli": "workspace:^1.0.0",
+    "dubhe-cli": "workspace:*",
     "dubhe-lib": "workspace:*",
     "dubhe-sub": "workspace:*",
     "element-plus": "^2.2.29",

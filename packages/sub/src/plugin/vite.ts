@@ -16,25 +16,18 @@ import {
   getVirtualContent,
   log,
   patchVersion,
-  replaceBundleImportDeclarations,
-  replaceImportDeclarations,
-  resolveExtension,
   resolveModuleAlias, resolvePathToModule,
-  toReg,
   updateLocalRecord,
 } from 'dubhe-lib'
 import type { HtmlTagDescriptor, ModuleNode, PluginOption, Update, ViteDevServer } from 'vite'
 import colors from 'colors'
 import sirv from 'sirv'
 import { init } from 'es-module-lexer'
-import type {
-  OutputChunk,
-} from 'rollup'
 
 import type {
-  PubConfig, SubConfig, SubViteDevConfig, aliasType,
+  SubConfig, aliasType,
   remoteListType,
-} from 'dubhe-share'
+} from 'dubhe-lib'
 
 import { Graph } from '../helper/node/graph'
 
@@ -55,53 +48,45 @@ const externalSet = new Set<string>()
 function reloadModule(id: string, time: number) {
   const { moduleGraph } = server
   const module = moduleGraph.getModuleById(VIRTUAL_PREFIX + id)
-
   if (module) {
-    if (id.endsWith('.css')) {
-      log(`reload module ${id} --[css]`, 'yellow')
-      moduleGraph.invalidateModule(module)
-      HMRMap.set(id, time)
-      return [
-        {
-          type: 'js-update',
-          path: VIRTUAL_PREFIX + id,
-          acceptedPath: VIRTUAL_PREFIX + id,
-          timestamp: time,
-        },
-      ]
-    }
-    else {
-      const ret: any = []
+    const ret = [] as any
+    moduleGraph.invalidateModule(module)
+
+    traverseModule(module)
+
+    function traverseModule(module: ModuleNode) {
+      if (module.url.startsWith(VIRTUAL_PREFIX))
+        HMRMap.set(module.url.slice(VIRTUAL_PREFIX.length), time)
+
       for (const i of (module as ModuleNode).importers) {
         moduleGraph.invalidateModule(i)
-        moduleGraph.invalidateModule(module)
-        const path = getHMRFilePath(i)
-        ret.push({
-          type: 'js-update',
-          path,
-          acceptedPath: path,
-          timestamp: time,
-        })
-        // if (extensionKey.includes(extname(i.file as string))) {
-        //   // vue hmr logic
-        //   for (const j of (i as ModuleNode).importers) {
-        //     moduleGraph.invalidateModule(j)
-        //     const parentPath = getHMRFilePath(j)
-        //     ret.push({
-        //       type: 'js-update',
-        //       path: parentPath,
-        //       acceptedPath: parentPath,
-        //       timestamp: time,
-        //     })
-        //     HMRMap.set(id.split('.')[0] + extname(i.file as string), time)
-        //   }
-        // }
+        if (i.acceptedHmrDeps.has(module)) {
+          ret.push({
+            type: 'js-update',
+            path: i.url,
+            acceptedPath: i.url,
+            timestamp: time,
+          })
+          continue
+        }
+        if (i.isSelfAccepting || i.acceptedHmrExports) {
+          ret.push({
+            type: 'js-update',
+            path: i.url,
+            acceptedPath: i.url,
+            timestamp: time,
+          })
+          if (i.isSelfAccepting)
+            return
+        }
+        traverseModule(i)
       }
-      log(`reload module ${id} --[js]`, 'yellow')
-
-      HMRMap.set(id, time)
-      return ret
     }
+
+    log('reload module ', 'yellow')
+
+    HMRMap.set(id, time)
+    return ret
   }
 }
 
@@ -111,9 +96,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
   const { externals } = config
 
-  const graph = new Graph(Object.keys(config.remote), config.extensions || [])
-  updateLocalRecord(config)
-
+  const graph = new Graph(Object.keys(config.remote), [])
+  updateLocalRecord(config.remote)
 
   // 返回的是插件对象
   return {
@@ -123,33 +107,34 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       if (command === 'build') {
         const { systemjs, esm } = externals(id) || {}
         if (systemjs || esm) {
-          if (esm) esmImportMap[id] = esm
-          if (systemjs) systemjsImportMap[id] = systemjs
+          if (esm)
+            esmImportMap[id] = esm
+          if (systemjs)
+            systemjsImportMap[id] = systemjs
           return { id, external: true }
-
         }
       }
 
       const [project, moduleName] = resolveModuleAlias(id, aliasMap)
       const module = `dubhe-${project}/${moduleName}`
       // for dubhe remote module which is in hot mode
-      if (command === 'build' && this.config.remote[project]?.mode === 'hot') {
+      if (command === 'build' && config.remote[project]?.mode === 'hot') {
         return {
           id: module,
           external: true,
         }
       }
 
-
       if (i?.startsWith(VIRTUAL_PREFIX) && id.startsWith('.')) {
         id = urlResolve(i, id)
 
         graph.addModule(resolvePathToModule(id), resolvePathToModule(i))
-        const [project, moduleName] = resolveModuleAlias(id, aliasMap)
+        const [project, moduleName] = resolveModuleAlias(id.slice(VIRTUAL_PREFIX.length), aliasMap)
 
         const module = `dubhe-${project}/${moduleName}`
 
         const query = HMRMap.has(module) ? `?t=${HMRMap.get(module)}` : ''
+
         return { id: id + query }
       }
 
@@ -167,15 +152,9 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       if (id.startsWith(VIRTUAL_PREFIX)) {
         const [project, moduleName] = resolveModuleAlias(id.slice(VIRTUAL_PREFIX.length), aliasMap)
 
-
-
-
         const module = `dubhe-${project}/${moduleName}`
         const url = `${config.remote[project].url}/core/${moduleName}`
         try {
-          // if (remoteCache[project][moduleName] && !HMRMap.has(module))
-          //   return remoteCache[project][moduleName]
-          // const [project, moduleName] = resolveModuleAlias(id.slice(VIRTUAL_PREFIX.length), aliasMap)
           const { data } = await getVirtualContent(
             url,
             project,
@@ -195,8 +174,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         }
       }
     },
-
-
 
     config(viteConfig) {
       if (!viteConfig.define)
@@ -227,13 +204,11 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           if (mode === 'hot' && command === 'build') {
             esmImportMap[`dubhe-${i}`] = urlResolve(url, 'core')
             systemjsImportMap[`dubhe-${i}`] = urlResolve(url, 'systemjs')
-
           }
 
           const dubheConfig: remoteListType = JSON.parse(data)
 
-          dubheConfig.externals.forEach((item) => externalSet.add(item))
-
+          dubheConfig.externals.forEach(item => externalSet.add(item))
 
           if (config.types)
             getTypes(`${url}/types/types.json`, i, dubheConfig.entryFileMap)
@@ -250,13 +225,11 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
                   'yellow',
                 )
               }
-
             }
             else {
               log('--Create Local Cache--')
             }
           }
-
 
           aliasMap[i] = dubheConfig.alias
 
@@ -267,11 +240,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             log(`Remote Module [${i}] Asset List:`)
             console.table(dubheConfig.files)
 
-
-            log(`All externals`)
+            log('All externals')
             console.table([...externalSet])
-
-
           }
         }
         catch (e) {
@@ -288,7 +258,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       // }
       console.table([...externalSet])
     },
-
 
     configureServer(_server) {
       server = _server as any
@@ -371,8 +340,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         return
       const tags = [] as HtmlTagDescriptor[]
 
-
-
       tags.push({
         tag: 'script',
         attrs: {
@@ -383,12 +350,11 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       })
 
       if (config.systemjs) {
-
         tags.push({
           tag: 'script',
           attrs: {
             type: 'systemjs-importmap',
-            nomodule: undefined,
+            nomodule: true,
           },
           children: `{"imports":${JSON.stringify(systemjsImportMap)}}`,
           injectTo: 'head',
@@ -402,61 +368,88 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             tag: 'script',
             attrs: {
               nomodule: true,
-              src: config.injectHtml.systemjs ?? DEFAULT_POLYFILL.systemjs,
+              src: config.injectHtml.systemjs === true ? DEFAULT_POLYFILL.systemjs : config.injectHtml.systemjs,
             },
             injectTo: 'head-prepend',
           })
         }
-
-      }
-
-      // work in both modes
-      if (config.importMap) {
-
         if (config.injectHtml.importMap) {
           tags.push({
             // importmap polyfill
             tag: 'script',
             attrs: {
-              src: config.injectHtml.importMap ?? DEFAULT_POLYFILL.importMap,
+              src: config.injectHtml.importMap === true ? DEFAULT_POLYFILL.importMap : config.injectHtml.importMap,
             },
             injectTo: 'head-prepend',
           })
         }
       }
+
+      // work in both modes
+
       return {
         html,
         tags,
-
-        // <script src="https://unpkg.com/systemjs@6.13.0/dist/s.js"></script>
-        // <script src="https://unpkg.com/systemjs-babel@0.3.1/dist/systemjs-babel.js"></script>
-        /**    <script type="systemjs-importmap">
-    {
-      "imports": {
-        "neptune": "./neptune.js"
-      }
-    }
-  </script> */
-
       }
     },
 
   }
 }
 
-export function DevPlugin(conf: SubViteDevConfig): PluginOption {
-  const entryMap: Record<string, string> = {}
+export function DevPlugin(config: SubConfig): PluginOption {
+  const externalSet = new Set<string>()
+
+  const resolvedDepMap = {} as Record<string, string>
+  const entryMap = {} as Record<string, string>
   return {
     name: 'dubhe::dev',
     apply: 'serve',
     enforce: 'pre',
 
-    async config(cf) {
+    async configResolved(conf) {
+      const { server: { port } } = conf
+      for (const project in config.remote) {
+        // 向远程请求清单
+        remoteCache[project] = {}
+        const { url } = config.remote[project]
 
+        try {
+          const { data: { externals, entry } } = await getRemoteContent(
+            urlResolve(url, 'dubhe'),
+          ) as { data: { externals: string[]; entry: Record<string, string> } }
+
+          for (const key in entry)
+            entryMap[`dubhe-${project}/${key}`] = urlResolve(url, entry[key])
+
+          externals.forEach((item) => {
+            resolvedDepMap[urlResolve(url, `/@id/${item}`)] = `http:127.0.0.1:${port || 5173}/@id/${item}`
+          })
+        }
+        catch (e) {
+
+        }
+      }
     },
-    resolveId(id) {
+    async resolveId(id, i) {
       if (id in entryMap)
-        return { id: entryMap[id] }
+        return entryMap[id]
+
+      if (externalSet.has(id))
+        return id
+    },
+
+    transformIndexHtml(html) {
+      const tags = [] as HtmlTagDescriptor[]
+      tags.push({
+        tag: 'script',
+        attrs: {
+          type: 'importmap',
+        },
+        children: `{"imports":${JSON.stringify(resolvedDepMap)}}`,
+        injectTo: 'head',
+      })
+
+      return { html, tags }
     },
   }
 }

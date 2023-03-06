@@ -23,3 +23,15 @@ export const DEFAULT_POLYFILL = {
 export const HMT_TYPES_TIMEOUT = 10000
 
 export const VIRTUAL_CSS_PREFIX = '/@virtual:DUBHE_CSS/'
+
+export const INJECT_STYLE = `export function injectStyle(styleStr, id) {
+  let style = document.querySelector(\`#dubhe-style-\${id}\`)
+  if (!style) {
+    style = document.createElement('style')
+    style.id = \`dubhe-style-\${id}\`
+    document.head.appendChild(style)
+  }
+  style.innerHTML = styleStr
+}
+`
+

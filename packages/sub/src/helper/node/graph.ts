@@ -1,6 +1,6 @@
 import { extname } from 'path'
-import { FEDERATION_RE } from 'dubhe-share'
-import type { VisModuleGraph, extensionType } from 'dubhe-share'
+import { FEDERATION_RE } from 'dubhe-lib'
+import type { VisModuleGraph } from 'dubhe-lib'
 
 const getOffset = (() => {
   let i = 0
@@ -20,7 +20,7 @@ let index = 0
 export class Graph {
   private moduleMap: { [key: string]: Set<string> } = {}
   private projectDep: { [key: string]: Set<string> } = {}
-  constructor(public projects: string[], public extensions: extensionType[]) {
+  constructor(public projects: string[], public extensions: any[]) {
     projects.forEach((item) => {
       this.moduleMap[item] = new Set()
       this.projectDep[item] = new Set()

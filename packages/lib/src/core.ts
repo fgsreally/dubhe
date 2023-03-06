@@ -3,7 +3,7 @@ import { parse } from 'es-module-lexer'
 import MagicString from 'magic-string'
 import minimatch from 'minimatch'
 import fse from 'fs-extra'
-import type { SubConfig, aliasType, externals } from './types'
+import type { SubConfig, aliasType } from './types'
 import { FEDERATION_RE, VIRTUAL_PREFIX } from './common'
 import { getLocalPath, getRemoteContent, setLocalContent, urlResolve } from './utils'
 
@@ -17,14 +17,14 @@ export function resolveAlias(alias: Record<string, string> = {}) {
 }
 
 // dependences which won't be bundled  in node_modules
-export function isExternal(id: string, ext: externals) {
-  for (const i in ext) {
-    if (minimatch(id, i) // true!
-    )
-      return getExternalId(id, ext[i])
-  }
-  return false
-}
+// export function isExternal(id: string, ext: externals) {
+//   for (const i in ext) {
+//     if (minimatch(id, i) // true!
+//     )
+//       return getExternalId(id, ext[i])
+//   }
+//   return false
+// }
 
 export function getExternalId(id: string, handler: string | ((id: string) => string)) {
   return typeof handler === 'string' ? handler : handler(id)
@@ -77,13 +77,13 @@ export function resolveModuleAlias(
 
   if (!project)
     return []
-  let baseName = moduleName.split('.')[0]
+  let baseName = moduleName
   for (const i of alias[project]) {
     if (i.name === baseName)
-      baseName = i.url
+      baseName = `${i.url}.js`
   }
 
-  return [project, baseName + (extname(moduleName) || '.js'), baseName]
+  return [project, `${baseName}`, baseName]
 }
 
 export function replaceImportDeclarations(source: any, externals: Record<string, string>) {
@@ -118,40 +118,40 @@ export function ImportExpression(source: string) {
   return ret
 }
 
-export function replaceHotImportDeclarations(
-  source: any,
-  config: SubConfig,
-  aliasMap: { [key: string]: aliasType[] },
-) {
-  const [imports] = parse(source, 'optional-sourcename')
-  // let newSource = source;
-  const newSource = new MagicString(source)
-  let cssImports = ''
-  for (const i of imports as any) {
-    if (FEDERATION_RE.test(i.n)) {
-      const [project, moduleName] = resolveModuleAlias(i.n, aliasMap)
+// export function replaceHotImportDeclarations(
+//   source: any,
+//   config: SubConfig,
+//   aliasMap: { [key: string]: aliasType[] },
+// ) {
+//   const [imports] = parse(source, 'optional-sourcename')
+//   // let newSource = source;
+//   const newSource = new MagicString(source)
+//   let cssImports = ''
+//   for (const i of imports as any) {
+//     if (FEDERATION_RE.test(i.n)) {
+//       const [project, moduleName] = resolveModuleAlias(i.n, aliasMap)
 
-      if (extname(moduleName) === '.js') {
-        newSource.overwrite(
-          i.s,
-          i.e,
-          urlResolve(config.remote[project], `core/${moduleName}`),
-        )
-      }
+//       if (extname(moduleName) === '.js') {
+//         newSource.overwrite(
+//           i.s,
+//           i.e,
+//           urlResolve(config.remote[project], `core/${moduleName}`),
+//         )
+//       }
 
-      if (extname(moduleName) === '.css') {
-        cssImports += `\nloadCss("${config.remote[project]}/core/${moduleName}");`
-        newSource.overwrite(i.ss, i.se, '')
-      }
-    }
-  }
-  if (cssImports.length > 0) {
-    newSource
-      .prepend('import {loadCss} from "dubhe/runtime"\n')
-      .append(cssImports)
-  }
-  return newSource.toString()
-}
+//       if (extname(moduleName) === '.css') {
+//         cssImports += `\nloadCss("${config.remote[project]}/core/${moduleName}");`
+//         newSource.overwrite(i.ss, i.se, '')
+//       }
+//     }
+//   }
+//   if (cssImports.length > 0) {
+//     newSource
+//       .prepend('import {loadCss} from "dubhe/runtime"\n')
+//       .append(cssImports)
+//   }
+//   return newSource.toString()
+// }
 
 export function replaceBundleImportDeclarations(
   source: string,

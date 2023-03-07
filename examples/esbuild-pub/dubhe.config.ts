@@ -5,16 +5,18 @@ export default {
   entry: {
     app: './src/App.vue',
     hello: './src/HelloWorld.vue',
+    module: './src/module.ts',
   },
   types: true,
   // limit: 1000,
-  externals: esmsh(['vue']),
+  externals: (id) => {
+    if (id === 'vue')
+      return true
+  },
   HMR: [{
     port: 'http://localhost:4100',
   }],
   outDir: '.dubhe',
-  // vendor: ['\0plugin-vue:export-helper'],
   source: true,
-  cssSplit: true,
-  importMap: true,
+
 } as PubConfig

@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { dirname, extname, resolve } from 'path'
+import fs from 'fs'
 // eslint-disable-next-line  n/no-deprecated-api
 import { fileURLToPath, resolve as urlResolve } from 'url'
 
@@ -46,6 +47,7 @@ const systemjsImportMap = {} as Record<string, string>
 const esmImportMap = {} as Record<string, string>
 const externalSet = new Set<string>()
 function reloadModule(id: string, time: number) {
+  console.log(id)
   const { moduleGraph } = server
   const module = moduleGraph.getModuleById(VIRTUAL_PREFIX + id)
   if (module) {
@@ -401,32 +403,43 @@ export function DevPlugin(config: SubConfig): PluginOption {
 
   const resolvedDepMap = {} as Record<string, string>
   const entryMap = {} as Record<string, string>
+  const tags = [] as HtmlTagDescriptor[]
+  let isFirstTime = true
   return {
     name: 'dubhe::dev',
     apply: 'serve',
     enforce: 'pre',
 
-    async configResolved(conf) {
-      const { server: { port } } = conf
+    async configureServer(conf) {
+      const { config: { server: { port } } } = conf
       for (const project in config.remote) {
         // 向远程请求清单
         remoteCache[project] = {}
         const { url } = config.remote[project]
 
         try {
-          const { data: { externals, entry } } = await getRemoteContent(
+          const { externals, entry } = await getRemoteContent(
             urlResolve(url, 'dubhe'),
-          ) as { data: { externals: string[]; entry: Record<string, string> } }
-
+          ) as { externals: string[]; entry: Record<string, string> }
           for (const key in entry)
             entryMap[`dubhe-${project}/${key}`] = urlResolve(url, entry[key])
 
           externals.forEach((item) => {
+            externalSet.add(item)
             resolvedDepMap[urlResolve(url, `/@id/${item}`)] = `http:127.0.0.1:${port || 5173}/@id/${item}`
           })
+          tags.push({
+            tag: 'script',
+            attrs: {
+              type: 'module',
+              src: urlResolve(url, '/@vite/client'),
+            },
+            injectTo: 'head',
+          })
+          log(`${project} use Dev Mode`)
         }
         catch (e) {
-
+          console.log(e)
         }
       }
     },
@@ -434,20 +447,36 @@ export function DevPlugin(config: SubConfig): PluginOption {
       if (id in entryMap)
         return entryMap[id]
 
-      if (externalSet.has(id))
+      if (externalSet.has(id) && i !== 'dubhe')
+
         return id
+
+      if (externalSet.has(i!)) {
+        const { id: resolveImporter } = await this.resolve(i!, 'dubhe') as any
+        const { id: resolveID } = await this.resolve(id, resolveImporter) as any
+        return resolveID
+      }
+    },
+
+    async load(id) {
+      if (externalSet.has(id)) {
+        const { id: resolveID } = await this.resolve(id, 'dubhe') as any
+        return fs.promises.readFile(resolveID.split('?')[0], 'utf-8')
+      }
     },
 
     transformIndexHtml(html) {
-      const tags = [] as HtmlTagDescriptor[]
-      tags.push({
-        tag: 'script',
-        attrs: {
-          type: 'importmap',
-        },
-        children: `{"imports":${JSON.stringify(resolvedDepMap)}}`,
-        injectTo: 'head',
-      })
+      if (isFirstTime) {
+        tags.push({
+          tag: 'script',
+          attrs: {
+            type: 'importmap',
+          },
+          children: `{"imports":${JSON.stringify(resolvedDepMap)}}`,
+          injectTo: 'head',
+        })
+      }
+      isFirstTime = false
 
       return { html, tags }
     },

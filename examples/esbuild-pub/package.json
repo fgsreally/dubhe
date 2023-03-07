@@ -14,7 +14,7 @@
   "dependencies": {
     "dubhe-pub": "workspace:*",
     "esbuild": "^0.16.9",
-    "esbuild-plugin-merge": "file:.yalc/esbuild-plugin-merge",
+    "esbuild-plugin-merge": "^1.0.6",
     "unplugin-vue": "^4.0.2",
     "vue": "^3.2.45"
   },

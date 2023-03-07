@@ -2,7 +2,6 @@ import { relative, resolve } from 'path'
 import os from 'os'
 import type { SourceFile } from 'ts-morph'
 import { Project } from 'ts-morph'
-import { createUnplugin } from 'unplugin'
 import fse from 'fs-extra'
 import type { Alias, AliasOptions } from 'vite'
 import { normalizePath } from 'vite'
@@ -13,6 +12,7 @@ import type { Plugin } from 'esbuild'
 import type { PubConfig, dtsPluginOptions } from 'dubhe-lib'
 import { debounce, ensureAbsolute, ensureArray, isNativeObj, log, mergeObjects, queryPublicPath, resolveAlias, runParallel, traverseDic } from 'dubhe-lib'
 
+import type { ProPlugin } from 'esbuild-plugin-merge'
 import { VueCompiler } from './compile'
 import { normalizeGlob, removePureImport, transformAliasImport } from './transform'
 const Debug = debug('dubhe-dts')
@@ -27,7 +27,7 @@ const dtsRE = /\.d\.tsx?$/
 let aliases: Alias[] = []
 
 const { readConfigFile } = TS
-export const dtsPlugin = createUnplugin((remoteConf: Required<PubConfig>) => {
+export const dtsPlugin = (remoteConf: Required<PubConfig>) => {
   const options: dtsPluginOptions = remoteConf.dts || {}
   const {
     tsConfigFilePath = 'tsconfig.json',
@@ -188,19 +188,10 @@ export const dtsPlugin = createUnplugin((remoteConf: Required<PubConfig>) => {
     Debug('output types.json')
     log(`Generate dts takes ${Date.now() - startTime}`)
   }
-
-  const buildEnd = debounce(outputDts)
-
-  return {
-    name: 'dubhe::dts',
-    enforce: 'pre',
-    transformInclude(id) {
-      return tjsRE.test(id) || compiler?.some(item => item.key.test(id))
-    },
-    transform(code, id) {
-      if (id.startsWith(virtualPrefix) || id === entry)
-        return null
-
+  function transform(code: string, id: string) {
+    if (id.startsWith(virtualPrefix) || id === entry)
+      return null
+    if (tjsRE.test(id) || compiler?.some(item => item.key.test(id))) {
       for (const i of compiler || []) {
         if (i.key.test(id))
 
@@ -214,14 +205,45 @@ export const dtsPlugin = createUnplugin((remoteConf: Required<PubConfig>) => {
 
         project.addSourceFileAtPath(id)
       }
+    }
 
-      return null
-    },
+    return null
+  }
+  const buildEnd = debounce(outputDts)
 
-    writeBundle: buildEnd,
+  return {
+    esbuild: {
+
+      name: 'dubhe::dts',
+      enforce: 'post',
+
+      setup(build) {
+        getAlias(resolveAlias(build.initialOptions.alias))
+
+        build.onLoad({ filter: /.*/ }, async (options) => {
+          const id = options.path + options.suffix
+          if (tjsRE.test(id) || compiler?.some(item => item.key.test(id))) {
+            if (fse.existsSync(id))
+              return { contents: await fse.readFile(id) }
+          }
+        })
+
+        build.onTransform({ filter: /.*/ }, (args, options) => {
+          const id = options.path + options.suffix
+          transform(args.contents as string, id)
+        })
+        build.onEnd(buildEnd)
+      },
+    } as ProPlugin,
 
     vite: {
       apply: 'build',
+      name: 'dubhe::dts',
+      enforce: 'pre',
+
+      transform,
+
+      writeBundle: buildEnd,
       // options,
       config(config: any) {
         const aliasOptions = config?.resolve?.alias ?? []
@@ -235,7 +257,7 @@ export const dtsPlugin = createUnplugin((remoteConf: Required<PubConfig>) => {
       // },
     },
   }
-})
+}
 
 export const EsbuildPolyfill: Plugin = {
   name: 'dubhe::dts[esbuild-polyfill]',

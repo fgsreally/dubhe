@@ -6,9 +6,9 @@ import type { Metafile, OutputFile } from 'esbuild'
 import fse from 'fs-extra'
 import { init } from 'es-module-lexer'
 import type { PubConfig } from 'dubhe-lib'
-import {isExternal} from './vite/vite'
+import { isExternal } from './vite/vite'
 const root = process.cwd()
-
+const externalSet = new Set<string>()
 export function CSSPlugin(): ProPlugin {
   return {
     name: 'dubhe::css',
@@ -60,10 +60,10 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
       })
 
       build.onResolve({ filter: /\.*/ }, (args) => {
-        const externalID = isExternal(args.path, config.externals)
-
-        if (externalID)
+        if (isExternal(args.path, config.externals)) {
+          externalSet.add(args.path)
           return { path: args.path, external: true }
+        }
       })
       build.onEnd(async (ret) => {
         const outputs = (ret.outputFiles as OutputFile[])
@@ -115,6 +115,7 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
           timestamp: Date.now(),
           files: Object.keys(meta.outputs).map(item => item.slice(outdir.length + 6)),
           alias,
+          externals: [...externalSet],
         }
         fse.outputJSON(resolve(root, outdir, 'core', 'remoteList.json'), remoteList)
       })

@@ -1,2 +1,2 @@
-// export { WebpackPlugin as Sub } from './plugin/webpack'
+export { WebpackPlugin as Sub } from './plugin/webpack'
 

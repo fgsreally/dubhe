@@ -1,8 +1,8 @@
 import fs from 'fs'
 import type { PluginOption } from 'vite'
-import { isExternal, log } from 'dubhe-lib'
 import type { PubConfig } from 'dubhe-lib'
 import type { ResolvedId } from 'rollup'
+import { isExternal } from './vite'
 export function DevPlugin(conf: PubConfig): PluginOption {
   const externals = new Set<string>()
   return {

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const { msg } = defineProps<{ msg: number }>()
-console.log('xxx')
 </script>
 
 <template>

@@ -5,7 +5,7 @@ testFromViteRemote()
 
 <template>
   <!-- <vite_dubhe-app msg="remote app component" /> -->
-  <viteout-app msg="remote hello component from vite" />
-  <!-- <esbuild-hello msg="remote hello component from esbuild" /> -->
+  <viteout-app msg="remote app component from viteout" />
+  <viteout-hello msg="remote hello component from viteout" />
 </template>
 

@@ -63,6 +63,8 @@ export class WebpackPlugin {
   // use virtual-module in development
   // use local-cache in production with parallel
   apply(compiler: Compiler) {
+    const systemjsImportMap = {} as Record<string, string>
+    const esmImportMap = {} as Record<string, string>
     updateLocalRecord(this.config.remote)
     const { mode, devServer } = compiler.options
     const { injectHtml, externals } = this.config
@@ -87,7 +89,8 @@ export class WebpackPlugin {
           // if (dubheConfig.config.importMap)
           //   isImportMap = true
           if (this.config.remote[i].mode === 'hot' && mode !== 'development') {
-            importMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'core')
+            esmImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'core')
+            systemjsImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'systemjs')
             if (!compiler.options.externals)
               compiler.options.externals = {}
             for (const external of dubheConfig.externals) {
@@ -96,6 +99,7 @@ export class WebpackPlugin {
             }
             for (const item of dubheConfig.alias)
               (compiler as any).options.externals[`dubhe-${i}/${item.name}`] = `dubhe-${i}/${item.url}.js`
+            console.log((compiler as any).options.externals)
           }
 
           if (this.config.types)
@@ -173,14 +177,13 @@ export class WebpackPlugin {
           (data) => {
             const tags = data.assetTags.scripts
             if (injectHtml) {
-              const externalMap = {} as Record<string, string>
               [...externalSet].forEach((dep) => {
-                const resolvedDep = externals(dep)
-                if (resolvedDep)
-                  externalMap[dep] = resolvedDep
+                const { esm, systemjs } = externals(dep) || {}
+                if (esm)
+                  esmImportMap[dep] = esm
+                if (systemjs)
+                  systemjsImportMap[dep] = systemjs
               })
-
-              const importMapStr = JSON.stringify({ ...externalMap, ...importMap })
 
               if (injectHtml.systemjs) {
                 tags.unshift({
@@ -211,7 +214,7 @@ export class WebpackPlugin {
                   voidTag: false,
                   meta: { plugin: 'dubhe::subscribe' },
                   attributes: { type: 'systemjs-importmap' },
-                  innerHTML: `{"imports":${importMapStr}}`,
+                  innerHTML: `{"imports":${JSON.stringify(systemjsImportMap)}}`,
                 })
               }
               tags.unshift({
@@ -219,7 +222,7 @@ export class WebpackPlugin {
                 voidTag: false,
                 meta: { plugin: 'dubhe::subscribe' },
                 attributes: { type: 'importmap' },
-                innerHTML: `{"imports":${importMapStr}}`,
+                innerHTML: `{"imports":${JSON.stringify(esmImportMap)}}`,
               })
             }
 
@@ -244,7 +247,6 @@ export class WebpackPlugin {
               let id = request.request
               if (!id)
                 return callback()
-                console.log(id)
 
               const importer = (request as any).context.issuer
               if (FEDERATION_RE.test(id)) {

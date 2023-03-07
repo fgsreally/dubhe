@@ -7,6 +7,8 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    EsbuildpubApp: typeof import('dubhe-esbuildpub/app')['default']
     ViteoutApp: typeof import('dubhe-viteout/app')['default']
+    ViteoutHello: typeof import('dubhe-viteout/hello')['default']
   }
 }

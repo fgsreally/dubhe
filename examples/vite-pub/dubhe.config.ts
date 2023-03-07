@@ -15,7 +15,7 @@ export default {
       return true
   },
   HMR: [{
-    port: 'http://localhost:4100',
+    port: 'http://localhost:8081',
   }],
   outDir: '.dubhe',
   source: true,

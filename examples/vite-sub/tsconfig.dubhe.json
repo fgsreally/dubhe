@@ -1,17 +1,1 @@
-{
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "dubhe-viteout/test": [
-                ".dubhe/types/viteout/src/modules/test"
-            ],
-            "dubhe-viteout/app": [
-                ".dubhe/types/viteout/src/App.vue"
-            ],
-            "dubhe-viteout/hello": [
-                ".dubhe/types/viteout/src/components/HelloWorld.vue"
-            ]
-        },
-        "composite": true
-    }
-}
+{"compilerOptions":{"baseUrl":".","paths":{"dubhe-viteout/test":[".dubhe/types/viteout/src/modules/test"],"dubhe-viteout/app":[".dubhe/types/viteout/src/App.vue"],"dubhe-viteout/hello":[".dubhe/types/viteout/src/components/HelloWorld.vue"]},"composite":true}}

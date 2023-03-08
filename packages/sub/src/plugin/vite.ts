@@ -46,6 +46,7 @@ const aliasMap: { [key: string]: aliasType[] } = {}
 const systemjsImportMap = {} as Record<string, string>
 const esmImportMap = {} as Record<string, string>
 const externalSet = new Set<string>()
+
 function reloadModule(id: string, time: number) {
   console.log(id)
   const { moduleGraph } = server
@@ -100,9 +101,11 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
   const graph = new Graph(Object.keys(config.remote), [])
   updateLocalRecord(config.remote)
+  const projectSet = new Set<string>()
+  const devHelper = DevPlugin(config, projectSet)
 
   // 返回的是插件对象
-  return {
+  return [devHelper, {
     name: 'dubhe::subscribe',
     async resolveId(id, i) {
       // for dep like vue
@@ -193,7 +196,10 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
       for (const i in config.remote) {
         try {
-          // 向远程请求清单
+          if (projectSet.has(i)) {
+            log(`${i} has mount`)
+            continue
+          } // 向远程请求清单
           remoteCache[i] = {}
           const { url, mode } = config.remote[i]
           // eslint-disable-next-line prefer-const
@@ -395,10 +401,10 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       }
     },
 
-  }
+  }]
 }
 
-export function DevPlugin(config: SubConfig): PluginOption {
+export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOption {
   const externalSet = new Set<string>()
 
   const resolvedDepMap = {} as Record<string, string>
@@ -410,8 +416,8 @@ export function DevPlugin(config: SubConfig): PluginOption {
     apply: 'serve',
     enforce: 'pre',
 
-    async configureServer(conf) {
-      const { config: { server: { port } } } = conf
+    async config(conf) {
+      const { server: { port } = {} } = conf
       for (const project in config.remote) {
         // 向远程请求清单
         remoteCache[project] = {}
@@ -436,10 +442,10 @@ export function DevPlugin(config: SubConfig): PluginOption {
             },
             injectTo: 'head',
           })
+          projectSet.add(project)
           log(`${project} use Dev Mode`)
         }
         catch (e) {
-          console.log(e)
         }
       }
     },

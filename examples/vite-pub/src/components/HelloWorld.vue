@@ -11,7 +11,7 @@ defineProps<{ msg: string }>()
   <h1 id="vite-r-hello">
     {{ msg }}
   </h1>
-  <el-button>vite-r app button</el-button>
+  <el-button>vite-r app button11</el-button>
 
   <Share />
 </template>

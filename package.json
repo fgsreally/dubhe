@@ -23,6 +23,7 @@
     "@changesets/cli": "^2.25.2",
     "eslint": "^8.28.0",
     "execa": "^6.1.0",
+    "puppeteer": "^19.7.3",
     "turbo": "^1.6.3",
     "vitest": "^0.25.6"
   },

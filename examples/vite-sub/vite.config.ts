@@ -30,7 +30,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       Components({
         resolvers: [ElementPlusResolver(), DubheResolver(config)],
       }),
-      Sub({ ...config }),
+      Sub(config),
     ],
   }
 }

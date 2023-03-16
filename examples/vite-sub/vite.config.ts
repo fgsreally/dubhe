@@ -1,6 +1,6 @@
 import type { ConfigEnv, UserConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { Dev, Sub } from 'dubhe-sub/vite'
+import { Sub } from 'dubhe-sub/vite'
 import { DubheResolver, defineConfig } from 'dubhe-sub'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'

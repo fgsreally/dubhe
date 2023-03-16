@@ -6,7 +6,6 @@ import { normalizePath } from 'vite'
 import type { ModuleNode } from 'vite'
 import axios from 'axios'
 import fse from 'fs-extra'
-import minimatch from 'minimatch'
 import cv from 'compare-versions'
 import debug from 'debug'
 import hash from 'hash-string'
@@ -131,8 +130,10 @@ export function patchVersion(version1: string, version2: string) {
 
 export const debugLog = debug('dubhe')
 
-// glob to RegExp
-export function toReg(input: string) {
-  return minimatch.makeRe(input) || input
+export function getFormatDate() {
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = date.getMonth()
+  const day = date.getDate()
+  return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`
 }
-

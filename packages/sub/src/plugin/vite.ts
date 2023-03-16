@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { dirname, extname, resolve } from 'path'
+import { dirname, resolve } from 'path'
 import fs from 'fs'
 // eslint-disable-next-line  n/no-deprecated-api
 import { fileURLToPath, resolve as urlResolve } from 'url'
@@ -11,7 +11,6 @@ import {
   HMRTypesHandler,
   VIRTUAL_EMPTY,
   VIRTUAL_PREFIX,
-  getHMRFilePath,
   getRemoteContent,
   getTypes,
   getVirtualContent,
@@ -416,8 +415,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
     apply: 'serve',
     enforce: 'pre',
 
-    async config(conf) {
-      const { server: { port } = {} } = conf
+    async config() {
       for (const project in config.remote) {
         // 向远程请求清单
         remoteCache[project] = {}
@@ -432,8 +430,9 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
 
           externals.forEach((item) => {
             externalSet.add(item)
-            resolvedDepMap[urlResolve(url, `/@id/${item}`)] = `http:127.0.0.1:${port || 5173}/@id/${item}`
+            resolvedDepMap[urlResolve(url, `/@id/${item}`)] = `/@id/${item}`
           })
+          console.log(resolvedDepMap)
           tags.push({
             tag: 'script',
             attrs: {

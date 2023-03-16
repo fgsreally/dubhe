@@ -1,5 +1,5 @@
 import { basename, relative, resolve } from 'path'
-import { INJECT_STYLE, ImportExpression, VIRTUAL_HMR_PREFIX, createEntryFile, log, mountStyle, sendHMRInfo, virtualCssHelper } from 'dubhe-lib'
+import { INJECT_STYLE, ImportExpression, VIRTUAL_HMR_PREFIX, analyseImport, createEntryFile, getFormatDate, log, mountStyle, sendHMRInfo, virtualCssHelper } from 'dubhe-lib'
 import type { ProPlugin } from 'esbuild-plugin-merge'
 
 import type { Metafile, OutputFile } from 'esbuild'
@@ -44,7 +44,8 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
       await createEntryFile(config.entry)
       let changeFile = ''
       let alias: any
-      build.onUpdate((id, { event }) => {
+      const importsGraph = {} as Record<string, Set<string>>
+      build.onUpdate((id) => {
         changeFile = id
       })
       build.initialOptions = Object.assign(build.initialOptions, {
@@ -96,6 +97,19 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
           }
         }
         else {
+          for (const i of outputs) {
+            Object.entries(analyseImport(i.text)).forEach(([k, v]) => {
+              if (!importsGraph[k])
+                importsGraph[k] = new Set()
+              v.forEach((imported) => {
+                importsGraph[k].add(imported)
+              })
+            })
+          }
+
+          for (const importer in importsGraph)
+            (importsGraph as any)[importer] = [...importsGraph[importer]]
+
           if (config.source) {
             for (const i in (ret.metafile as Metafile).inputs) {
               const sourcePath = resolve(root, i)
@@ -112,10 +126,11 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
           from: 'esbuild',
           meta: config.meta,
           version: config.version || '0.0.0',
-          timestamp: Date.now(),
+          timestamp: getFormatDate(),
           files: Object.keys(meta.outputs).map(item => item.slice(outdir.length + 6)),
           alias,
           externals: [...externalSet],
+          importsGraph,
         }
         fse.outputJSON(resolve(root, outdir, 'core', 'remoteList.json'), remoteList)
       })

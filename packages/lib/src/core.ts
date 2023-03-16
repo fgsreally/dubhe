@@ -1,11 +1,11 @@
 import { basename, extname } from 'path'
 import { parse } from 'es-module-lexer'
 import MagicString from 'magic-string'
-import minimatch from 'minimatch'
 import fse from 'fs-extra'
-import type { SubConfig, aliasType } from './types'
+import { parseSync, traverse } from '@babel/core'
+import type { aliasType } from './types'
 import { FEDERATION_RE, VIRTUAL_PREFIX } from './common'
-import { getLocalPath, getRemoteContent, setLocalContent, urlResolve } from './utils'
+import { getLocalPath, getRemoteContent, setLocalContent } from './utils'
 
 export function resolveAlias(alias: Record<string, string> = {}) {
   return Object.entries(alias).map((item) => {
@@ -118,6 +118,35 @@ export function ImportExpression(source: string) {
   return ret
 }
 
+export function analyseImport(code: string) {
+  const ret = {} as Record<string, Set<string>>
+  const ast = parseSync(code)
+
+  traverse(ast, {
+
+    ImportDeclaration(path) {
+      const { node } = path
+
+      const { source: { value }, specifiers } = node
+      if (!value.startsWith('/') && !value.startsWith('.')) {
+        if (!ret[value])
+          ret.value = new Set()
+        specifiers.forEach((item) => {
+          if ((item as any).imported)
+            ret.value.add((item as any).imported)
+
+          else ret.value.add(item.local.name)
+        })
+      }
+    },
+
+  })
+
+  for (const i in ret)
+    (ret as any)[i] = [...ret[i]]
+
+  return ret as unknown as Record<string, string[]>
+}
 // export function replaceHotImportDeclarations(
 //   source: any,
 //   config: SubConfig,

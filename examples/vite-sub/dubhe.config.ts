@@ -2,7 +2,7 @@ import type { SubConfig } from 'dubhe-sub'
 export default {
   remote: {
     viteout: {
-      url: 'http://127.0.0.1:5175',
+      url: 'http://127.0.0.1:5173',
       mode: 'hot',
     }, // remote static server
     esbuildpub: {

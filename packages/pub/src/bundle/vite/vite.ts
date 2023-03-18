@@ -264,19 +264,23 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         sourceGraph: outputSourceGraph,
         importsGraph: outputimportsGraph,
         // pkgVersionMap,
-      };
+      }
 
-      (this as any).emitFile({
-        type: 'asset',
-        name: 'remoteList',
-        fileName: 'remoteList.json',
-        source: JSON.stringify(metaData, (k, v) => {
-          if (typeof v === 'function')
-            return v.toString()
+      if (config.beforeEmit) {
+        await config.beforeEmit(metaData);
 
-          return v
-        }),
-      })
+        (this as any).emitFile({
+          type: 'asset',
+          name: 'remoteList',
+          fileName: 'remoteList.json',
+          source: JSON.stringify(metaData, (k, v) => {
+            if (typeof v === 'function')
+              return v.toString()
+
+            return v
+          }),
+        })
+      }
 
       if (config.source && !isWatch) {
         log('Copy source file to source dir')

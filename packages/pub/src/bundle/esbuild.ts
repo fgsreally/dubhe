@@ -139,7 +139,7 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
           alias = ImportExpression(outputs[0].text)
         }
 
-        const remoteList = {
+        const metaData = {
           from: 'esbuild',
           meta: config.meta,
           version: config.version || '0.0.0',
@@ -150,8 +150,10 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
           importsGraph,
           entryFileMap,
           sourceGraph,
-        }
-        fse.outputJSON(resolve(root, outdir, 'core', 'remoteList.json'), remoteList)
+        } as any
+        if (config.beforeEmit)
+          await config.beforeEmit(metaData)
+        fse.outputJSON(resolve(root, outdir, 'core', 'remoteList.json'), metaData)
       })
     },
   }

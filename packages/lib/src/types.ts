@@ -49,6 +49,7 @@ export interface PubConfig {
   HMR?: { port: string }[]
   dts?: dtsPluginOptions
   meta?: any
+  beforeEmit?: (param: remoteListType) => void
 }
 
 export interface SubConfig {
@@ -74,20 +75,14 @@ export interface remoteListType {
   version: string
   externals: string[]
   alias: { name: string; url: string }[]
-  initEntryFiles: string[]
   entryFileMap: { [key: string]: string }
   sourceGraph: { [key: string]: string[] }
-  dependenceGraph: { [key: string]: string[] }
+  // dependenceGraph: { [key: string]: string[] }
   importsGraph: { [key: string]: string[] }
   timestamp: number
 }
 
 export type ModulePathMap = { [key in string]: string }
-
-interface Options {
-  include?: string | RegExp | (string | RegExp)[]
-  exclude?: string | RegExp | (string | RegExp)[]
-}
 
 // export interface devConfig {
 //   externals: { [key in string]: string }

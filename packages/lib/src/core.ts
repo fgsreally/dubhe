@@ -131,8 +131,6 @@ export function analyseImport(code: string) {
       if (!value.startsWith('/') && !value.startsWith('.')) {
         if (!ret[value])
           ret[value] = new Set()
-        if (specifiers.length === 0)
-          ret[value].add('_sideEffect')
 
         specifiers.forEach((item) => {
           if (item.type === 'ImportSpecifier')
@@ -140,7 +138,7 @@ export function analyseImport(code: string) {
           if (item.type === 'ImportDefaultSpecifier')
             ret[value].add('default')
           if (item.type === 'ImportNamespaceSpecifier')
-            ret[value].add(`*${item.local.name}`)
+            ret[value].add('*')
         })
       }
     },

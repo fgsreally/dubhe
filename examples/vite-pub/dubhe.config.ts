@@ -11,7 +11,7 @@ export default {
   types: true,
   // limit: 1000,
   externals: (id) => {
-    if (id.startsWith('element-plus') || id === 'vue')
+    if (id.startsWith('element-plus') || id === 'vue' || id === 'fgs')
       return true
   },
   HMR: [{

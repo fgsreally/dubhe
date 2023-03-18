@@ -5,6 +5,14 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".vitepress/dist/**"]
     },
+    "build:cold": {
+    },
+    "build:hot": {
+    },
+    "pub": {
+    },
+    "preview": {
+    },
     "dev": {
       "cache": false
     }

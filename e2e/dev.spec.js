@@ -1,19 +1,21 @@
 import { expect, test } from '@playwright/test'
 
 test.describe('should import component from remote [dev]', () => {
-  test.beforeAll(async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     // Go to the starting url before each test.
-    await page.goto('http://localhost:4100/')
+    await page.goto('http://localhost:4105/')
   })
 
   test('component from vite-pub should exist and work', async ({ page }) => {
     // Assertions use the expect API.
     await expect(page.getByTestId('vite-pub-btn')).toHaveClass('el-button')
-    await expect(page.getByTestId('vite-pub-text')).toContainText('substring')
+    await expect(page.getByTestId('vite-pub-text')).toContainText('remote app component from viteout')
   })
   test('component from esbuild-pub should exist and work', async ({ page }) => {
     // Assertions use the expect API.
-    await expect(page.getByTestId('esbuild-pub-btn')).toHaveClass('el-button')
-    await expect(page.getByTestId('esbuild-pub-text')).toHaveClass('el-button')
+    await expect(page.getByTestId('esbuild-pub-btn')).toBeVisible()
+    await expect(page.getByTestId('esbuild-pub-text')).toContainText('remote app component from esbuildpub')
+
+    // await expect(page.getByTestId('esbuild-pub-text')).toHaveClass()
   })
 })

@@ -1,4 +1,4 @@
-import execa from 'execa'
+import { execa } from 'execa'
 
 export function sleep(ms = 2000) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -9,18 +9,23 @@ async function SubBundle() {
 }
 
 async function PubBundle() {
-  await execa('npm run example:build')
+  await execa('npm run example:pub')
 }
 function dev() {
   execa('npm run example:preview')
-  execa('npm run example:dev')
 }
 
+function SubDev() {
+  execa('npm run example:sub')
+}
 async function start() {
   await PubBundle()
   dev()
   await sleep()
-  await SubBundle()
+  // SubDev()
+  console.log('start test')
+
+  // await SubBundle()
 }
 
 start()

@@ -5,12 +5,14 @@ const { msg } = defineProps<{ msg: string }>()
 </script>
 
 <template>
-  <p id="vite-r-app">
+  <p id="vite-r-app" data-testid="vite-pub-text">
     {{ msg }}
   </p>
   <img src="/vite.svg" class="logo" alt="Vite logo">
 
-  <el-button>vite-r app button</el-button>
+  <el-button data-testid="vite-pub-btn">
+    vite-r app button
+  </el-button>
   <Share />
 </template>
 

@@ -130,12 +130,17 @@ export function analyseImport(code: string) {
       const { source: { value }, specifiers } = node
       if (!value.startsWith('/') && !value.startsWith('.')) {
         if (!ret[value])
-          ret.value = new Set()
-        specifiers.forEach((item) => {
-          if ((item as any).imported)
-            ret.value.add((item as any).imported)
+          ret[value] = new Set()
+        if (specifiers.length === 0)
+          ret[value].add('_sideEffect')
 
-          else ret.value.add(item.local.name)
+        specifiers.forEach((item) => {
+          if (item.type === 'ImportSpecifier')
+            ret[value].add((item as any).imported.name)
+          if (item.type === 'ImportDefaultSpecifier')
+            ret[value].add('default')
+          if (item.type === 'ImportNamespaceSpecifier')
+            ret[value].add(`*${item.local.name}`)
         })
       }
     },

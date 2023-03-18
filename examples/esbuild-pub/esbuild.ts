@@ -7,7 +7,7 @@ build({
   outdir: 'dist',
   format: 'esm',
   splitting: true,
-  watch: true,
+  watch: false,
   bundle: true,
   metafile: true,
   plugins: [merge([unplugin.esbuild(), ...Pub(config)])],

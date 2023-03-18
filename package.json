@@ -3,19 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type":"module",
   "scripts": {
     "publish": "changeset publish",
     "pretest":"node test/script.js",
     "test:e2e": "playwright test e2e/",
     "test:unit": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test": "npm run test:e2e && npm run test:unit",
     "dev": "turbo run dev --filter dubhe-*",
     "build": "turbo run build --filter dubhe-*",
     "docs:build": "npm -C docs run build",
-    "example:preview": "turbo run preview --filter dubhe-*",
-    "example:pub": "turbo run pub --filter dubhe-*",
-    "example:dev": "turbo run dev --filter dubhe-*",
-    "example:cold": "npm -C examples/vite-h run build:cold"
+    "example:preview": "pnpm --filter=*-pub run preview ",
+    "example:pub": "pnpm --filter=*-pub run pub ",
+    "example:sub": "pnpm --filter=*-sub run dev",
+    "example:cold": "pnpm --filter=*-sub run build:cold",
+    "example:hot": "pnpm --filter=*-sub run build:hot"
+
   },
   "keywords": [],
   "author": "",

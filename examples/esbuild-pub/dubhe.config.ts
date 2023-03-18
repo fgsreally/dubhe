@@ -1,5 +1,4 @@
 import type { PubConfig } from 'dubhe-pub'
-import { esmsh } from 'dubhe-pub'
 export default {
   project: 'esbuildpub',
   entry: {
@@ -7,7 +6,7 @@ export default {
     hello: './src/HelloWorld.vue',
     module: './src/module.ts',
   },
-  types: true,
+  types: false,
   // limit: 1000,
   externals: (id) => {
     if (id === 'vue')

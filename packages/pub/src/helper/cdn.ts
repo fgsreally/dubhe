@@ -1,21 +1,12 @@
 import { ESM_SH_URL, UNPKG_URL } from 'dubhe-lib'
 
-export function unpkg(imports: string[]) {
-  // work for unpkg
-  const externals: { [key: string]: string } = {}
+export function unpkg(name: string) {
 
-  for (const i of imports)
-    externals[i] = `${UNPKG_URL}${i}?module`
 
-  return externals
+  return `${UNPKG_URL}${name}?module`
 }
 
-export function esmsh(imports: string[]) {
-  // work for unpkg
-  const externals: { [key: string]: string } = {}
+export function esmsh(name: string) {
 
-  for (const i of imports)
-    externals[i] = `${ESM_SH_URL}${i}`
-
-  return externals
+  return `${ESM_SH_URL}${name}`
 }

@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import { CACHE_ROOT, TYPE_ROOT, esmToSystemjs, getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, linkTypes, log, patchVersion, removeLocalCache, removeLocalType, updateLocalRecord } from 'dubhe-lib'
+import { CACHE_ROOT, TYPE_ROOT, esmToSystemjs, getLocalContent, getLocalPath, getPkgName, getRemoteContent, getTypePathInCache, linkTypes, log, patchVersion, removeLocalCache, removeLocalType, updateLocalRecord } from 'dubhe-lib'
 /* eslint-disable no-console */
 import cac from 'cac'
 import fse from 'fs-extra'
@@ -8,7 +8,7 @@ import fg from 'fast-glob'
 import pkgs from '../package.json'
 import { buildExternal } from './build'
 
-import { analyseDep, downloadFile, generateExports, getDubheDepJS, getPkgName, getRemoteList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist, updateTsConfig } from './utils'
+import { analyseDep, downloadFile, generateExports, getDubheDepJS, getRemoteList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist, updateTsConfig } from './utils'
 const root = process.cwd()
 
 const cli = cac()

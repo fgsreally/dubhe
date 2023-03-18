@@ -1,7 +1,12 @@
 import { resolve } from 'path'
 import { parse } from 'es-module-lexer'
 import MagicString from 'magic-string'
+import {
+  getPackageInfo,
+
+} from 'local-pkg'
 import fse from 'fs-extra'
+import { getPkgName } from './utils'
 export function copySourceFile(p: string, outdir: string) {
   if (fse.existsSync(resolve(process.cwd(), p)))
     fse.copy(p, resolve(process.cwd(), outdir, 'source', p))
@@ -28,4 +33,12 @@ export function replaceEntryFile(code: string, source: string) {
     newSource.overwrite(item.s, item.e, `"${i2[i].n}"`)
   })
   return newSource.toString()
+}
+
+export async function getLocalPkgVersion(pkgname: string) {
+  const name = getPkgName(pkgname)
+  const info = await getPackageInfo(name)
+  return {
+    name, version: info?.version,
+  }
 }

@@ -20,6 +20,7 @@ import {
   createEntryFile,
   getAlias,
   getFormatDate,
+  getLocalPkgVersion,
   getRelatedPath,
   isSourceFile,
   log,
@@ -44,6 +45,8 @@ const importsGraph: { [key: string]: Set<string> } = {}
 // const entryDepMap: { [key: string]: number } = {}
 const chunkSet: Set<string> = new Set()
 const externalSet = new Set<string>()
+const pkgVersionMap = {} as Record<string, string>
+
 // let vendor: string[]
 const root = process.cwd()
 
@@ -187,7 +190,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         // }
       }
     },
-    generateBundle(_, data) {
+    async generateBundle(_, data) {
       const code = ((data['remoteEntry.js'] as OutputChunk).code
         = replaceEntryFile(
           (data['remoteEntry.js'] as OutputChunk).code,
@@ -240,6 +243,14 @@ export function BundlePlugin(config: PubConfig): PluginOption {
       for (const i in importsGraph)
         outputimportsGraph[i] = [...importsGraph[i]]
 
+      // if (!HMRconfig.changeFile) {
+      //   for (const i in outputimportsGraph) {
+      //     const { name, version } = await getLocalPkgVersion(i)
+      //     if (!(name in pkgVersionMap))
+      //       pkgVersionMap[name] = version as any
+      //   }
+      // }
+
       metaData = {
         from: 'vite',
         meta: config.meta || null,
@@ -252,6 +263,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         entryFileMap,
         sourceGraph: outputSourceGraph,
         importsGraph: outputimportsGraph,
+        // pkgVersionMap,
       };
 
       (this as any).emitFile({

@@ -9,13 +9,6 @@ import { loadConfig } from 'unconfig'
 
 const root = process.cwd()
 
-export function getPkgName(str: string) {
-  if (str.startsWith('@'))
-    return str.split('/').splice(0, 2).join('/')
-
-  return str.split('/')[0]
-}
-
 export function generateExports(imports: string[]) {
   return imports.reduce((p, c) => {
     const [importVar, importSource] = c.split('--')

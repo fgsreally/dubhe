@@ -137,3 +137,10 @@ export function getFormatDate() {
   const day = date.getDate()
   return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`
 }
+
+export function getPkgName(str: string) {
+  if (str.startsWith('@'))
+    return str.split('/').splice(0, 2).join('/')
+
+  return str.split('/')[0]
+}

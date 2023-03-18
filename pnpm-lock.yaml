@@ -204,6 +204,7 @@ importers:
       es-module-lexer: ^0.10.5
       fs-extra: ^10.1.0
       hash-string: ^1.0.0
+      local-pkg: ^0.4.3
       magic-string: ^0.26.4
       rollup: 2.78.1
       ts-morph: ^17.0.1
@@ -226,6 +227,7 @@ importers:
       es-module-lexer: registry.npmmirror.com/es-module-lexer/0.10.5
       fs-extra: registry.npmmirror.com/fs-extra/10.1.0
       hash-string: registry.npmmirror.com/hash-string/1.0.0
+      local-pkg: 0.4.3
       magic-string: registry.npmmirror.com/magic-string/0.26.7
       ts-morph: registry.npmmirror.com/ts-morph/17.0.1
       vite: registry.npmmirror.com/vite/3.2.5
@@ -2494,6 +2496,11 @@ packages:
       emojis-list: 3.0.0
       json5: 1.0.2
     dev: true
+
+  /local-pkg/0.4.3:
+    resolution: {integrity: sha512-SFppqq5p42fe2qcZQqqEOiVRXl+WCP1MdT6k7BDEW1j++sp5fIY+/fdRQitvKgB5BrBcmrs5m/L0v2FrU5MY1g==}
+    engines: {node: '>=14'}
+    dev: false
 
   /lodash-es/4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}

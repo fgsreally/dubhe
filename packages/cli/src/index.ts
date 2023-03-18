@@ -1,5 +1,4 @@
 import { resolve } from 'path'
-import type { remoteListType } from 'dubhe-lib'
 import { CACHE_ROOT, TYPE_ROOT, esmToSystemjs, getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, linkTypes, log, patchVersion, removeLocalCache, removeLocalType, updateLocalRecord } from 'dubhe-lib'
 /* eslint-disable no-console */
 import cac from 'cac'
@@ -223,13 +222,11 @@ cli
     for (const dependence of dependencies) {
       if (dependence in dep) {
         const pkgName = getPkgName(dependence)
-        if (!(pkgName in pkgs.dependencies)) {
+        if (pkgName in pkgs.dependencies) {
           exportsStr += `${generateExports([...dep[dependence]])}\n`
           log(`Find ${dependence}@${(pkgs.dependencies as any)[dependence]}`)
           log('Create dubhe.dep.js', 'grey')
-
           await fse.outputFile(filePath, exportsStr, 'utf-8')
-
           log('Bundle start')
           await buildExternal(dependence, option.outDir)
           log('Bundle finish')

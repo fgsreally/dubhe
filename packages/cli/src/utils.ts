@@ -19,9 +19,11 @@ export function getPkgName(str: string) {
 export function generateExports(imports: string[]) {
   return imports.reduce((p, c) => {
     const [importVar, importSource] = c.split('--')
+    if (importVar === '*')
+      return `export * from '${importSource}'`
     if (importVar === 'default')
       return `${p}import _defaultImport from '${importSource}'\nexport {_defaultImport as default}\n`
-    if (importVar === '#css')
+    if (importVar === '#side_effect')
       return `${p}import '${importSource}'\n`
     return `${p}export {${importVar}} from '${importSource}'\n`
   }, '')
@@ -60,7 +62,7 @@ export async function analyseDep(dubheConfig: SubConfig) {
       if (!ret[pkgName])
         ret[pkgName] = new Set()
       if (remoteConfig.importsGraph[dep].length === 0)
-        ret[pkgName].add(`#css--${dep}`)
+        ret[pkgName].add(`#side_effect--${dep}`)
 
       else
         remoteConfig.importsGraph[dep].forEach((item: string) => ret[pkgName].add(`${item}--${dep}`))

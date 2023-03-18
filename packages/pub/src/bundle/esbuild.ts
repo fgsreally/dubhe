@@ -44,6 +44,7 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
       await createEntryFile(config.entry)
       let changeFile = ''
       let alias: any
+      const entryFileMap = config.entry
       const importsGraph = {} as Record<string, Set<string>>
       build.onUpdate((id) => {
         changeFile = id
@@ -69,6 +70,22 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
       build.onEnd(async (ret) => {
         const outputs = (ret.outputFiles as OutputFile[])
         const meta = (ret.metafile as Metafile)
+        const sourceGraph = {} as Record<string, Set<string> | string[]>
+        Object.values(meta.outputs).forEach((item) => {
+          Object.values(entryFileMap).forEach((entry) => {
+            if (resolve(root, item.entryPoint || '') === resolve(root, entry)) {
+              sourceGraph[entry] = new Set()
+              Object.keys(item.inputs).forEach((input) => {
+                if (fse.existsSync(resolve(root, input)))
+                  (sourceGraph[entry] as Set<string>).add(input)
+              })
+            }
+          })
+        })
+
+        for (const i in sourceGraph)
+          sourceGraph[i] = [...sourceGraph[i]]
+
         if (outputs.length === 0)
           return
 
@@ -131,6 +148,8 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
           alias,
           externals: [...externalSet],
           importsGraph,
+          entryFileMap,
+          sourceGraph,
         }
         fse.outputJSON(resolve(root, outdir, 'core', 'remoteList.json'), remoteList)
       })

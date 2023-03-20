@@ -67,7 +67,7 @@ export class WebpackPlugin {
     const esmImportMap = {} as Record<string, string>
     updateLocalRecord(this.config.remote)
     const { mode, devServer } = compiler.options
-    const { injectHtml, externals } = this.config
+    const { injectHtml, externals, polyfill } = this.config
     // virtualmodule does't work when using multiprocess bundle
     const useVirtualModule = mode === 'development' && !this.config.cache
     // get remote config
@@ -176,7 +176,7 @@ export class WebpackPlugin {
 
           (data) => {
             const tags = data.assetTags.scripts
-            if (injectHtml) {
+            if (polyfill) {
               [...externalSet].forEach((dep) => {
                 const { esm, systemjs } = externals(dep) || {}
                 if (esm)
@@ -185,29 +185,31 @@ export class WebpackPlugin {
                   systemjsImportMap[dep] = systemjs
               })
 
-              if (injectHtml.systemjs) {
+              if (polyfill.systemjs) {
                 tags.unshift({
                   // importmap polyfill
                   tagName: 'script',
                   voidTag: false,
                   meta: { plugin: 'dubhe::subscribe' },
                   attributes: {
-                    src: injectHtml.systemjs === true ? DEFAULT_POLYFILL.systemjs : injectHtml.systemjs,
+                    src: polyfill.systemjs === true ? DEFAULT_POLYFILL.systemjs : polyfill.systemjs,
                     nomodule: true,
                   },
                 })
               }
-              if (injectHtml.importMap) {
+              if (polyfill.importMap) {
                 tags.unshift({
                   // importmap polyfill
                   tagName: 'script',
                   voidTag: false,
                   meta: { plugin: 'dubhe::subscribe' },
                   attributes: {
-                    src: injectHtml.importMap === true ? DEFAULT_POLYFILL.importMap : injectHtml.importMap,
+                    src: polyfill.importMap === true ? DEFAULT_POLYFILL.importMap : polyfill.importMap,
                   },
                 })
               }
+            }
+            if (injectHtml !== false) {
               if (this.config.systemjs) {
                 tags.unshift({
                   tagName: 'script',

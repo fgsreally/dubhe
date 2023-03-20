@@ -347,45 +347,47 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         return
       const tags = [] as HtmlTagDescriptor[]
 
-      tags.push({
-        tag: 'script',
-        attrs: {
-          type: 'importmap',
-        },
-        children: `{"imports":${JSON.stringify(esmImportMap)}}`,
-        injectTo: 'head',
-      })
-
-      if (config.systemjs) {
+      if (config.injectHtml === false) {
         tags.push({
           tag: 'script',
           attrs: {
-            type: 'systemjs-importmap',
-            nomodule: true,
+            type: 'importmap',
           },
-          children: `{"imports":${JSON.stringify(systemjsImportMap)}}`,
+          children: `{"imports":${JSON.stringify(esmImportMap)}}`,
           injectTo: 'head',
         })
+
+        if (config.systemjs) {
+          tags.push({
+            tag: 'script',
+            attrs: {
+              type: 'systemjs-importmap',
+              nomodule: true,
+            },
+            children: `{"imports":${JSON.stringify(systemjsImportMap)}}`,
+            injectTo: 'head',
+          })
+        }
       }
 
-      if (config.injectHtml) {
-        if (config.injectHtml.systemjs) {
+      if (config.polyfill) {
+        if (config.polyfill.systemjs) {
           tags.push({
             // importmap polyfill
             tag: 'script',
             attrs: {
               nomodule: true,
-              src: config.injectHtml.systemjs === true ? DEFAULT_POLYFILL.systemjs : config.injectHtml.systemjs,
+              src: config.polyfill.systemjs === true ? DEFAULT_POLYFILL.systemjs : config.polyfill.systemjs,
             },
             injectTo: 'head-prepend',
           })
         }
-        if (config.injectHtml.importMap) {
+        if (config.polyfill.importMap) {
           tags.push({
             // importmap polyfill
             tag: 'script',
             attrs: {
-              src: config.injectHtml.importMap === true ? DEFAULT_POLYFILL.importMap : config.injectHtml.importMap,
+              src: config.polyfill.importMap === true ? DEFAULT_POLYFILL.importMap : config.polyfill.importMap,
             },
             injectTo: 'head-prepend',
           })

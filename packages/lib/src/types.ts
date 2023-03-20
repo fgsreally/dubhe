@@ -56,16 +56,16 @@ export interface SubConfig {
   externals: (id: string) => { esm?: string; systemjs?: string } | void
   version?: number
   remote: Record<string, {
-    url: string, mode?: 'hot' | 'cold'
+    url: string
+    mode?: 'hot' | 'cold'
   }>
   cache?: boolean
   types?: boolean
   systemjs?: boolean
-
-  injectHtml?: {
+  injectHtml?: boolean
+  polyfill?: {
     systemjs?: string | boolean
     importMap?: string | boolean
-    systemBabel?: string | boolean
   }
 }
 

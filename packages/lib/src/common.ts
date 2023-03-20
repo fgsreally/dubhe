@@ -17,7 +17,6 @@ export const TS_CONFIG_PATH = resolve(
 
 export const DEFAULT_POLYFILL = {
   systemjs: 'https://unpkg.com/systemjs@6.13.0/dist/s.js',
-  systemBabel: 'https://unpkg.com/systemjs-babel@0.3.1/dist/systemjs-babel.js',
   importMap: 'https://ga.jspm.io/npm:es-module-shims@1.6.2/dist/es-module-shims.js',
 }
 export const HMT_TYPES_TIMEOUT = 10000

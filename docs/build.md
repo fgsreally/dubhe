@@ -14,7 +14,7 @@ export default {
     // injectHtml 为false时，不注入任何垫片，垫片默认均为unpkg的源
     systemjs, // systemjs
     importMap, // import-map的垫片，如果有远程项目使用了importmap，就启用它
-    systemBabel, // 功能是在systemjs中调用esm 这是一个破坏力很大的垫片，会影响体积性能，官方的实现有一点赘余，建议自行封装一个。如果不想用，可以改造生产端的线上版本为systemjs
+
   },
 }
 ```

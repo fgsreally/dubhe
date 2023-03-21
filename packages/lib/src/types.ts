@@ -67,6 +67,8 @@ export interface SubConfig {
     systemjs?: string | boolean
     importMap?: string | boolean
   }
+  beforeEmit?: (param: Record<string, RemoteListType>) => void
+
 }
 
 export interface RemoteListType {

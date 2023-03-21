@@ -25,8 +25,8 @@ import sirv from 'sirv'
 import { init } from 'es-module-lexer'
 
 import type {
-  SubConfig, aliasType,
-  RemoteListType,
+  RemoteListType, SubConfig,
+  aliasType,
 } from 'dubhe-lib'
 
 import { Graph } from '../helper/node/graph'
@@ -40,7 +40,7 @@ const _dirname
     : dirname(fileURLToPath(import.meta.url))
 
 const HMRMap: Map<string, number> = new Map()
-const remoteCache: any = {}
+const remoteListMap: Record<string, RemoteListType> = {}
 const aliasMap: { [key: string]: aliasType[] } = {}
 const systemjsImportMap = {} as Record<string, string>
 const esmImportMap = {} as Record<string, string>
@@ -199,7 +199,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             log(`${i} has mount`)
             continue
           } // 向远程请求清单
-          remoteCache[i] = {}
+
           const { url, mode } = config.remote[i]
           // eslint-disable-next-line prefer-const
           let { data, isCache } = await getVirtualContent(
@@ -214,7 +214,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           }
 
           const dubheConfig: RemoteListType = JSON.parse(data)
-
+          remoteListMap[i] = dubheConfig
           dubheConfig.externals.forEach(item => externalSet.add(item))
 
           if (config.types)
@@ -401,7 +401,9 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         tags,
       }
     },
-
+    async closeBundle() {
+      await config.beforeEmit(remoteListMap)
+    },
   }]
 }
 
@@ -420,7 +422,6 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
     async config() {
       for (const project in config.remote) {
         // 向远程请求清单
-        remoteCache[project] = {}
         const { url } = config.remote[project]
 
         try {

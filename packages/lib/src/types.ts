@@ -49,7 +49,7 @@ export interface PubConfig {
   HMR?: { port: string }[]
   dts?: dtsPluginOptions
   meta?: any
-  beforeEmit?: (param: remoteListType) => void
+  beforeEmit?: (param: RemoteListType) => void
 }
 
 export interface SubConfig {
@@ -69,7 +69,7 @@ export interface SubConfig {
   }
 }
 
-export interface remoteListType {
+export interface RemoteListType {
   from: 'vite' | 'esbuild'
   files: string[]
   version: string
@@ -77,8 +77,9 @@ export interface remoteListType {
   alias: { name: string; url: string }[]
   entryFileMap: { [key: string]: string }
   sourceGraph: { [key: string]: string[] }
-  // dependenceGraph: { [key: string]: string[] }
   importsGraph: { [key: string]: string[] }
+  bundleGraph: { [key: string]: string[] }
+
   timestamp: number
 }
 

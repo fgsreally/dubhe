@@ -26,7 +26,7 @@ import { init } from 'es-module-lexer'
 
 import type {
   SubConfig, aliasType,
-  remoteListType,
+  RemoteListType,
 } from 'dubhe-lib'
 
 import { Graph } from '../helper/node/graph'
@@ -213,7 +213,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             systemjsImportMap[`dubhe-${i}`] = urlResolve(url, 'systemjs')
           }
 
-          const dubheConfig: remoteListType = JSON.parse(data)
+          const dubheConfig: RemoteListType = JSON.parse(data)
 
           dubheConfig.externals.forEach(item => externalSet.add(item))
 
@@ -221,7 +221,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             getTypes(`${url}/types/types.json`, i, dubheConfig.entryFileMap)
           if (config.cache) {
             if (isCache) {
-              // const localInfo: remoteListType = remoteInfo
+              // const localInfo: RemoteListType = remoteInfo
               const remoteInfo = await getRemoteContent(
                 `${url}/core/remoteList.json`,
               )

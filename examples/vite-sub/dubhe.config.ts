@@ -17,7 +17,7 @@ export default {
   cache: false,
   types: true,
   info: false,
-  injectHtml: {
+  polyfill: {
     importMap: true,
   },
 } as SubConfig

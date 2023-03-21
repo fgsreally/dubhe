@@ -83,6 +83,18 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
           })
         })
 
+        const bundleGraph = {} as Record<string, string[]>
+        for (const i in meta.outputs) {
+          if (!i.includes(`.dubhe-${config.project}.js`))
+            continue
+          const name = basename(i).split('.')[0]
+          bundleGraph[name] = []
+          meta.outputs[i].imports.forEach((item) => {
+            if (item.path.includes(`.dubhe-${config.project}.js`))
+              bundleGraph[name].push(basename(item.path))
+          })
+        }
+
         for (const i in sourceGraph)
           sourceGraph[i] = [...sourceGraph[i]]
 
@@ -150,6 +162,7 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
           importsGraph,
           entryFileMap,
           sourceGraph,
+          bundleGraph,
         } as any
         if (config.beforeEmit)
           await config.beforeEmit(metaData)

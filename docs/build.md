@@ -10,11 +10,15 @@
 
 ```ts
 export default {
-  injectHtml: {
-    // injectHtml 为false时，不注入任何垫片，垫片默认均为unpkg的源
-    systemjs, // systemjs
-    importMap, // import-map的垫片，如果有远程项目使用了importmap，就启用它
-
+  polyfill: {
+    /**
+     * string|boolean
+     */
+    systemjs, // 添加systemjs
+    /**
+     * string|boolean
+     */
+    importMap, // import-map的垫片
   },
 }
 ```

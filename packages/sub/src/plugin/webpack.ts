@@ -6,7 +6,7 @@ import { DEFAULT_POLYFILL, FEDERATION_RE, HMRModuleHandler, HMRTypesHandler, get
 import { DefinePlugin } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
-import type { SubConfig, aliasType, remoteListType } from 'dubhe-lib'
+import type { SubConfig, aliasType, RemoteListType } from 'dubhe-lib'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 
 const importMap: Record<string, string> = {}
@@ -83,7 +83,7 @@ export class WebpackPlugin {
             'remoteList.json',
             this.config.cache,
           )
-          const dubheConfig: remoteListType = JSON.parse(data)
+          const dubheConfig: RemoteListType = JSON.parse(data)
 
           dubheConfig.externals.forEach(item => externalSet.add(item))
           // if (dubheConfig.config.importMap)
@@ -106,7 +106,7 @@ export class WebpackPlugin {
             getTypes(`${this.config.remote[i].url}/types/types.json`, i, dubheConfig.entryFileMap)
           if (this.config.cache) {
             if (isCache) {
-              // const localInfo: remoteListType = remoteInfo
+              // const localInfo: RemoteListType = remoteInfo
               const remoteInfo = await getRemoteContent(
                 `${this.config.remote[i].url}/core/remoteList.json`,
               )

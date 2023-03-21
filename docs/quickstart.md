@@ -22,18 +22,17 @@ export default {
     hello: './src/components/HelloWorld.vue',
   },
   types: true, // 是否产生dts
-  // limit: 1000,
-  externals: {
-    vue: 'cdn-vue',
-  }, // 共享依赖通过cdn的形式
+  externals: (name) => {
+    if (name === 'vue')
+      return true
+
+  }, // 放到cdn的依赖
   HMR: [
     {
-      port: 'http://localhost:4100', // 生产端的port，如果不需要热更新，可不填
+      port: 'http://localhost:4100', // 生产端的port，生产端watch模式打包时，使消费端正常热更新，如果不需要热更新，可不填
     },
   ],
-  outDir: '.dubhe', // 输出文件夹
   source: true, // 是否输出 源码
-  importMap: true, // 是否使用 importmap模式
 } as PubConfig
 ```
 
@@ -80,8 +79,8 @@ export default {
       mode: 'hot', // 模式
     },
   },
-  cache: true,
-  types: true,
+  cache: true, // 使用缓存
+  types: true, // 安装类型
 } as SubConfig
 ```
 

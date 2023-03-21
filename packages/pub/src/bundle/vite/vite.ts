@@ -235,8 +235,22 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         }
       }
 
+      const bundleGraph: { [key: string]: string[] } = {}
       const outputSourceGraph: { [key: string]: string[] } = {}
       const outputimportsGraph: { [key: string]: string[] } = {}
+
+      for (const i in data) {
+        if (!i.includes(`.dubhe-${config.project}.js`))
+          continue
+
+        const name = i.split('.')[0] // filename
+
+        bundleGraph[name] = [];
+        (data[i] as any).imports.forEach((item: string) => {
+          if (item.includes(`.dubhe-${config.project}.js`))
+            bundleGraph[name].push(item)
+        })
+      }
       for (const i in sourceGraph)
         outputSourceGraph[i] = [...sourceGraph[i]]
 
@@ -263,25 +277,19 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         entryFileMap,
         sourceGraph: outputSourceGraph,
         importsGraph: outputimportsGraph,
+        bundleGraph,
         // pkgVersionMap,
       }
 
-      if (config.beforeEmit) {
+      if (config.beforeEmit)
         await config.beforeEmit(metaData);
 
-        (this as any).emitFile({
-          type: 'asset',
-          name: 'remoteList',
-          fileName: 'remoteList.json',
-          source: JSON.stringify(metaData, (k, v) => {
-            if (typeof v === 'function')
-              return v.toString()
-
-            return v
-          }),
-        })
-      }
-
+      (this as any).emitFile({
+        type: 'asset',
+        name: 'remoteList',
+        fileName: 'remoteList.json',
+        source: JSON.stringify(metaData),
+      })
       if (config.source && !isWatch) {
         log('Copy source file to source dir')
         isWatch = true

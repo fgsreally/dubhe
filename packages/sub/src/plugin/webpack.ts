@@ -95,20 +95,25 @@ export class WebpackPlugin {
             getTypes(`${this.config.remote[i].url}/types/types.json`, i, dubheConfig.entryFileMap)
           if (this.config.cache) {
             if (isCache) {
-              // const localInfo: RemoteListType = remoteInfo
-              const remoteInfo = await getRemoteContent(
-                `${this.config.remote[i].url}/core/remoteList.json`,
-              )
-
-              if (!patchVersion(remoteInfo.version, dubheConfig.version)) {
-                log(
-                  `[versions-diff] project:${i}  (local:${dubheConfig.version}|remote:${remoteInfo.version})`,
-                  'yellow',
+              try {
+                const remoteInfo = await getRemoteContent(
+                  `${this.config.remote[i].url}/core/remoteList.json`,
                 )
+
+                if (!patchVersion(remoteInfo.version, dubheConfig.version)) {
+                  log(
+                    `[versions-diff] project:${i}  (local:${dubheConfig.version}|remote:${remoteInfo.version})`,
+                    'yellow',
+                  )
+                }
               }
+              catch (e) {
+                log(`--Project [${i}] Use Offline Mode--`)
+              }
+              // const localInfo: RemoteListType = remoteInfo
             }
             else {
-              log('--Create Local Cache--')
+              log(`--Project [${i}] Create Local Cache--`)
             }
           }
 
@@ -118,16 +123,13 @@ export class WebpackPlugin {
 
           log(`Remote Module [${i}] Asset List:`)
           console.table(dubheConfig.files)
-
-          log('All externals')
-          console.table([...state.externalSet])
         }
         catch (e) {
-          log(`can't find remote module (${i}) -- ${this.config.remote[i].url}`, 'red')
-          process.exit(1)
+          log(`can't find remote module [${i}] -- ${this.config.remote[i].url}`, 'red')
         }
       }
-
+      log('All externals')
+      console.table([...state.externalSet])
       resolve()
     })
     // inject plugins

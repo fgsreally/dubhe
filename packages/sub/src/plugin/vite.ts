@@ -218,20 +218,25 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             getTypes(`${url}/types/types.json`, i, dubheConfig.entryFileMap)
           if (config.cache) {
             if (isCache) {
-              // const localInfo: RemoteListType = remoteInfo
-              const remoteInfo = await getRemoteContent(
-                `${url}/core/remoteList.json`,
-              )
-
-              if (!patchVersion(remoteInfo.version, dubheConfig.version)) {
-                log(
-                  `[versions-diff] project:${i}  (local:${dubheConfig.version}|remote:${remoteInfo.version})`,
-                  'yellow',
+              try {
+                const remoteInfo = await getRemoteContent(
+                  `${url}/core/remoteList.json`,
                 )
+
+                if (!patchVersion(remoteInfo.version, dubheConfig.version)) {
+                  log(
+                    `[versions-diff] project:${i}  (local:${dubheConfig.version}|remote:${remoteInfo.version})`,
+                    'yellow',
+                  )
+                }
               }
+              catch (e) {
+                log(`--Project [${i}] Use Offline Mode--`)
+              }
+              // const localInfo: RemoteListType = remoteInfo
             }
             else {
-              log('--Create Local Cache--')
+              log(`--Project [${i}] Create Local Cache--`)
             }
           }
 
@@ -243,22 +248,14 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
             log(`Remote Module [${i}] Asset List:`)
             console.table(dubheConfig.files)
-
-            log('All externals')
-            console.table([...state.externalSet])
           }
         }
         catch (e) {
-          log(`can't find remote module (${i}) -- ${config.remote[i]}`, 'red')
+          log(`can't find remote module [${i}] -- ${config.remote[i]}`, 'red')
         }
       }
 
-      // if (!config.externals) {
-      //   // auto import remote config
-      //   // config.externals = ext
-      //   log('Final Externals :')
-      //   console.table(config.externals)
-      // }
+      log('All externals')
       console.table([...state.externalSet])
     },
 

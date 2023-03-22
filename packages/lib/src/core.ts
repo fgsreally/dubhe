@@ -3,7 +3,7 @@ import { parse } from 'es-module-lexer'
 import MagicString from 'magic-string'
 import fse from 'fs-extra'
 import { parseSync, traverse } from '@babel/core'
-import type { aliasType } from './types'
+import type { AliasType } from './types'
 import { FEDERATION_RE, VIRTUAL_PREFIX } from './common'
 import { getLocalPath, getRemoteContent, setLocalContent } from './utils'
 
@@ -70,7 +70,7 @@ export function resolvePathToModule(id?: string) {
 
 export function resolveModuleAlias(
   id: string,
-  alias: { [key: string]: aliasType[] },
+  alias: { [key: string]: AliasType[] },
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, project, moduleName] = id.match(FEDERATION_RE) || []
@@ -153,7 +153,7 @@ export function analyseImport(code: string) {
 // export function replaceHotImportDeclarations(
 //   source: any,
 //   config: SubConfig,
-//   aliasMap: { [key: string]: aliasType[] },
+//   aliasMap: { [key: string]: AliasType[] },
 // ) {
 //   const [imports] = parse(source, 'optional-sourcename')
 //   // let newSource = source;

@@ -9,3 +9,6 @@
 # webpack
 
 1. `webpack`如果使用了多线程打包，那么必须使用缓存，因为不使用缓存时，`dubhe`使用的是`webpackvirtualmodule`，这在多线程中无法起效
+
+
+ `[vite] Internal server error: ENOENT: no such file or directory, open 'D:\MyProject\1\dubhe\examples\vite-sub\node_modules\.vite\deps\element-plus_es_components_button_style_css.js'`

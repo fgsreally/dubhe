@@ -24,8 +24,8 @@ import sirv from 'sirv'
 import { init } from 'es-module-lexer'
 
 import type {
-  RemoteListType, SubConfig,
-  aliasType,
+  RemoteListType,
+  SubConfig,
 } from 'dubhe-lib'
 import { state } from '../state'
 
@@ -40,10 +40,9 @@ const _dirname
     : dirname(fileURLToPath(import.meta.url))
 
 const HMRMap: Map<string, number> = new Map()
-const aliasMap: { [key: string]: aliasType[] } = {}
-const systemjsImportMap = {} as Record<string, string>
-const esmImportMap = {} as Record<string, string>
-const externalSet = new Set<string>()
+// const state.aliasMap: { [key: string]: AliasType[] } = {}
+// const state.systemjsImportMap = {} as Record<string, string>
+// const state.esmImportMap = {} as Record<string, string>
 
 function reloadModule(id: string, time: number) {
   const { moduleGraph } = server
@@ -110,14 +109,14 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         const { systemjs, esm } = externals(id) || {}
         if (systemjs || esm) {
           if (esm)
-            esmImportMap[id] = esm
+            state.esmImportMap[id] = esm
           if (systemjs)
-            systemjsImportMap[id] = systemjs
+            state.systemjsImportMap[id] = systemjs
           return { id, external: true }
         }
       }
 
-      const [project, moduleName] = resolveModuleAlias(id, aliasMap)
+      const [project, moduleName] = resolveModuleAlias(id, state.aliasMap)
       const module = `dubhe-${project}/${moduleName}`
       // for dubhe remote module which is in hot mode
       if (command === 'build' && config.remote[project]?.mode === 'hot') {
@@ -131,7 +130,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         id = urlResolve(i, id)
 
         graph.addModule(resolvePathToModule(id), resolvePathToModule(i))
-        const [project, moduleName] = resolveModuleAlias(id.slice(VIRTUAL_PREFIX.length), aliasMap)
+        const [project, moduleName] = resolveModuleAlias(id.slice(VIRTUAL_PREFIX.length), state.aliasMap)
 
         const module = `dubhe-${project}/${moduleName}`
 
@@ -152,7 +151,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         return ''
 
       if (id.startsWith(VIRTUAL_PREFIX)) {
-        const [project, moduleName] = resolveModuleAlias(id.slice(VIRTUAL_PREFIX.length), aliasMap)
+        const [project, moduleName] = resolveModuleAlias(id.slice(VIRTUAL_PREFIX.length), state.aliasMap)
 
         const module = `dubhe-${project}/${moduleName}`
         const url = `${config.remote[project].url}/core/${moduleName}`
@@ -207,13 +206,13 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             config.cache,
           )
           if (mode === 'hot' && command === 'build') {
-            esmImportMap[`dubhe-${i}`] = urlResolve(url, 'core')
-            systemjsImportMap[`dubhe-${i}`] = urlResolve(url, 'systemjs')
+            state.esmImportMap[`dubhe-${i}`] = urlResolve(url, 'core')
+            state.systemjsImportMap[`dubhe-${i}`] = urlResolve(url, 'systemjs')
           }
 
           const dubheConfig: RemoteListType = JSON.parse(data)
           state.remoteListMap[i] = dubheConfig
-          dubheConfig.externals.forEach(item => externalSet.add(item))
+          dubheConfig.externals.forEach(item => state.externalSet.add(item))
 
           if (config.types)
             getTypes(`${url}/types/types.json`, i, dubheConfig.entryFileMap)
@@ -236,7 +235,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             }
           }
 
-          aliasMap[i] = dubheConfig.alias
+          state.aliasMap[i] = dubheConfig.alias
 
           if (command === 'serve') {
             log(`Remote Module [${i}] Map:`)
@@ -246,7 +245,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             console.table(dubheConfig.files)
 
             log('All externals')
-            console.table([...externalSet])
+            console.table([...state.externalSet])
           }
         }
         catch (e) {
@@ -260,7 +259,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       //   log('Final Externals :')
       //   console.table(config.externals)
       // }
-      console.table([...externalSet])
+      console.table([...state.externalSet])
     },
 
     configureServer(_server) {
@@ -350,7 +349,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           attrs: {
             type: 'importmap',
           },
-          children: `{"imports":${JSON.stringify(esmImportMap)}}`,
+          children: `{"imports":${JSON.stringify(state.esmImportMap)}}`,
           injectTo: 'head',
         })
 
@@ -361,7 +360,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
               type: 'systemjs-importmap',
               nomodule: true,
             },
-            children: `{"imports":${JSON.stringify(systemjsImportMap)}}`,
+            children: `{"imports":${JSON.stringify(state.systemjsImportMap)}}`,
             injectTo: 'head',
           })
         }
@@ -398,14 +397,12 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         tags,
       }
     },
-    async closeBundle() {
-      await config.beforeEmit(state.remoteListMap)
-    },
+
   }]
 }
 
 export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOption {
-  const externalSet = new Set<string>()
+  // const externalSet = new Set<string>()
 
   const resolvedDepMap = {} as Record<string, string>
   const entryMap = {} as Record<string, string>
@@ -429,7 +426,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
             entryMap[`dubhe-${project}/${key}`] = urlResolve(url, entry[key])
 
           externals.forEach((item) => {
-            externalSet.add(item)
+            state.externalSet.add(item)
             resolvedDepMap[urlResolve(url, `/@id/${item}`)] = `/@id/${item}`
           })
           tags.push({
@@ -451,11 +448,11 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
       if (id in entryMap)
         return entryMap[id]
 
-      if (externalSet.has(id) && i !== 'dubhe')
+      if (state.externalSet.has(id) && i !== 'dubhe')
 
         return id
 
-      if (externalSet.has(i!)) {
+      if (state.externalSet.has(i!)) {
         const { id: resolveImporter } = await this.resolve(i!, 'dubhe') as any
         const { id: resolveID } = await this.resolve(id, resolveImporter) as any
         return resolveID
@@ -463,7 +460,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
     },
 
     async load(id) {
-      if (externalSet.has(id)) {
+      if (state.externalSet.has(id)) {
         const { id: resolveID } = await this.resolve(id, 'dubhe') as any
         return fs.promises.readFile(resolveID.split('?')[0], 'utf-8')
       }

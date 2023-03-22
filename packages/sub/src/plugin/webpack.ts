@@ -1,3 +1,4 @@
+/* eslint-disable n/no-deprecated-api */
 /* eslint-disable no-console */
 /* eslint-disable no-async-promise-executor */
 import { resolve } from 'path'
@@ -6,23 +7,16 @@ import { DEFAULT_POLYFILL, FEDERATION_RE, HMRModuleHandler, HMRTypesHandler, get
 import { DefinePlugin } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
-import type { SubConfig, aliasType, RemoteListType } from 'dubhe-lib'
+import type { RemoteListType, SubConfig } from 'dubhe-lib'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import { state } from '../state'
 
-const importMap: Record<string, string> = {}
-
-const externalSet = new Set<string>()
 function getVirtualFilePath(id: string) {
   return `_VIRTUAL_DUBHE_/${id}`
 }
 export class WebpackPlugin {
-  aliasMap: { [key: string]: aliasType[] } = {
-  }
-
   vfs: VirtualModulesPlugin
   dp: DefinePlugin
-  remoteCache: Record<string, Record<string, string>> = {}
-  externalsMap: Record<string, string> = {}
   constructor(public config: SubConfig) {
 
   }
@@ -35,7 +29,7 @@ export class WebpackPlugin {
       if (ret) {
         HMRTypesHandler(url, this.config.remote)
         ret.forEach(async (id) => {
-          const [project, moduleName] = resolveModuleAlias(id, this.aliasMap)
+          const [project, moduleName] = resolveModuleAlias(id, state.aliasMap)
           const { data } = await getVirtualContent(
             `${this.config.remote[project].url}/core/${moduleName}`,
             project,
@@ -63,8 +57,6 @@ export class WebpackPlugin {
   // use virtual-module in development
   // use local-cache in production with parallel
   apply(compiler: Compiler) {
-    const systemjsImportMap = {} as Record<string, string>
-    const esmImportMap = {} as Record<string, string>
     updateLocalRecord(this.config.remote)
     const { mode, devServer } = compiler.options
     const { injectHtml, externals, polyfill } = this.config
@@ -74,8 +66,6 @@ export class WebpackPlugin {
     const initlize = new Promise<void>(async (resolve, _reject) => {
       for (const i in this.config.remote) {
         try {
-          //
-
           // eslint-disable-next-line prefer-const
           let { data, isCache } = await getVirtualContent(
             `${this.config.remote[i].url}/core/remoteList.json`,
@@ -84,13 +74,13 @@ export class WebpackPlugin {
             this.config.cache,
           )
           const dubheConfig: RemoteListType = JSON.parse(data)
-
-          dubheConfig.externals.forEach(item => externalSet.add(item))
+          state.remoteListMap[i] = dubheConfig
+          dubheConfig.externals.forEach(item => state.externalSet.add(item))
           // if (dubheConfig.config.importMap)
           //   isImportMap = true
           if (this.config.remote[i].mode === 'hot' && mode !== 'development') {
-            esmImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'core')
-            systemjsImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'systemjs')
+            state.esmImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'core')
+            state.systemjsImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'systemjs')
             if (!compiler.options.externals)
               compiler.options.externals = {}
             for (const external of dubheConfig.externals) {
@@ -99,7 +89,6 @@ export class WebpackPlugin {
             }
             for (const item of dubheConfig.alias)
               (compiler as any).options.externals[`dubhe-${i}/${item.name}`] = `dubhe-${i}/${item.url}.js`
-            console.log((compiler as any).options.externals)
           }
 
           if (this.config.types)
@@ -123,10 +112,7 @@ export class WebpackPlugin {
             }
           }
 
-          // ext = { ...ext, ...remoteInfo.config.externals }
-          // this.externalsMap = Object.assign(this.externalsMap, dubheConfig.externals)
-
-          this.aliasMap[i] = dubheConfig.alias
+          state.aliasMap[i] = dubheConfig.alias
           log(`Remote Module [${i}] Map:`)
           console.table(dubheConfig.alias)
 
@@ -134,7 +120,7 @@ export class WebpackPlugin {
           console.table(dubheConfig.files)
 
           log('All externals')
-          console.table([...externalSet])
+          console.table([...state.externalSet])
         }
         catch (e) {
           log(`can't find remote module (${i}) -- ${this.config.remote[i].url}`, 'red')
@@ -177,12 +163,12 @@ export class WebpackPlugin {
           (data) => {
             const tags = data.assetTags.scripts
             if (polyfill) {
-              [...externalSet].forEach((dep) => {
+              [...state.externalSet].forEach((dep) => {
                 const { esm, systemjs } = externals(dep) || {}
                 if (esm)
-                  esmImportMap[dep] = esm
+                  state.esmImportMap[dep] = esm
                 if (systemjs)
-                  systemjsImportMap[dep] = systemjs
+                  state.systemjsImportMap[dep] = systemjs
               })
 
               if (polyfill.systemjs) {
@@ -216,7 +202,7 @@ export class WebpackPlugin {
                   voidTag: false,
                   meta: { plugin: 'dubhe::subscribe' },
                   attributes: { type: 'systemjs-importmap' },
-                  innerHTML: `{"imports":${JSON.stringify(systemjsImportMap)}}`,
+                  innerHTML: `{"imports":${JSON.stringify(state.systemjsImportMap)}}`,
                 })
               }
               tags.unshift({
@@ -224,7 +210,7 @@ export class WebpackPlugin {
                 voidTag: false,
                 meta: { plugin: 'dubhe::subscribe' },
                 attributes: { type: 'importmap' },
-                innerHTML: `{"imports":${JSON.stringify(esmImportMap)}}`,
+                innerHTML: `{"imports":${JSON.stringify(state.esmImportMap)}}`,
               })
             }
 
@@ -254,7 +240,7 @@ export class WebpackPlugin {
               if (FEDERATION_RE.test(id)) {
                 const [project, moduleName] = resolveModuleAlias(
                   id,
-                  this.aliasMap,
+                  state.aliasMap,
                 )
                 this.dp.definitions[`__DUBHE_${project}_`] = `"${this.config.remote[project].url}/core"`
                 const { data } = await getVirtualContent(
@@ -299,7 +285,7 @@ export class WebpackPlugin {
 
                 const [project, moduleName] = resolveModuleAlias(
                   resolveID,
-                  this.aliasMap,
+                  state.aliasMap,
                 )
                 const { data } = await getVirtualContent(
                   `${this.config.remote[project].url}/core/${moduleName}`,

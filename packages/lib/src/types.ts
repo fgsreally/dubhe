@@ -114,7 +114,7 @@ export interface VisModuleGraph {
   }[]
 }
 
-export interface aliasType {
+export interface AliasType {
   name: string
   url: string
 }

@@ -4,12 +4,12 @@ module.exports = ({
       url: 'http://127.0.0.1:8080',
       mode: 'hot',
     }, // remote static server
-  }, 
+  },
   externals: id => false,
   systemjs: true,
-  cache: true,
+  cache: false,
   types: true,
-  injectHtml: {
+  polyfill: {
     importMap: true,
     systemjs: true,
   },

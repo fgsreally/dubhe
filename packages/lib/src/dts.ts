@@ -1,4 +1,4 @@
-import { join, resolve } from 'path'
+import { dirname, join, resolve } from 'path'
 // eslint-disable-next-line n/no-deprecated-api
 import { resolve as urlResolve } from 'url'
 import { parse } from 'es-module-lexer'
@@ -99,6 +99,14 @@ export async function getTypes(url: string, project: string, fileMap: { [key: st
 
 // create link from types-cache to workspace
 export async function linkTypes(project: string, fileSet: string) {
-  for (const file of fileSet)
-    await fse.symlink(getTypePathInCache(project, file), getTypePathInWorkspace(project, file))
+  for (const file of fileSet) {
+    try {
+      const dest = getTypePathInWorkspace(project, file)
+      await fse.ensureDir(dirname(dest))
+      await fse.symlink(getTypePathInCache(project, file), dest)
+    }
+    catch (e) {
+      log('fail to create symlink', 'red')
+    }
+  }
 }

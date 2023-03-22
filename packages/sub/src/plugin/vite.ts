@@ -3,7 +3,6 @@ import { dirname, resolve } from 'path'
 import fs from 'fs'
 // eslint-disable-next-line  n/no-deprecated-api
 import { fileURLToPath, resolve as urlResolve } from 'url'
-
 import {
   DEFAULT_POLYFILL,
   FEDERATION_RE,
@@ -28,6 +27,7 @@ import type {
   RemoteListType, SubConfig,
   aliasType,
 } from 'dubhe-lib'
+import { state } from '../state'
 
 import { Graph } from '../helper/node/graph'
 
@@ -40,14 +40,12 @@ const _dirname
     : dirname(fileURLToPath(import.meta.url))
 
 const HMRMap: Map<string, number> = new Map()
-const remoteListMap: Record<string, RemoteListType> = {}
 const aliasMap: { [key: string]: aliasType[] } = {}
 const systemjsImportMap = {} as Record<string, string>
 const esmImportMap = {} as Record<string, string>
 const externalSet = new Set<string>()
 
 function reloadModule(id: string, time: number) {
-  console.log(id)
   const { moduleGraph } = server
   const module = moduleGraph.getModuleById(VIRTUAL_PREFIX + id)
   if (module) {
@@ -214,7 +212,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           }
 
           const dubheConfig: RemoteListType = JSON.parse(data)
-          remoteListMap[i] = dubheConfig
+          state.remoteListMap[i] = dubheConfig
           dubheConfig.externals.forEach(item => externalSet.add(item))
 
           if (config.types)
@@ -252,7 +250,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           }
         }
         catch (e) {
-          console.log(e)
           log(`can't find remote module (${i}) -- ${config.remote[i]}`, 'red')
         }
       }
@@ -326,7 +323,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           }
         }
         catch (e) {
-          console.error(e)
+          // console.error(e)
         }
       })
     },
@@ -402,7 +399,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       }
     },
     async closeBundle() {
-      await config.beforeEmit(remoteListMap)
+      await config.beforeEmit(state.remoteListMap)
     },
   }]
 }
@@ -435,7 +432,6 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
             externalSet.add(item)
             resolvedDepMap[urlResolve(url, `/@id/${item}`)] = `/@id/${item}`
           })
-          console.log(resolvedDepMap)
           tags.push({
             tag: 'script',
             attrs: {

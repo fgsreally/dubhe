@@ -20,9 +20,9 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     plugins: [
       Inspect(),
       visualizer(),
-      legacy({
-        targets: ['defaults', 'not IE 11'],
-      }),
+      // legacy({
+      //   targets: ['defaults', 'not IE 11'],
+      // }),
       vue(),
       AutoImport({
         resolvers: [ElementPlusResolver(), DubheResolver(config)],

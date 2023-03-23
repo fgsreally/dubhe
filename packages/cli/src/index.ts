@@ -214,33 +214,34 @@ cli
     const localConfig = await getWorkSpaceConfig()
 
     const dep = await analyseDep(localConfig)
-    const filePath = getDubheDepJS()
 
-    const dependencies = deps.split('|')
+    const dependencies = deps.split('+')
     let exportsStr = ''
-
+    let count = 0
     for (const dependence of dependencies) {
       if (dependence in dep) {
         const pkgName = getPkgName(dependence)
-        if (pkgName in pkgs.dependencies) {
-          exportsStr += `${generateExports([...dep[dependence]])}\n`
-          log(`Find ${dependence}@${(pkgs.dependencies as any)[dependence]}`)
-          log('Create dubhe.dep.js', 'grey')
-          await fse.outputFile(filePath, exportsStr, 'utf-8')
-          log('Bundle start')
-          await buildExternal(dependence, option.outDir)
-          log('Bundle finish')
-          fse.remove(filePath)
-          log('Remove dubhe.dep.js', 'grey')
-        }
-        else {
-          log(`${dependence} doesn't exist in package.json`, 'red')
-        }
+
+        exportsStr = `${generateExports([...dep[dependence]])}\n`
+        log(`Find ${dependence}@${(pkgs.dependencies as any)[dependence]}`)
+        log('Create dubhe.dep.js', 'grey')
+        await fse.outputFile(resolve(root, 'dubhe-bundle', `dubhe.dep${++count}.js`), exportsStr, 'utf-8')
+        // if (pkgName in pkgs.dependencies) {
+
+        // }
+        // else {
+        //   log(`${dependence} doesn't exist in package.json`, 'red')
+        // }
       }
       else {
         log(`${dependence} doesn't exist in dubhe-external`, 'red')
       }
     }
+    log('Bundle start')
+    await buildExternal(option.outDir, count)
+    log('Bundle finish')
+    // fse.remove(resolve(root, 'dubhe-bundle'))
+    log('Remove dubhe.dep.js', 'grey')
   })
 // https://bundlephobia.com/api/size?package=vue@3.2.1&record=true
 

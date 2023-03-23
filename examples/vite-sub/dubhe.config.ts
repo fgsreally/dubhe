@@ -11,8 +11,13 @@ export default {
     },
   },
   externals: (id) => {
-
+    if (id === 'vue' || id.includes('element-plus')) {
+      return {
+        esm: `www${id}`,
+      }
+    }
   },
+  injectHtml: true,
   systemjs: true,
   cache: false,
   types: true,

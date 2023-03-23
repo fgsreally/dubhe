@@ -1,6 +1,6 @@
 import { join, resolve } from 'path'
 import type { SubConfig } from 'dubhe-lib'
-import { getLocalPath, getLocalRecord, getRemoteContent, getTypePathInCache, log } from 'dubhe-lib'
+import { getLocalPath, getLocalRecord, getPkgName, getRemoteContent, getTypePathInCache, log } from 'dubhe-lib'
 import axios from 'axios'
 import { normalizePath } from 'vite'
 
@@ -13,7 +13,7 @@ export function generateExports(imports: string[]) {
   return imports.reduce((p, c) => {
     const [importVar, importSource] = c.split('--')
     if (importVar === '*')
-      return `export * from '${importSource}'`
+      return `export * from '${importSource}'\n`
     if (importVar === 'default')
       return `${p}import _defaultImport from '${importSource}'\nexport {_defaultImport as default}\n`
     if (importVar === '#side_effect')

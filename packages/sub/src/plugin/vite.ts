@@ -103,10 +103,12 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
   // 返回的是插件对象
   return [devHelper, {
     name: 'dubhe::subscribe',
+    enforce: 'pre',
     async resolveId(id, i) {
       // for dep like vue
       if (command === 'build') {
         const { systemjs, esm } = externals(id) || {}
+
         if (systemjs || esm) {
           if (esm)
             state.esmImportMap[id] = esm
@@ -340,7 +342,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         return
       const tags = [] as HtmlTagDescriptor[]
 
-      if (config.injectHtml === false) {
+      if (config.injectHtml !== false) {
         tags.push({
           tag: 'script',
           attrs: {

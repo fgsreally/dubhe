@@ -203,45 +203,34 @@ cli.command('export', 'get remote module exports')
  */
 cli
   .command(
-    'bundle <deps>',
+    'bundle ',
     'bundle external dependence for function-level treeshake',
   )
   .alias('b')
   .option('--outDir, -o [o]', '[string] outDir for vite output', {
     default: 'dist',
   })
-  .action(async (deps, option) => {
+  .action(async (option) => {
     const localConfig = await getWorkSpaceConfig()
 
-    const dep = await analyseDep(localConfig)
+    const deps = await analyseDep(localConfig)
 
-    const dependencies = deps.split('+')
-    let exportsStr = ''
-    let count = 0
-    for (const dependence of dependencies) {
-      if (dependence in dep) {
-        const pkgName = getPkgName(dependence)
-
-        exportsStr = `${generateExports([...dep[dependence]])}\n`
-        log(`Find ${dependence}@${(pkgs.dependencies as any)[dependence]}`)
-        log('Create dubhe.dep.js', 'grey')
-        await fse.outputFile(resolve(root, 'dubhe-bundle', `dubhe.dep${++count}.js`), exportsStr, 'utf-8')
-        // if (pkgName in pkgs.dependencies) {
-
-        // }
-        // else {
-        //   log(`${dependence} doesn't exist in package.json`, 'red')
-        // }
-      }
-      else {
-        log(`${dependence} doesn't exist in dubhe-external`, 'red')
-      }
+    // const dependencies = deps.split('+')
+    const files: string[] = []
+    for (const depname in deps) {
+      const pkgName = getPkgName(depname)
+      const exportsStr = `${generateExports([...deps[depname]])}\n`
+      log(`Create ${pkgName}.js`, 'grey')
+      const filePath = resolve(root, 'dubhe-bundle', `${pkgName}.js`)
+      files.push(filePath)
+      await fse.outputFile(filePath, exportsStr, 'utf-8')
     }
+
     log('Bundle start')
-    await buildExternal(option.outDir, count)
+    await buildExternal(option.outDir, files)
     log('Bundle finish')
-    // fse.remove(resolve(root, 'dubhe-bundle'))
-    log('Remove dubhe.dep.js', 'grey')
+    fse.remove(resolve(root, 'dubhe-bundle'))
+    log('Remove dir', 'grey')
   })
 // https://bundlephobia.com/api/size?package=vue@3.2.1&record=true
 

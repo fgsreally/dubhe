@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Share from './Share.vue'
 /**
  * @props msg string
  */
@@ -12,8 +11,6 @@ defineProps<{ msg: string }>()
     {{ msg }}
   </h1>
   <el-button>vite-r app button11</el-button>
-
-  <Share />
 </template>
 
 <style scoped>

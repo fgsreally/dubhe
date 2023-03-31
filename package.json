@@ -2,6 +2,7 @@
   "name": "dubhe",
   "version": "1.0.0",
   "description": "",
+  "packageManager": "pnpm@7.21.0",
 
   "scripts": {
     "dev": "turbo run dev --filter dubhe-*",

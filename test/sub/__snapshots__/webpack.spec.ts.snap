@@ -1,0 +1,5 @@
+// Vitest Snapshot v1
+
+exports[`[webpack] subscribe module > dist files output [cold mode] 1`] = `0`;
+
+exports[`[webpack] subscribe module > dist files output [hot mode] 1`] = `0`;

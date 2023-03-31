@@ -1,5 +1,4 @@
 import type { PubConfig } from 'dubhe-pub'
-import { esmsh } from 'dubhe-pub'
 
 export default {
   project: 'viteout',

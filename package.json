@@ -2,23 +2,21 @@
   "name": "dubhe",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "type":"module",
+
   "scripts": {
-    "publish": "changeset publish",
-    "pretest":"node test/script.js",
-    "test:e2e": "playwright test e2e/",
-    "test:unit": "vitest",
-    "test": "npm run test:e2e && npm run test:unit",
     "dev": "turbo run dev --filter dubhe-*",
     "build": "turbo run build --filter dubhe-*",
+    "publish": "changeset publish",
+    "lint": "eslint . --ext .ts",
+    "test": "node test/before-test.mjs",
+    "test:e2e": "playwright test e2e/",
+    "test:unit": "vitest",
     "docs:build": "npm -C docs run build",
-    "example:preview": "pnpm --filter=*-pub run preview ",
-    "example:pub": "pnpm --filter=*-pub run pub ",
-    "example:sub": "pnpm --filter=*-sub run dev",
-    "example:cold": "pnpm --filter=*-sub run build:cold",
-    "example:hot": "pnpm --filter=*-sub run build:hot"
-
+    "example:serve": "pnpm --filter=pub-* run serve ",
+    "example:pub": "pnpm --filter=pub-* run pub ",
+    "example:sub": "pnpm --filter=sub-* run dev",
+    "example:cold": "pnpm --filter=sub-* run build",
+    "example:hot": "cross-env HOTBUILD=true pnpm --filter=sub-* run build"
   },
   "keywords": [],
   "author": "",
@@ -27,12 +25,14 @@
     "@antfu/eslint-config": "^0.31.0",
     "@changesets/cli": "^2.25.2",
     "@playwright/test": "^1.31.2",
+    "cross-env": "^7.0.3",
     "eslint": "^8.28.0",
     "execa": "^6.1.0",
     "fast-glob": "^3.2.12",
     "puppeteer": "^19.7.3",
     "turbo": "^1.6.3",
     "vitepress": "1.0.0-alpha.49",
-    "vitest": "^0.25.6"
+    "vitest": "^0.25.6",
+    "zx": "^7.2.1"
   }
 }

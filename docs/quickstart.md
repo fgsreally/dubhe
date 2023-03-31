@@ -1,17 +1,15 @@
 # 快速开始
 
-`dubhe` 存在至少一个生产端和一个消费端，这和模块联邦是一致的
+`dubhe` 存在至少一个生产端和一个消费端，
 
 ## 生产端
 
 需要安装`dubhe-pub`，并将配置写入`dubhe.config.ts/js`
 
-> 不是必须放在这个文件，但这样做会方便 cli 的寻找
 
 ```ts
 // in dubhe.config.ts
 import type { PubConfig } from 'dubhe-pub'
-import { esmsh } from 'dubhe-pub'
 
 export default {
   project: 'viteout', // 项目名
@@ -24,8 +22,7 @@ export default {
   types: true, // 是否产生dts
   externals: (name) => {
     if (name === 'vue')
-      return true
-
+      return true// 此时共有依赖为vue
   }, // 放到cdn的依赖
   HMR: [
     {
@@ -41,7 +38,6 @@ export default {
 ```ts
 import { Pub } from 'dubhe-pub/vite'
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/dynamic_base__/' : '/', // 打包时这需要是一个特定字符串，从而使得消费端能够正确处理assets，比如图片等，由于vite 没有publicpath ，暂时采用社区插件vite-plugin-dynamic-base，故base不能为空
   plugins: [Pub(config)],
 })
 ```

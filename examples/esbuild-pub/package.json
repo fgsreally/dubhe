@@ -1,12 +1,12 @@
 {
-  "name": "esbuild-pub",
+  "name": "pub-esbuild",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "pub": "esno esbuild.ts",
-    "preview": "http-server .dubhe --port=8081 --cors"
+    "serve": "http-server .dubhe --port=8081 --cors"
   },
   "keywords": [],
   "author": "",

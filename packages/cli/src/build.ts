@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import { build, defineConfig } from 'vite'
 import { CSS } from 'dubhe-lib'
 // const { CSS } = require('dubhe-pub/vite')

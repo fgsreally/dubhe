@@ -6,7 +6,6 @@ import { init } from 'es-module-lexer'
 import fse from 'fs-extra'
 // import contentHash from 'content-hash'
 import type {
-  GetManualChunkApi,
   OutputChunk,
   OutputOptions,
 } from 'rollup'
@@ -20,7 +19,6 @@ import {
   createEntryFile,
   getAlias,
   getFormatDate,
-  getLocalPkgVersion,
   getRelatedPath,
   isSourceFile,
   log,
@@ -41,11 +39,7 @@ let metaData: any
 let alias: { name: string; url: string }[]
 const sourceGraph: { [key: string]: Set<string> } = {}
 const importsGraph: { [key: string]: Set<string> } = {}
-// let dependenceGraph: { [key: string]: Set<string> } = {};
-// const entryDepMap: { [key: string]: number } = {}
-const chunkSet: Set<string> = new Set()
 const externalSet = new Set<string>()
-const pkgVersionMap = {} as Record<string, string>
 
 // let vendor: string[]
 const root = process.cwd()
@@ -53,16 +47,6 @@ const root = process.cwd()
 export function isExternal(id: string, handler: (param: string) => boolean | void) {
   return handler(id)
 }
-
-// function resolveImport(id: string) {
-//   if (fse.existsSync(id) && initEntryFiles.includes(id)) {
-//     if (!entryDepMap[id])
-//       entryDepMap[id] = 0
-//     if (entryDepMap[id] > 0)
-//       chunkSet.add(id)
-//     entryDepMap[id]++
-//   }
-// }
 
 let isWatch = false
 
@@ -85,9 +69,8 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         opts.build = {}
       if (!opts.build.outDir)
         opts.build.outDir = `${outDir}/core`
-
-      // if (config.cssSplit)
-      //   opts.build.cssCodeSplit = true
+      if (!opts.base)
+        opts.base = '/__dubhe/'
 
       if (!opts.build.lib) {
         opts.build.lib = {
@@ -100,8 +83,6 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         }
       }
 
-      // if (opts.build.emptyOutDir === undefined)
-      //   opts.build.emptyOutDir = false
       if (!opts.build.rollupOptions)
         opts.build.rollupOptions = {}
 
@@ -116,20 +97,17 @@ export function BundlePlugin(config: PubConfig): PluginOption {
       output.assetFileNames
         = '[name][extname]'
 
-      let userManualChunks = output.manualChunks
-      const dubheManualChunks = (id: string) => {
-        // if (vendor.includes(id))
-        //   return 'vendor'
+      // let userManualChunks = output.manualChunks
+      // const dubheManualChunks = (id: string, { getModuleInfo }: any) => {
+      //   // if (chunkSet.has(id))
+      //   //   return basename(id).split('.')[0]
+      // }
 
-        if (chunkSet.has(id))
-          return basename(id).split('.')[0]
-      }
-
-      output.manualChunks = (id: string, api: GetManualChunkApi) => {
-        if (typeof userManualChunks !== 'function')
-          userManualChunks = () => null
-        return userManualChunks(id, api) ?? dubheManualChunks(id)
-      }
+      // output.manualChunks = (id: string, api: GetManualChunkApi) => {
+      //   if (typeof userManualChunks !== 'function')
+      //     userManualChunks = () => null
+      //   return userManualChunks(id, api) ?? dubheManualChunks(id, api)
+      // }
     },
 
     watchChange(id: string, change: any) {

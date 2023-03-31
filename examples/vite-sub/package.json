@@ -1,5 +1,5 @@
 {
-  "name": "vite-sub",
+  "name": "sub-vite",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@vitejs/plugin-legacy": "^4.0.1",
-    "@vue/shared": "^3.2.47",
     "dubhe-cli": "workspace:*",
     "dubhe-lib": "workspace:*",
     "dubhe-sub": "workspace:*",

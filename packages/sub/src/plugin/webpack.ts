@@ -62,6 +62,7 @@ export class WebpackPlugin {
     const { injectHtml, externals, polyfill } = this.config
     // virtualmodule does't work when using multiprocess bundle
     const useVirtualModule = mode === 'development' && !this.config.cache
+    compiler.options.externals = []
     // get remote config
     const initlize = new Promise<void>(async (resolve, _reject) => {
       for (const i in this.config.remote) {
@@ -81,14 +82,19 @@ export class WebpackPlugin {
           if (this.config.remote[i].mode === 'hot' && mode !== 'development') {
             state.esmImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'core')
             state.systemjsImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'systemjs')
-            if (!compiler.options.externals)
-              compiler.options.externals = {}
+
             for (const external of dubheConfig.externals) {
-              if (externals(external))
-                (compiler as any).options.externals[external] = external
+              const { esm, systemjs } = externals(external) || {}
+              if (!state.esmImportMap[external] && (esm || systemjs)) {
+                (compiler as any).options.externals.push({ [external]: external })
+                if (esm)
+                  state.esmImportMap[external] = esm
+                if (systemjs)
+                  state.systemjsImportMap[external] = systemjs
+              }
             }
             for (const item of dubheConfig.alias)
-              (compiler as any).options.externals[`dubhe-${i}/${item.name}`] = `dubhe-${i}/${item.url}.js`
+              (compiler as any).options.externals.push({ [`dubhe-${i}/${item.name}`]: `dubhe-${i}/${item.url}.js` })
           }
 
           if (this.config.types)
@@ -125,6 +131,7 @@ export class WebpackPlugin {
           console.table(dubheConfig.files)
         }
         catch (e) {
+          console.log(e)
           log(`can't find remote module [${i}] -- ${this.config.remote[i].url}`, 'red')
         }
       }

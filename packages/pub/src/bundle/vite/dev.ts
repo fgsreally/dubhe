@@ -31,7 +31,7 @@ export function DevPlugin(conf: PubConfig): PluginOption {
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         if (req?.url === '/dubhe')
-          res.end(JSON.stringify({ entry: conf.entry, externals: [...externals] }))
+          res.end(JSON.stringify({ entry: conf.entry, externals: [...externals] ,isDubhe:true}))
 
         else next()
       })

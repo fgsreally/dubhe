@@ -418,9 +418,11 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
         const { url } = config.remote[project]
 
         try {
-          const { externals, entry } = await getRemoteContent(
+          const { externals, entry, isDubhe } = await getRemoteContent(
             urlResolve(url, 'dubhe'),
-          ) as { externals: string[]; entry: Record<string, string> }
+          ) as { externals: string[]; entry: Record<string, string>; isDubhe: boolean }
+          if (!isDubhe)
+            throw new Error('it\'s not a valid pub server')
           for (const key in entry)
             entryMap[`dubhe-${project}/${key}`] = urlResolve(url, entry[key])
 

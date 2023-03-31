@@ -13,7 +13,8 @@ export default {
   externals: (id) => {
     if (id === 'vue' || id.includes('element-plus')) {
       return {
-        esm: `www${id}`,
+        esm: `dubhe:${id}`,
+        systemjs: `dubhe:${id}`,
       }
     }
   },

@@ -1,18 +1,21 @@
-import type { ConfigEnv, UserConfig } from 'vite'
+import type { UserConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { Sub } from 'dubhe-sub/vite'
-import { DubheResolver, defineConfig } from 'dubhe-sub'
+import { DubheResolver } from 'dubhe-sub'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { visualizer } from 'rollup-plugin-visualizer'
-import legacy from '@vitejs/plugin-legacy'
 import Inspect from 'vite-plugin-inspect'
 import config from './dubhe.config'
-export default ({ mode }: ConfigEnv): UserConfig => {
+export default (): UserConfig => {
   return {
     optimizeDeps: {
       exclude: [], // it doesn't work
+    },
+    build: {
+      outDir: process.env.HOTBUILD ? 'dist/hot' : 'dist/cold',
+
     },
     server: {
       port: 4100,
@@ -20,9 +23,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     plugins: [
       Inspect(),
       visualizer(),
-      // legacy({
-      //   targets: ['defaults', 'not IE 11'],
-      // }),
       vue(),
       AutoImport({
         resolvers: [ElementPlusResolver(), DubheResolver(config)],

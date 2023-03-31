@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["esbuild-pub","vite-pub","vite-sub","vuecli-sub","webpack-sub"]
+  "ignore": ["sub-*","pub-*"]
 }

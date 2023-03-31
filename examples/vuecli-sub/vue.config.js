@@ -14,8 +14,11 @@ const config = {
     }, // remote static server
   },
   externals: (id) => {
-
-    return {esm:id,}
+    if(id==='vue'||id.includes('element-plus'))
+    return {
+      esm: `dubhe:${id}`,
+      systemjs: `dubhe:${id}`,
+    }
   },
   systemjs: true,
   cache: false,
@@ -29,6 +32,7 @@ const config = {
 const app = new Sub(config);
 module.exports = defineConfig({
   transpileDependencies: true,
+  outputDir:process.env.HOTBUILD?'dist/hot':'dist/cold',
   lintOnSave: false,
   // parallel:false,
   configureWebpack: {
@@ -39,7 +43,6 @@ module.exports = defineConfig({
     externalsType: 'module',
   
     output: {
-      path: path.join(__dirname, 'dist'),
       library: { type: 'module' },
       environment: { module: true },
     },

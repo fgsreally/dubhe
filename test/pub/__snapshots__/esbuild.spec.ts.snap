@@ -1,0 +1,78 @@
+// Vitest Snapshot v1
+
+exports[`[esbuild] publish module  > core files output 1`] = `
+{
+  "alias": [
+    {
+      "name": "app",
+      "url": "App.dubhe-esbuildpub",
+    },
+    {
+      "name": "hello",
+      "url": "HelloWorld.dubhe-esbuildpub",
+    },
+    {
+      "name": "module",
+      "url": "module.dubhe-esbuildpub",
+    },
+  ],
+  "bundleGraph": {
+    "App": [
+      "chunk.dubhe-esbuildpub.js",
+    ],
+    "HelloWorld": [
+      "chunk.dubhe-esbuildpub.js",
+    ],
+    "chunk": [],
+    "module": [],
+  },
+  "entryFileMap": {
+    "app": "./src/App.vue",
+    "hello": "./src/HelloWorld.vue",
+    "module": "./src/module.ts",
+  },
+  "externals": [
+    "vue",
+  ],
+  "files": [
+    "remoteEntry.js",
+    "HelloWorld.dubhe-esbuildpub.js",
+    "App.dubhe-esbuildpub.js",
+    "chunk.dubhe-esbuildpub.js",
+    "module.dubhe-esbuildpub.js",
+  ],
+  "from": "esbuild",
+  "importsGraph": {
+    "vue": [
+      "defineComponent",
+      "toDisplayString",
+      "createElementVNode",
+      "createVNode",
+      "Fragment",
+      "openBlock",
+      "createElementBlock",
+      "pushScopeId",
+      "popScopeId",
+      "*",
+      "default",
+    ],
+  },
+  "sourceGraph": {
+    "./src/App.vue": [
+      "src/test.ts",
+      "src/App.vue",
+    ],
+    "./src/HelloWorld.vue": [],
+    "./src/module.ts": [
+      "src/module.ts",
+    ],
+  },
+  "timestamp": "2023-02-31",
+  "version": "0.0.0",
+}
+`;
+
+exports[`[esbuild] publish module  > types files output 1`] = `
+"[\\"dubhe.d.ts\\",\\"src/App.vue.d.ts\\",\\"src/HelloWorld.vue.d.ts\\",\\"src/module.d.ts\\",\\"src/test.d.ts\\",\\"types.json\\"]
+"
+`;

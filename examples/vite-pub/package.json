@@ -1,12 +1,12 @@
 {
-  "name": "vite-pub",
+  "name": "pub-vite",
   "private": true,
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "pub": "vite build ",
-    "preview": "http-server .dubhe --port=8080 --cors"
+    "serve": "http-server .dubhe --port=8080 --cors"
   },
   "dependencies": {
     "dubhe-cli": "workspace:^1.0.0",

@@ -251,6 +251,10 @@ importers:
       vite:
         specifier: ^4.1.1
         version: registry.npmmirror.com/vite@4.1.1(terser@5.16.3)
+    devDependencies:
+      '@types/fs-extra':
+        specifier: ^9.0.13
+        version: 9.0.13
 
   packages/lib:
     dependencies:
@@ -1450,6 +1454,12 @@ packages:
     resolution: {integrity: sha512-MxObHvNl4A69ofaTRU8DFqvgzzv8s9yRtaPPm5gud9HDNvpB3GPQFvNuTWAI59B9huVGV5jXYJwbCsmBsOGYWA==}
     dependencies:
       '@types/jsonfile': 6.1.1
+      '@types/node': 17.0.45
+    dev: true
+
+  /@types/fs-extra@9.0.13:
+    resolution: {integrity: sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA==}
+    dependencies:
       '@types/node': 17.0.45
     dev: true
 

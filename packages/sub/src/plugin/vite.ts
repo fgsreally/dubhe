@@ -21,7 +21,6 @@ import {
 import type { HtmlTagDescriptor, ModuleNode, PluginOption, Update, ViteDevServer } from 'vite'
 import colors from 'colors'
 import sirv from 'sirv'
-import { init } from 'es-module-lexer'
 
 import type {
   RemoteListType,
@@ -189,8 +188,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
     async configResolved(resolvedConfig) {
       command = resolvedConfig.command
       // let ext: externals = {}
-
-      await init
 
       for (const i in config.remote) {
         try {

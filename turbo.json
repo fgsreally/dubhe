@@ -3,16 +3,10 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
+      "cache": false,
       "outputs": ["dist/**", ".vitepress/dist/**"]
     },
-    "build:cold": {
-    },
-    "build:hot": {
-    },
-    "pub": {
-    },
-    "preview": {
-    },
+
     "dev": {
       "cache": false
     }

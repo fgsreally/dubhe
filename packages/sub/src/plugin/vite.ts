@@ -403,6 +403,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
   const resolvedDepMap = {} as Record<string, string>
   const entryMap = {} as Record<string, string>
   const tags = [] as HtmlTagDescriptor[]
+  let useViteDev = false
   let isFirstTime = true
   return {
     name: 'dubhe::dev',
@@ -436,6 +437,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
             injectTo: 'head',
           })
           projectSet.add(project)
+          useViteDev = true
           log(`${project} use Dev Mode`)
         }
         catch (e) {
@@ -443,6 +445,8 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
       }
     },
     async resolveId(id, i) {
+      if (!useViteDev)
+        return
       if (id in entryMap)
         return entryMap[id]
 

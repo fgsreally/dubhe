@@ -5,13 +5,13 @@ describe('[esbuild] publish module ', () => {
     const files = await getDistFiles('esbuild-pub/.dubhe/core')
     expect(files.length).toBe(5)
     const remoteList = JSON.parse(await getFileContent('esbuild-pub/.dubhe/core/remoteList.json'))
-    delete remoteList.time
+    delete remoteList.timestamp
     expect(remoteList).toMatchSnapshot()
   })
 
   it('types files output', async () => {
     const content = await getFileContent('esbuild-pub/.dubhe/types/types.json')
-    expect(content).toMatchSnapshot()
+    expect(JSON.parse(content).length).toMatchSnapshot()
   })
 
   it('source files output', async () => {

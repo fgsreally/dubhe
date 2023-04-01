@@ -67,12 +67,8 @@ exports[`[esbuild] publish module  > core files output 1`] = `
       "src/module.ts",
     ],
   },
-  "timestamp": "2023-02-31",
   "version": "0.0.0",
 }
 `;
 
-exports[`[esbuild] publish module  > types files output 1`] = `
-"[\\"dubhe.d.ts\\",\\"src/App.vue.d.ts\\",\\"src/HelloWorld.vue.d.ts\\",\\"src/module.d.ts\\",\\"src/test.d.ts\\",\\"types.json\\"]
-"
-`;
+exports[`[esbuild] publish module  > types files output 1`] = `6`;

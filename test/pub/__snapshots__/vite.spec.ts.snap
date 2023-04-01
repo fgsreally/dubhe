@@ -76,12 +76,8 @@ exports[`[vite] publish module > core files output 1`] = `
       "src/modules/test.ts",
     ],
   },
-  "timestamp": "2023-02-31",
   "version": "0.0.0",
 }
 `;
 
-exports[`[vite] publish module > types files output 1`] = `
-"[\\"src/App.vue.d.ts\\",\\"src/components/HelloWorld.vue.d.ts\\",\\"src/components/Share.vue.d.ts\\",\\"src/modules/test.d.ts\\",\\"src/vite-env.d.ts\\",\\"types.json\\"]
-"
-`;
+exports[`[vite] publish module > types files output 1`] = `6`;

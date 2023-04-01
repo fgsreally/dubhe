@@ -2,10 +2,6 @@
 
 exports[`[vuecli] subscribe module > dist files output [cold mode] 1`] = `0`;
 
-exports[`[vuecli] subscribe module > dist files output [cold mode] 2`] = `"<!doctype html><html lang=\\"\\"><head><meta charset=\\"utf-8\\"><meta http-equiv=\\"X-UA-Compatible\\" content=\\"IE=edge\\"><meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\"><title>Vue App</title><script type=\\"importmap\\">{\\"imports\\":{\\"dubhe-viteout\\":\\"http://127.0.0.1:8080/core\\",\\"element-plus/es\\":\\"dubhe:element-plus/es\\",\\"element-plus/es/components/button/style/css\\":\\"dubhe:element-plus/es/components/button/style/css\\",\\"vue\\":\\"dubhe:vue\\"}}</script><script type=\\"systemjs-importmap\\">{\\"imports\\":{\\"dubhe-viteout\\":\\"http://127.0.0.1:8080/systemjs\\",\\"element-plus/es\\":\\"dubhe:element-plus/es\\",\\"element-plus/es/components/button/style/css\\":\\"dubhe:element-plus/es/components/button/style/css\\",\\"vue\\":\\"dubhe:vue\\"}}</script><script defer=\\"defer\\" src=\\"/js/app.d2e3de4b.js\\"></script><link href=\\"/css/app.b2d625b8.css\\" rel=\\"stylesheet\\"></head><body><div id=\\"app\\"></div></body></html>"`;
+exports[`[vuecli] subscribe module > dist files output [cold mode] 2`] = `"<!doctype html><html lang=\\"\\"><head><meta charset=\\"utf-8\\"><meta http-equiv=\\"X-UA-Compatible\\" content=\\"IE=edge\\"><meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\"><title>Vue App</title><script type=\\"importmap\\">{\\"imports\\":{}}</script><script type=\\"systemjs-importmap\\">{\\"imports\\":{}}</script><script defer=\\"defer\\" src=\\"/js/app.0d2dc64c.js\\"></script><link href=\\"/css/app.213703a1.css\\" rel=\\"stylesheet\\"></head><body><div id=\\"app\\"></div></body></html>"`;
 
 exports[`[vuecli] subscribe module > dist files output [hot mode] 1`] = `0`;
-
-exports[`[webpack] subscribe module > dist files output [cold mode] 1`] = `0`;
-
-exports[`[webpack] subscribe module > dist files output [hot mode] 1`] = `0`;

@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "packageManager": "pnpm@7.21.0",
-
   "scripts": {
-    "dev": "turbo run dev --filter dubhe-*",
-    "build": "turbo run build --filter dubhe-*",
+    "dev": "turbo run dev --filter dubhe-* --filter dubhe",
+    "build": "turbo run build --filter dubhe-* --filter dubhe",
     "publish": "changeset publish",
     "lint": "eslint . --ext .ts",
     "test": "node test/before-test.mjs",
@@ -28,7 +27,6 @@
     "@playwright/test": "^1.31.2",
     "cross-env": "^7.0.3",
     "eslint": "^8.28.0",
-    "execa": "^6.1.0",
     "fast-glob": "^3.2.12",
     "puppeteer": "^19.7.3",
     "turbo": "^1.6.3",

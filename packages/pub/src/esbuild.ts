@@ -1,4 +1,4 @@
-import type { PubConfig } from 'dubhe-lib'
+import type { PubConfig } from 'dubhe'
 import { dtsPlugin } from './dts/index'
 import { BundlePlugin as Bundle, CSSPlugin as CSS } from './bundle/esbuild'
 // export { Bundle }

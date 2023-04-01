@@ -1,4 +1,4 @@
-import { ESM_SH_URL, UNPKG_URL } from 'dubhe-lib'
+import { ESM_SH_URL, UNPKG_URL } from 'dubhe'
 
 export function unpkg(name: string) {
   return `${UNPKG_URL}${name}?module`

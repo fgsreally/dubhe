@@ -60,7 +60,7 @@
     "axios": "^0.27.2",
     "colors": "^1.4.0",
     "debug": "^4.3.4",
-    "dubhe-lib": "workspace:^1.0.0",
+    "dubhe": "workspace:*",
     "fs-extra": "^10.1.0",
     "html-webpack-plugin": "^5.5.0",
     "sirv": "^2.0.2",

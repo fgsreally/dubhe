@@ -47,7 +47,7 @@
   "dependencies": {
     "@vue/compiler-sfc": "^3.2.45",
     "debug": "^4.3.4",
-    "dubhe-lib": "workspace:^1.0.0",
+    "dubhe": "workspace:^1.0.0",
     "es-module-lexer": "^0.10.5",
     "fast-glob": "^3.2.12",
     "fs-extra": "^10.1.0",

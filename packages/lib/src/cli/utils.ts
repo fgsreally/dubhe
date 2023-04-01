@@ -1,11 +1,14 @@
 import { join, resolve } from 'path'
-import type { SubConfig } from 'dubhe-lib'
-import { getLocalPath, getLocalRecord, getPkgName, getRemoteContent, getTypePathInCache, log } from 'dubhe-lib'
+
 import axios from 'axios'
 import { normalizePath } from 'vite'
 
 import fse from 'fs-extra'
 import { loadConfig } from 'unconfig'
+import { log } from 'debug'
+import { getLocalRecord } from '../cache'
+import type { SubConfig } from '../types'
+import { getLocalPath, getPkgName, getRemoteContent, getTypePathInCache } from '../utils'
 
 const root = process.cwd()
 

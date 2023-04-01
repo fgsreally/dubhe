@@ -1,6 +1,6 @@
-import type { SubConfig } from 'dubhe-lib'
+import type { SubConfig } from 'dubhe'
 export * from './helper/node'
-export * from 'dubhe-lib'
+export * from 'dubhe'
 export function defineConfig(conf: SubConfig) {
   return conf
 }

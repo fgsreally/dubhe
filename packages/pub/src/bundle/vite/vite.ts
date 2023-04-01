@@ -10,7 +10,7 @@ import type {
   OutputOptions,
 } from 'rollup'
 
-import type { PubConfig } from 'dubhe-lib'
+import type { PubConfig } from 'dubhe'
 import {
   ImportExpression,
   VIRTUAL_HMR_PREFIX,
@@ -24,7 +24,7 @@ import {
   log,
   replaceEntryFile,
   sendHMRInfo,
-} from 'dubhe-lib'
+} from 'dubhe'
 interface HMRInfo {
   changeFile: string
   cssFiles: { [key in string]: number }

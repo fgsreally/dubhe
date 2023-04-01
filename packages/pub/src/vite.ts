@@ -1,6 +1,6 @@
-import type { PubConfig } from 'dubhe-lib'
+import type { PubConfig } from 'dubhe'
 import { dynamicBase } from 'vite-plugin-dynamic-base'
-import { CSS } from 'dubhe-lib'
+import { CSS } from 'dubhe'
 import { dtsPlugin } from './dts/index'
 import { BundlePlugin as Bundle } from './bundle/vite/vite'
 import { DevPlugin as Dev } from './bundle/vite/dev'

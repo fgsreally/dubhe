@@ -2,7 +2,7 @@ import { dirname, isAbsolute, relative } from 'path'
 import type { Project } from 'ts-morph'
 import { normalizePath } from 'vite'
 import type { Alias } from 'vite'
-import { isRegExp } from 'dubhe-lib'
+import { isRegExp } from 'dubhe'
 import { compileVueCode } from './compile'
 
 const globSuffixRE = /^((?:.*\.[^.]+)|(?:\*+))$/

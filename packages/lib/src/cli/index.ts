@@ -1,14 +1,18 @@
 import { resolve } from 'path'
-import { CACHE_ROOT, TYPE_ROOT, esmToSystemjs, getLocalContent, getLocalPath, getPkgName, getRemoteContent, getTypePathInCache, linkTypes, log, patchVersion, removeLocalCache, removeLocalType, updateLocalRecord } from 'dubhe-lib'
 /* eslint-disable no-console */
 import cac from 'cac'
 import fse from 'fs-extra'
 import { findExports } from 'mlly'
 import fg from 'fast-glob'
-import pkgs from '../package.json'
-import { buildExternal } from './build'
-
+import { log } from 'debug'
+import pkgs from '../../package.json'
+import { CACHE_ROOT, TYPE_ROOT } from '../common'
+import { esmToSystemjs } from '../babel'
+import { removeLocalCache, removeLocalType, updateLocalRecord } from '../cache'
+import { linkTypes } from '../dts'
+import { getLocalContent, getLocalPath, getPkgName, getRemoteContent, getTypePathInCache, patchVersion } from '../utils'
 import { analyseDep, downloadFile, generateExports, getRemoteList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist, updateTsConfig } from './utils'
+import { buildExternal } from './build'
 const root = process.cwd()
 
 const cli = cac()

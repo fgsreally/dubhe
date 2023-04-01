@@ -1,7 +1,7 @@
 import { basename } from 'path'
 import type { SFCDescriptor } from '@vue/compiler-sfc'
 import { compileScript, parse, rewriteDefault } from '@vue/compiler-sfc'
-import type { dtsCompiler } from 'dubhe-lib'
+import type { dtsCompiler } from 'dubhe'
 import { transferSetupPosition } from './transform'
 const exportDefaultRE = /export\s+default/
 const exportDefaultClassRE = /(?:(?:^|\n|;)\s*)export\s+default\s+class\s+([\w$]+)/

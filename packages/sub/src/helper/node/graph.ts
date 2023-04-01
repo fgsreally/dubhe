@@ -1,6 +1,6 @@
 import { extname } from 'path'
-import { FEDERATION_RE } from 'dubhe-lib'
-import type { VisModuleGraph } from 'dubhe-lib'
+import { FEDERATION_RE } from 'dubhe'
+import type { VisModuleGraph } from 'dubhe'
 
 const getOffset = (() => {
   let i = 0

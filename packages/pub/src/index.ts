@@ -1,6 +1,6 @@
-import type { PubConfig } from 'dubhe-lib'
+import type { PubConfig } from 'dubhe'
 export * from './dts'
-export * from 'dubhe-lib'
+export * from 'dubhe'
 export * from './helper/cdn'
 
 export function defineConfig(conf: PubConfig) {

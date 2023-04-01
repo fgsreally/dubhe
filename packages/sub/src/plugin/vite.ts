@@ -17,7 +17,7 @@ import {
   patchVersion,
   resolveModuleAlias, resolvePathToModule,
   updateLocalRecord,
-} from 'dubhe-lib'
+} from 'dubhe'
 import type { HtmlTagDescriptor, ModuleNode, PluginOption, Update, ViteDevServer } from 'vite'
 import colors from 'colors'
 import sirv from 'sirv'
@@ -25,7 +25,7 @@ import sirv from 'sirv'
 import type {
   RemoteListType,
   SubConfig,
-} from 'dubhe-lib'
+} from 'dubhe'
 import { state } from '../state'
 
 import { Graph } from '../helper/node/graph'

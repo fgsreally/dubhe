@@ -1,5 +1,5 @@
 import { build, defineConfig } from 'vite'
-import { CSS } from 'dubhe-lib'
+import { CSS } from '../plugin'
 // const { CSS } = require('dubhe-pub/vite')
 export async function buildExternal(outDir: string, files: string[]) {
   const config = defineConfig({

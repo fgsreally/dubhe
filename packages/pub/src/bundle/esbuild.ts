@@ -1,11 +1,11 @@
 import { basename, relative, resolve } from 'path'
-import { INJECT_STYLE, ImportExpression, VIRTUAL_HMR_PREFIX, analyseImport, createEntryFile, getFormatDate, log, mountStyle, sendHMRInfo, virtualCssHelper } from 'dubhe-lib'
+import { INJECT_STYLE, ImportExpression, VIRTUAL_HMR_PREFIX, analyseImport, createEntryFile, getFormatDate, log, mountStyle, sendHMRInfo, virtualCssHelper } from 'dubhe'
 import type { ProPlugin } from 'esbuild-plugin-merge'
 
 import type { Metafile, OutputFile } from 'esbuild'
 import fse from 'fs-extra'
 import { init } from 'es-module-lexer'
-import type { PubConfig } from 'dubhe-lib'
+import type { PubConfig } from 'dubhe'
 import { isExternal } from './vite/vite'
 const root = process.cwd()
 const externalSet = new Set<string>()

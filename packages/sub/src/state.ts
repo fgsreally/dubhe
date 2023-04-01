@@ -1,4 +1,4 @@
-import type { AliasType, RemoteListType } from 'dubhe-lib'
+import type { AliasType, RemoteListType } from 'dubhe'
 
 interface SubState {
   remoteListMap: Record<string, RemoteListType>

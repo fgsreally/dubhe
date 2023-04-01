@@ -10,8 +10,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-legacy": "^4.0.1",
-    "dubhe-cli": "workspace:*",
-    "dubhe-lib": "workspace:*",
+    "dubhe": "workspace:*",
     "dubhe-sub": "workspace:*",
     "element-plus": "^2.2.29",
     "rollup-plugin-visualizer": "^5.9.0",

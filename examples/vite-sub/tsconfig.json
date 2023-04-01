@@ -1,5 +1,4 @@
 {
-  "extends":"./tsconfig.dubhe.json",
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
@@ -11,7 +10,7 @@
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": false,
+    
     "noEmit": true
   },
   "include": ["./src/**/*.ts", "./src/**/*.d.ts", "./src/**/*.tsx", "./src/**/*.vue", "./auto-imports.d.ts",

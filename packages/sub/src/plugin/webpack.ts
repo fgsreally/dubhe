@@ -289,8 +289,8 @@ export class WebpackPlugin {
                 id = resolve(importer, '../', id)
 
                 const resolveID = id
-                  .split('_VIRTUAL_DUBHE_\\')[1]
                   .replace(/\\/g, '/')
+                  .split('_VIRTUAL_DUBHE_')[1].slice(1)
 
                 const [project, moduleName] = resolveModuleAlias(
                   resolveID,

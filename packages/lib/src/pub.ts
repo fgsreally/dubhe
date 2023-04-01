@@ -3,7 +3,6 @@ import { parse } from 'es-module-lexer'
 import MagicString from 'magic-string'
 import {
   getPackageInfo,
-
 } from 'local-pkg'
 import fse from 'fs-extra'
 import { getPkgName } from './utils'

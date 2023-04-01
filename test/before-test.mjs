@@ -30,7 +30,8 @@ async function start() {
   Serve()
   await sleep()
   SubDev()
-  await Promise.all([HotBundle(), ColdBundle()])
+  await HotBundle()
+  await ColdBundle()
   $`npm run test:unit`
   $`npm run test:e2e`
 }

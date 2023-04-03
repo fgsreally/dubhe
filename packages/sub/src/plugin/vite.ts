@@ -250,7 +250,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           }
         }
         catch (e) {
-          log(`can't find remote module [${i}] -- ${config.remote[i]}`, 'red')
+          log(`can't find remote module [${i}] -- ${config.remote[i].url}`, 'red')
         }
       }
 

@@ -13,7 +13,7 @@ exports[`[vite] subscribe module > dist files output [cold mode] 2`] = `
     <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\" />
     <title>Vite + Vue + TS</title>
     <script type=\\"importmap\\">{\\"imports\\":{\\"vue\\":\\"dubhe:vue\\",\\"element-plus/es\\":\\"dubhe:element-plus/es\\",\\"element-plus/es/components/button/style/css\\":\\"dubhe:element-plus/es/components/button/style/css\\"}}</script>
-    <script type=\\"module\\" crossorigin src=\\"/assets/index-4650c4b4.js\\"></script>
+    <script type=\\"module\\" crossorigin src=\\"/assets/index-887ec0f2.js\\"></script>
     <link rel=\\"stylesheet\\" href=\\"/assets/index-78058d01.css\\">
 
     <script type=\\"systemjs-importmap\\" nomodule>{\\"imports\\":{\\"vue\\":\\"dubhe:vue\\",\\"element-plus/es\\":\\"dubhe:element-plus/es\\",\\"element-plus/es/components/button/style/css\\":\\"dubhe:element-plus/es/components/button/style/css\\"}}</script>

@@ -77,6 +77,14 @@ export function getLocalPath(project: string,
   moduleName: string) {
   return resolve(CACHE_ROOT, project, moduleName)
 }
+export function isLocalPath(path:string){
+  return path.startsWith(CACHE_ROOT)
+}
+
+export function getProjectAndModule(path:string){
+  
+  return relative(CACHE_ROOT,path).match(/(.*)\/(.*)/)
+}
 
 export async function getLocalContent(project: string,
   moduleName: string) {

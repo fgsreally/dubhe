@@ -11,12 +11,15 @@ export default {
     },
   },
   externals: (id) => {
-    if (id === 'vue' || id.includes('element-plus')) {
-      return {
-        esm: `dubhe:${id}`,
-        systemjs: `dubhe:${id}`,
+    if(process.env.TEST){
+      if (id === 'vue' || id.includes('element-plus')) {
+        return {
+          esm: `dubhe:${id}`,// only work for test
+          systemjs: `dubhe:${id}`,// only work for test
+        }
       }
     }
+ 
   },
   injectHtml: true,
   systemjs: true,

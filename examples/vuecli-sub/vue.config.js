@@ -14,14 +14,15 @@ const config = {
     }, // remote static server
   },
   externals: (id) => {
-    if(id==='vue'||id.includes('element-plus'))
+    if(process.env.TEST)
+{    if(id==='vue'||id.includes('element-plus'))
     return {
       esm: `dubhe:${id}`,
       systemjs: `dubhe:${id}`,
-    }
+    }}
   },
   systemjs: true,
-  cache: false,
+  cache: true,
   types: true,
   injectHtml: {
     importMap: true,

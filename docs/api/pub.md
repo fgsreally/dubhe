@@ -7,9 +7,6 @@ interface PubConfig {
   // 默认：src/dubhe.ts
   entry: string
 
-  // 是否开启自动分包，当文件字符长度小于limit，会被分到vendor
-  // 默认不开启
-  limit?: number
 
   // 是否输出对应源码
   // 默认不输出
@@ -24,12 +21,9 @@ interface PubConfig {
   externals: { [key: string]: string }
 
   // 版本，用于消费端判断缓存是否命中
-  // 默认为undefined
+  // 默认为0.0.0
   version?: string
 
-  // 是否开启importmap，该配置生产消费端必须相同
-  // 默认不开启
-  importMap: boolean
 
   // 项目名称
   project?: string
@@ -38,8 +32,6 @@ interface PubConfig {
   // 默认不输出
   types?: boolean
 
-  // 手动分包，将该id的文件分入vendor
-  vendor?: string[]
 
   // 联调热更新，只用于watch 模式
   HMR?: {
@@ -51,11 +43,9 @@ interface PubConfig {
 
   // 类型的相关配置
   dts?: dtsPluginOptions
-  // 是否开启css split
-  // 默认不开启
-  cssSplit?: boolean
+
   // 元数据，根据自己需求填
-  meta?: Metadata | any
+  meta?:  any
 }
 
 ```

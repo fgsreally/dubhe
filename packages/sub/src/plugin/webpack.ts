@@ -3,7 +3,7 @@
 /* eslint-disable no-async-promise-executor */
 import { resolve } from 'path'
 import { resolve as urlResolve } from 'url'
-import { DEFAULT_POLYFILL, FEDERATION_RE, HMRModuleHandler, HMRTypesHandler, getLocalPath, getRemoteContent, getTypes, getVirtualContent, log, patchVersion, resolveModuleAlias, updateLocalRecord } from 'dubhe'
+import { DEFAULT_POLYFILL, FEDERATION_RE, HMRModuleHandler, HMRTypesHandler, getLocalPath, getRemoteContent, getTypes, getVirtualContent, log, patchVersion, resolveModuleAlias, updateLocalRecord, getProjectAndModule, isLocalPath } from 'dubhe'
 import { DefinePlugin } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
@@ -61,7 +61,7 @@ export class WebpackPlugin {
     const { mode, devServer } = compiler.options
     const { injectHtml, externals, polyfill } = this.config
     // virtualmodule does't work when using multiprocess bundle
-    const useVirtualModule = mode === 'development' && !this.config.cache
+    const useVirtualModule =!this.config.cache
     compiler.options.externals = []
     // get remote config
     const initlize = new Promise<void>(async (resolve, _reject) => {
@@ -234,14 +234,15 @@ export class WebpackPlugin {
     const resolverPlugin = {
       apply: (resolver) => {
         const target = resolver.ensureHook('resolve')
-
         resolver
           .getHook('resolve')
           .tapAsync(
             'dubhe::subscribe',
             async (request, resolveContext, callback) => {
+
               await initlize
               let id = request.request
+
               if (!id)
                 return callback()
 
@@ -259,18 +260,13 @@ export class WebpackPlugin {
                   this.config.cache,
                   this.config.cache,
                 )
-                const module = `dubhe-${project}/${moduleName}`
+                const modulePath = getLocalPath(project, moduleName)
+                request.request = modulePath
                 if (useVirtualModule) {
-                  this.vfs.writeModule(getVirtualFilePath(module), data)
-                  request.request = resolve(
-                    compiler.context,
-                    '_VIRTUAL_DUBHE_',
-                    module,
-                  )
+                  this.vfs.writeModule(modulePath, data)
+
                 }
-                else {
-                  request.request = getLocalPath(project, moduleName)
-                }
+
 
                 return resolver.doResolve(
                   target,
@@ -283,19 +279,16 @@ export class WebpackPlugin {
 
               if (
                 importer
-                && importer.includes('_VIRTUAL_DUBHE_')
-                && id.endsWith('.js') && useVirtualModule
+                && isLocalPath(importer)
+                && id.startsWith('.')
               ) {
                 id = resolve(importer, '../', id)
 
-                const resolveID = id
-                  .replace(/\\/g, '/')
-                  .split('_VIRTUAL_DUBHE_')[1].slice(1)
 
-                const [project, moduleName] = resolveModuleAlias(
-                  resolveID,
-                  state.aliasMap,
-                )
+
+                const [_, project, moduleName] = getProjectAndModule(id)
+          
+       
                 const { data } = await getVirtualContent(
                   `${this.config.remote[project].url}/core/${moduleName}`,
                   project,
@@ -303,9 +296,8 @@ export class WebpackPlugin {
                   this.config.cache,
                   this.config.cache,
                 )
-                const module = `dubhe-${project}/${moduleName}`
 
-                this.vfs.writeModule(getVirtualFilePath(module), data)
+                useVirtualModule && this.vfs.writeModule(getVirtualFilePath(id), data)
               }
 
               return callback()

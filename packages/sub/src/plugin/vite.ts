@@ -1,16 +1,16 @@
-import { normalizePath } from 'vite';
 /* eslint-disable no-console */
-import { dirname, resolve, relative } from 'path'
+import { dirname, relative, resolve } from 'path'
 import fs from 'fs'
 // eslint-disable-next-line  n/no-deprecated-api
 import { fileURLToPath, resolve as urlResolve } from 'url'
+import { normalizePath } from 'vite'
 import {
   DEFAULT_POLYFILL,
-  VIRTUAL_RE,
   HMRModuleHandler,
   HMRTypesHandler,
   VIRTUAL_EMPTY,
   VIRTUAL_PREFIX,
+  VIRTUAL_RE,
   getRemoteContent,
   getTypes,
   getVirtualContent,
@@ -404,9 +404,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
   const resolvedDepMap = {} as Record<string, string>
   const entryMap = {} as Record<string, string>
   const tags = [] as HtmlTagDescriptor[]
-  let useViteDev = false
   let isFirstTime = true
-  let isResolvedDep = false
   return {
     name: 'dubhe::dev',
     apply: 'serve',
@@ -428,7 +426,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
 
           externals.forEach((item) => {
             state.externalSet.add(item)
-            resolvedDepMap[urlResolve(url, `/@id/${item}`)] = item
+            resolvedDepMap[urlResolve(url, `/@id/${item}`)] = `/@id/${item}`
           })
           tags.push({
             tag: 'script',
@@ -439,7 +437,6 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
             injectTo: 'head',
           })
           projectSet.add(project)
-          useViteDev = true
           log(`${project} use Dev Mode`)
         }
         catch (e) {
@@ -447,23 +444,25 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
       }
     },
     async resolveId(id, i) {
-      if (!useViteDev)
-        return
       if (id in entryMap)
         return entryMap[id]
+
+      if (state.externalSet.has(id) && i !== 'dubhe')
+
+        return id
+
+      if (state.externalSet.has(i!)) {
+        const { id: resolveImporter } = await this.resolve(i!, 'dubhe') as any
+        const { id: resolveID } = await this.resolve(id, resolveImporter) as any
+        return resolveID
+      }
     },
 
-    async transform(id) {
-      if (!isResolvedDep)
-        [...state.externalSet].forEach(async (item) => {
-          const { id: depPath } = await this.resolve(item)
-          for (let i in resolvedDepMap) {
-            if (resolvedDepMap[i] === item) {
-              resolvedDepMap[i] = '/' + normalizePath(relative(process.cwd(), depPath))
-            }
-          }
-        })
-      isResolvedDep = true
+    async load(id) {
+      if (state.externalSet.has(id)) {
+        const { id: resolveID } = await this.resolve(id, 'dubhe') as any
+        return fs.promises.readFile(resolveID.split('?')[0], 'utf-8')
+      }
     },
 
     transformIndexHtml(html) {

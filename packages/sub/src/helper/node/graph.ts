@@ -1,5 +1,5 @@
 import { extname } from 'path'
-import { FEDERATION_RE } from 'dubhe'
+import { VIRTUAL_RE } from 'dubhe'
 import type { VisModuleGraph } from 'dubhe'
 
 const getOffset = (() => {
@@ -34,7 +34,7 @@ export class Graph {
   }
 
   addModule(id: string, importer: string) {
-    const project = id.match(FEDERATION_RE)?.[1] as string
+    const project = id.match(VIRTUAL_RE)?.[1] as string
     this.moduleMap[project].add(id)
 
     if (!this.moduleMap[id])
@@ -68,7 +68,7 @@ export class Graph {
           attributes: {
             x: offset[0] + Math.random(),
             size: 20,
-            label: moduleID.match(FEDERATION_RE)?.[2] as string,
+            label: moduleID.match(VIRTUAL_RE)?.[2] as string,
             color: this.getColor(extname(moduleID)),
             y: offset[1] + Math.random(),
           },

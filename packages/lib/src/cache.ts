@@ -25,6 +25,7 @@ export async function getLocalRecord() {
 export async function removeLocalCache(project: string) {
   return fse.remove(resolve(CACHE_ROOT, project))
 }
+
 export async function removeLocalType(project: string) {
   return fse.remove(resolve(TYPE_ROOT, project))
 }

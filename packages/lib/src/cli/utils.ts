@@ -91,7 +91,6 @@ export async function downloadFile(url: string, output: string) {
 
 export async function installProjectCache(baseUrl: string, files: string[], project: string) {
   for (const file of files) {
-    // const cachePath = getCachePath(project, file)
     downloadFile(`${baseUrl}/core/${file}`, getLocalPath(project, file))
   }
 }

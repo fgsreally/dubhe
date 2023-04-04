@@ -4,7 +4,7 @@ import MagicString from 'magic-string'
 import fse from 'fs-extra'
 import { parseSync, traverse } from '@babel/core'
 import type { AliasType } from './types'
-import { FEDERATION_RE, VIRTUAL_PREFIX } from './common'
+import { VIRTUAL_RE, VIRTUAL_PREFIX } from './common'
 import { getLocalPath, getRemoteContent, setLocalContent } from './utils'
 
 export function resolveAlias(alias: Record<string, string> = {}) {
@@ -16,15 +16,6 @@ export function resolveAlias(alias: Record<string, string> = {}) {
   })
 }
 
-// dependences which won't be bundled  in node_modules
-// export function isExternal(id: string, ext: externals) {
-//   for (const i in ext) {
-//     if (minimatch(id, i) // true!
-//     )
-//       return getExternalId(id, ext[i])
-//   }
-//   return false
-// }
 
 export function getExternalId(id: string, handler: string | ((id: string) => string)) {
   return typeof handler === 'string' ? handler : handler(id)
@@ -63,7 +54,7 @@ export async function getVirtualContent(
 export function resolvePathToModule(id?: string) {
   if (id?.includes(VIRTUAL_PREFIX))
     id = id.split(VIRTUAL_PREFIX)[1]
-  if (id && FEDERATION_RE.test(id))
+  if (id && VIRTUAL_RE.test(id))
     return id
   return ''
 }
@@ -73,7 +64,7 @@ export function resolveModuleAlias(
   alias: { [key: string]: AliasType[] },
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, project, moduleName] = id.match(FEDERATION_RE) || []
+  const [_, project, moduleName] = id.match(VIRTUAL_RE) || []
 
   if (!project)
     return []
@@ -160,7 +151,7 @@ export function analyseImport(code: string) {
 //   const newSource = new MagicString(source)
 //   let cssImports = ''
 //   for (const i of imports as any) {
-//     if (FEDERATION_RE.test(i.n)) {
+//     if (VIRTUAL_RE.test(i.n)) {
 //       const [project, moduleName] = resolveModuleAlias(i.n, aliasMap)
 
 //       if (extname(moduleName) === '.js') {

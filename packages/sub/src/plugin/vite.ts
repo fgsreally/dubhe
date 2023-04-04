@@ -6,7 +6,7 @@ import fs from 'fs'
 import { fileURLToPath, resolve as urlResolve } from 'url'
 import {
   DEFAULT_POLYFILL,
-  FEDERATION_RE,
+  VIRTUAL_RE,
   HMRModuleHandler,
   HMRTypesHandler,
   VIRTUAL_EMPTY,
@@ -141,7 +141,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         return { id: id + query }
       }
 
-      if (FEDERATION_RE.test(id) && !id.startsWith(VIRTUAL_PREFIX)) {
+      if (VIRTUAL_RE.test(id) && !id.startsWith(VIRTUAL_PREFIX)) {
         const query = HMRMap.has(module) ? `?t=${HMRMap.get(module)}` : ''
         graph.addModule(module, resolvePathToModule(i))
 

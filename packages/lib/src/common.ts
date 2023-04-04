@@ -3,7 +3,7 @@ import envPaths from 'env-paths'
 export const CACHE_ROOT = envPaths('dubhe').data
 export const TYPE_ROOT = envPaths('dubhe-type').data
 
-export const FEDERATION_RE = /^dubhe-(.*)\/([^?]*)/
+export const VIRTUAL_RE = /^dubhe-(.*)\/([^?]*)/
 export const VIRTUAL_PREFIX = '_virtual_DUBHE_'
 export const VIRTUAL_EMPTY = '/@virtual:EmptyModule'
 export const VIRTUAL_HMR_PREFIX = 'VIRTUAL-HMR'

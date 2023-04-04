@@ -16,7 +16,7 @@ export default defineConfig({
   },
   base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/',
 
-  preview: {
+  server: {
     port: 8080,
     cors: true,
   },

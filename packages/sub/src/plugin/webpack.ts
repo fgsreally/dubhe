@@ -3,7 +3,7 @@
 /* eslint-disable no-async-promise-executor */
 import { resolve } from 'path'
 import { resolve as urlResolve } from 'url'
-import { DEFAULT_POLYFILL, FEDERATION_RE, HMRModuleHandler, HMRTypesHandler, getLocalPath, getRemoteContent, getTypes, getVirtualContent, log, patchVersion, resolveModuleAlias, updateLocalRecord, getProjectAndModule, isLocalPath } from 'dubhe'
+import { DEFAULT_POLYFILL, VIRTUAL_RE, HMRModuleHandler, HMRTypesHandler, getLocalPath, getRemoteContent, getTypes, getVirtualContent, log, patchVersion, resolveModuleAlias, updateLocalRecord, getProjectAndModule, isLocalPath } from 'dubhe'
 import { DefinePlugin } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
@@ -247,7 +247,7 @@ export class WebpackPlugin {
                 return callback()
 
               const importer = (request as any).context.issuer
-              if (FEDERATION_RE.test(id)) {
+              if (VIRTUAL_RE.test(id)) {
                 const [project, moduleName] = resolveModuleAlias(
                   id,
                   state.aliasMap,

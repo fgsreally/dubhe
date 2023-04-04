@@ -147,26 +147,9 @@ export function BundlePlugin(config: PubConfig): PluginOption {
           }, 1000)
         }
 
-        // try {
-
-        //   //   log('Send HMR information to home ')
-
-        //   // else
-        //   //   log('Fail to send HMR information\n', 'red')
-        // }
-        // catch (e) {
-        //   log(`Fail to collect HMR information\n${e}`, 'red')
-        // }
+  
       }
-      else {
-        // for (const i in module) {
-        //   if (i.endsWith('.css')) {
-        //     const cssHash = contentHash.encode('onion', module[i].source)
-        //     HMRconfig.cssFiles[i] = cssHash
-
-        //   }
-        // }
-      }
+ 
     },
     async generateBundle(_, data) {
       const code = ((data['remoteEntry.js'] as OutputChunk).code

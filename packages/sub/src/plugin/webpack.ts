@@ -3,7 +3,7 @@
 /* eslint-disable no-async-promise-executor */
 import { resolve } from 'path'
 import { resolve as urlResolve } from 'url'
-import { DEFAULT_POLYFILL, VIRTUAL_RE, HMRModuleHandler, HMRTypesHandler, getLocalPath, getRemoteContent, getTypes, getVirtualContent, log, patchVersion, resolveModuleAlias, updateLocalRecord, getProjectAndModule, isLocalPath } from 'dubhe'
+import { DEFAULT_POLYFILL, HMRModuleHandler, HMRTypesHandler, VIRTUAL_RE, getLocalPath, getProjectAndModule, getRemoteContent, getTypes, getVirtualContent, isLocalPath, log, patchVersion, resolveModuleAlias, updateLocalRecord } from 'dubhe'
 import { DefinePlugin } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
@@ -61,7 +61,7 @@ export class WebpackPlugin {
     const { mode, devServer } = compiler.options
     const { injectHtml, externals, polyfill } = this.config
     // virtualmodule does't work when using multiprocess bundle
-    const useVirtualModule =!this.config.cache
+    const useVirtualModule = !this.config.cache
     compiler.options.externals = []
     // get remote config
     const initlize = new Promise<void>(async (resolve, _reject) => {
@@ -239,7 +239,6 @@ export class WebpackPlugin {
           .tapAsync(
             'dubhe::subscribe',
             async (request, resolveContext, callback) => {
-
               await initlize
               let id = request.request
 
@@ -262,10 +261,8 @@ export class WebpackPlugin {
                 )
                 const modulePath = getLocalPath(project, moduleName)
                 request.request = modulePath
-                if (useVirtualModule) {
+                if (useVirtualModule)
                   this.vfs.writeModule(modulePath, data)
-                }
-
 
                 return resolver.doResolve(
                   target,
@@ -282,9 +279,8 @@ export class WebpackPlugin {
                 && id.startsWith('.')
               ) {
                 id = resolve(importer, '../', id)
+                const [, project, moduleName] = getProjectAndModule(id) as any
 
-                const [_, project, moduleName] = getProjectAndModule(id) as any          
-       
                 const { data } = await getVirtualContent(
                   `${this.config.remote[project].url}/core/${moduleName}`,
                   project,

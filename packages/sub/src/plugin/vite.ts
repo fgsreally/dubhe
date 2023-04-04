@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
-import { dirname, relative, resolve } from 'path'
+import { dirname, resolve } from 'path'
 import fs from 'fs'
 // eslint-disable-next-line  n/no-deprecated-api
 import { fileURLToPath, resolve as urlResolve } from 'url'
-import { normalizePath } from 'vite'
 import {
   DEFAULT_POLYFILL,
   HMRModuleHandler,

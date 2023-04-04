@@ -90,9 +90,8 @@ export async function downloadFile(url: string, output: string) {
 }
 
 export async function installProjectCache(baseUrl: string, files: string[], project: string) {
-  for (const file of files) {
+  for (const file of files)
     downloadFile(`${baseUrl}/core/${file}`, getLocalPath(project, file))
-  }
 }
 
 export async function installProjectTypes(baseUrl: string, project: string) {

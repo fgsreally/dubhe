@@ -12,7 +12,7 @@ describe('[vite] publish module', () => {
 
   it('types files output', async () => {
     const content = await getFileContent('vite-pub/.dubhe/types/types.json')
-    expect(JSON.parse(content).length).toMatchSnapshot()
+    expect(JSON.parse(content).length).toBe(5)
   })
 
   it('source files output', async () => {

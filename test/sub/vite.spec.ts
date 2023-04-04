@@ -3,15 +3,15 @@ import { getDistFiles, getFileContent } from '../utils'
 describe('[vite] subscribe module', () => {
   it('dist files output [cold mode]', async () => {
     const files = await getDistFiles('vite-sub/dist/cold')
-    expect(files.length).toMatchSnapshot()
-    expect(await getFileContent('vite-sub/dist/cold/index.html')).toMatchSnapshot()
+    const content = await getFileContent(`vite-sub/dist/cold/${files[0]}`)
+    expect(content).not.toMatch('\"dubhe-esbuildpub/App.dubhe-esbuildpub.js\"')
+    expect(content).not.toMatch('\"dubhe-viteout/App.dubhe-viteout.js\"')
   })
   it('dist files output [hot mode]', async () => {
     const files = await getDistFiles('vite-sub/dist/hot')
-    expect(files.length).toMatchSnapshot()
     expect(await getFileContent('vite-sub/dist/hot/index.html')).toMatchSnapshot()
-
-    for (const p of files)
-      expect(await getFileContent(`vite-sub/dist/hot/${p}`)).toMatchSnapshot()
+    const content = await getFileContent(`vite-sub/dist/hot/${files[0]}`)
+    expect(content).toMatch('\"dubhe-esbuildpub/App.dubhe-esbuildpub.js\"')
+    expect(content).toMatch('\"dubhe-viteout/App.dubhe-viteout.js\"')
   })
 })

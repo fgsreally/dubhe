@@ -4,7 +4,7 @@ import MagicString from 'magic-string'
 import fse from 'fs-extra'
 import { parseSync, traverse } from '@babel/core'
 import type { AliasType } from './types'
-import { VIRTUAL_RE, VIRTUAL_PREFIX } from './common'
+import { VIRTUAL_PREFIX, VIRTUAL_RE } from './common'
 import { getLocalPath, getRemoteContent, setLocalContent } from './utils'
 
 export function resolveAlias(alias: Record<string, string> = {}) {
@@ -15,7 +15,6 @@ export function resolveAlias(alias: Record<string, string> = {}) {
     }
   })
 }
-
 
 export function getExternalId(id: string, handler: string | ((id: string) => string)) {
   return typeof handler === 'string' ? handler : handler(id)

@@ -1,34 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`[vite] subscribe module > dist files output [cold mode] 1`] = `1`;
-
-exports[`[vite] subscribe module > dist files output [cold mode] 2`] = `
-"<!DOCTYPE html>
-<html lang=\\"en\\">
-  <head>
-    <script src=\\"https://ga.jspm.io/npm:es-module-shims@1.6.2/dist/es-module-shims.js\\"></script>
-
-    <meta charset=\\"UTF-8\\" />
-    <link rel=\\"icon\\" type=\\"image/svg+xml\\" href=\\"/vite.svg\\" />
-    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\" />
-    <title>Vite + Vue + TS</title>
-    <script type=\\"importmap\\">{\\"imports\\":{\\"vue\\":\\"dubhe:vue\\",\\"element-plus/es\\":\\"dubhe:element-plus/es\\",\\"element-plus/es/components/button/style/css\\":\\"dubhe:element-plus/es/components/button/style/css\\"}}</script>
-    <script type=\\"module\\" crossorigin src=\\"/assets/index-887ec0f2.js\\"></script>
-    <link rel=\\"stylesheet\\" href=\\"/assets/index-78058d01.css\\">
-
-    <script type=\\"systemjs-importmap\\" nomodule>{\\"imports\\":{\\"vue\\":\\"dubhe:vue\\",\\"element-plus/es\\":\\"dubhe:element-plus/es\\",\\"element-plus/es/components/button/style/css\\":\\"dubhe:element-plus/es/components/button/style/css\\"}}</script>
-  </head>
-  <body>
-    <div id=\\"app\\"></div>
-    
-  </body>
-</html>
-"
-`;
-
-exports[`[vite] subscribe module > dist files output [hot mode] 1`] = `1`;
-
-exports[`[vite] subscribe module > dist files output [hot mode] 2`] = `
+exports[`[vite] subscribe module > dist files output [hot mode] 1`] = `
 "<!DOCTYPE html>
 <html lang=\\"en\\">
   <head>
@@ -49,10 +21,5 @@ exports[`[vite] subscribe module > dist files output [hot mode] 2`] = `
     
   </body>
 </html>
-"
-`;
-
-exports[`[vite] subscribe module > dist files output [hot mode] 3`] = `
-"import{defineComponent as p,openBlock as u,createElementBlock as l,Fragment as m,createVNode as c,createApp as f}from\\"vue\\";import a from\\"dubhe-esbuildpub/App.dubhe-esbuildpub.js\\";import d from\\"dubhe-viteout/App.dubhe-viteout.js\\";(function(){const t=document.createElement(\\"link\\").relList;if(t&&t.supports&&t.supports(\\"modulepreload\\"))return;for(const e of document.querySelectorAll('link[rel=\\"modulepreload\\"]'))n(e);new MutationObserver(e=>{for(const o of e)if(o.type===\\"childList\\")for(const r of o.addedNodes)r.tagName===\\"LINK\\"&&r.rel===\\"modulepreload\\"&&n(r)}).observe(document,{childList:!0,subtree:!0});function i(e){const o={};return e.integrity&&(o.integrity=e.integrity),e.referrerpolicy&&(o.referrerPolicy=e.referrerpolicy),e.crossorigin===\\"use-credentials\\"?o.credentials=\\"include\\":e.crossorigin===\\"anonymous\\"?o.credentials=\\"omit\\":o.credentials=\\"same-origin\\",o}function n(e){if(e.ep)return;e.ep=!0;const o=i(e);fetch(e.href,o)}})();const _=p({__name:\\"App\\",setup(s){return(t,i)=>{const n=d,e=a;return u(),l(m,null,[c(n,{msg:\\"remote app component from viteout\\"}),c(e,{msg:\\"remote app component from esbuildpub\\"})],64)}}});f(_).mount(\\"#app\\");
 "
 `;

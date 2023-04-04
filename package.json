@@ -16,7 +16,7 @@
     "example:pub": "pnpm --filter=pub-* run pub ",
     "example:sub": "pnpm --filter=sub-* run dev",
     "example:cold": "pnpm --filter sub-vuecli --filter sub-vite run build",
-    "example:hot": "cross-env HOTBUILD=true pnpm  run example:cold"
+    "example:hot": "cross-env  HOTBUILD=true pnpm  run example:cold"
   },
   "keywords": [],
   "author": "",

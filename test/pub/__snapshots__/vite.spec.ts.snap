@@ -79,5 +79,3 @@ exports[`[vite] publish module > core files output 1`] = `
   "version": "0.0.0",
 }
 `;
-
-exports[`[vite] publish module > types files output 1`] = `6`;

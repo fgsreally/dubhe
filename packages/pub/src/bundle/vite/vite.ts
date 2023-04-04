@@ -146,10 +146,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
             }
           }, 1000)
         }
-
-  
       }
- 
     },
     async generateBundle(_, data) {
       const code = ((data['remoteEntry.js'] as OutputChunk).code

@@ -264,7 +264,6 @@ export class WebpackPlugin {
                 request.request = modulePath
                 if (useVirtualModule) {
                   this.vfs.writeModule(modulePath, data)
-
                 }
 
 
@@ -284,10 +283,7 @@ export class WebpackPlugin {
               ) {
                 id = resolve(importer, '../', id)
 
-
-
-                const [_, project, moduleName] = getProjectAndModule(id)
-          
+                const [_, project, moduleName] = getProjectAndModule(id) as any          
        
                 const { data } = await getVirtualContent(
                   `${this.config.remote[project].url}/core/${moduleName}`,

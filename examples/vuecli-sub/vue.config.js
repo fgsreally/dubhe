@@ -23,7 +23,7 @@ const config = {
     }
   },
   systemjs: true,
-  cache: true,
+  cache: !process.env.DEV,
   types: true,
   injectHtml: {
     importMap: true,

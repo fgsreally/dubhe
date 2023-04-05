@@ -1,7 +1,18 @@
 #!/usr/bin/env zx
 import { $ } from 'zx'
+import waitOn from 'wait-on'
 
-process.env.PATH = `/usr/local/bin:${process.env.PATH}`
+const opts = {
+  resources: [4100].map(port => `http-get://localhost:${port}`),
+  log: true,
+  // vite project need to accept headers
+  headers: {
+    accept: '*/*',
+  },
+  validateStatus(status) {
+    return status >= 200 && status < 300 // default if not provided
+  },
+}
 
 export function sleep(ms = 5000) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -32,6 +43,8 @@ async function start() {
   SubDev()
   await HotBundle()
   await ColdBundle()
+  await waitOn(opts)
+
   $`npm run test:unit`
   $`npm run test:e2e`
 }

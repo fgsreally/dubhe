@@ -1,7 +1,7 @@
 const { defineConfig } = require("@vue/cli-service");
 const { Sub } = require("dubhe-sub/webpack");
 const { DubheResolver } = require("dubhe-sub");
-const path =require('path')
+const path = require("path");
 const AutoImport = require("unplugin-auto-import/webpack");
 const Components = require("unplugin-vue-components/webpack");
 const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
@@ -10,16 +10,17 @@ const config = {
   remote: {
     viteout: {
       url: "http://127.0.0.1:8080",
-      mode: process.env.HOTBUILD?'hot':'cold',
+      mode: process.env.HOTBUILD ? "hot" : "cold",
     }, // remote static server
   },
   externals: (id) => {
-    if(process.env.TEST)
-{    if(id==='vue'||id.includes('element-plus'))
-    return {
-      esm: `dubhe:${id}`,
-      systemjs: `dubhe:${id}`,
-    }}
+    if (process.env.TEST) {
+      if (id === "vue" || id.includes("element-plus"))
+        return {
+          esm: `dubhe:${id}`,
+          systemjs: `dubhe:${id}`,
+        };
+    }
   },
   systemjs: true,
   cache: true,
@@ -33,7 +34,7 @@ const config = {
 const app = new Sub(config);
 module.exports = defineConfig({
   transpileDependencies: true,
-  outputDir:process.env.HOTBUILD?'dist/hot':'dist/cold',
+  outputDir: process.env.HOTBUILD ? "dist/hot" : "dist/cold",
   lintOnSave: false,
   // parallel:false,
   configureWebpack: {
@@ -41,13 +42,13 @@ module.exports = defineConfig({
     experiments: {
       outputModule: true,
     },
-    externalsType: 'module',
-  
+    externalsType: "module",
+
     output: {
-      library: { type: 'module' },
+      library: { type: "module" },
       environment: { module: true },
     },
- 
+
     devServer: {
       setupMiddlewares(m) {
         m.push(app.middleware.bind(app));

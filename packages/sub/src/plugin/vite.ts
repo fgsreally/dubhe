@@ -404,6 +404,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
   const entryMap = {} as Record<string, string>
   const tags = [] as HtmlTagDescriptor[]
   let isFirstTime = true
+  let useDevMode = false
   return {
     name: 'dubhe::dev',
     apply: 'serve',
@@ -436,6 +437,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
             injectTo: 'head',
           })
           projectSet.add(project)
+          useDevMode = true
           log(`${project} use Dev Mode`)
         }
         catch (e) {
@@ -443,6 +445,9 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
       }
     },
     async resolveId(id, i) {
+      if (!useDevMode)
+        return
+
       if (id in entryMap)
         return entryMap[id]
 
@@ -450,11 +455,11 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
 
         return id
 
-      if (state.externalSet.has(i!)) {
-        const { id: resolveImporter } = await this.resolve(i!, 'dubhe') as any
-        const { id: resolveID } = await this.resolve(id, resolveImporter) as any
-        return resolveID
-      }
+      // if (state.externalSet.has(i!)) {
+      //   const { id: resolveImporter } = await this.resolve(i!, 'dubhe') as any
+      //   const { id: resolveID } = await this.resolve(id, resolveImporter) as any
+      //   return resolveID
+      // }
     },
 
     async load(id) {

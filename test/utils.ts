@@ -12,3 +12,8 @@ export async function getDistFiles(p: string) {
 export function isExist(p: string) {
   return fs.existsSync(resolve(process.cwd(), 'examples', p))
 }
+
+export function getImportMap(html: string) {
+  const [,importmap] = html.match(/<script type="importmap">([^\<]*)<\/script>/)!
+  return JSON.parse(importmap)
+}

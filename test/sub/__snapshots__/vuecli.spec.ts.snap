@@ -1,3 +1,15 @@
 // Vitest Snapshot v1
 
-exports[`[vuecli] subscribe module > dist files output [cold mode] 1`] = `"<!doctype html><html lang=\\"\\"><head><meta charset=\\"utf-8\\"><meta http-equiv=\\"X-UA-Compatible\\" content=\\"IE=edge\\"><meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\"><title>Vue App</title><script type=\\"importmap\\">{\\"imports\\":{}}</script><script type=\\"systemjs-importmap\\">{\\"imports\\":{}}</script><script defer=\\"defer\\" src=\\"/js/app.c8836860.js\\"></script><link href=\\"/css/app.213703a1.css\\" rel=\\"stylesheet\\"></head><body><div id=\\"app\\"></div></body></html>"`;
+exports[`[vuecli] subscribe module > dist files output [cold mode] 1`] = `
+{
+  "imports": {},
+}
+`;
+
+exports[`[vuecli] subscribe module > dist files output [hot mode] 1`] = `
+{
+  "imports": {
+    "dubhe-viteout": "http://127.0.0.1:8080/core",
+  },
+}
+`;

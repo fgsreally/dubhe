@@ -1,0 +1,18 @@
+// Vitest Snapshot v1
+
+exports[`[vuecli] subscribe module > dist files output [cold mode] 1`] = `
+{
+  "imports": {},
+}
+`;
+
+exports[`[vuecli] subscribe module > dist files output [hot mode] 1`] = `
+{
+  "imports": {
+    "dubhe-viteout": "http://127.0.0.1:8080/core",
+    "element-plus/es": "dubhe:element-plus/es",
+    "element-plus/es/components/button/style/css": "dubhe:element-plus/es/components/button/style/css",
+    "vue": "dubhe:vue",
+  },
+}
+`;

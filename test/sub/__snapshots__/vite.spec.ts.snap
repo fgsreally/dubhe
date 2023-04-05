@@ -2,7 +2,11 @@
 
 exports[`[vite] subscribe module > dist files output [cold mode] 1`] = `
 {
-  "imports": {},
+  "imports": {
+    "element-plus/es": "dubhe:element-plus/es",
+    "element-plus/es/components/button/style/css": "dubhe:element-plus/es/components/button/style/css",
+    "vue": "dubhe:vue",
+  },
 }
 `;
 
@@ -11,6 +15,7 @@ exports[`[vite] subscribe module > dist files output [hot mode] 1`] = `
   "imports": {
     "dubhe-esbuildpub": "http://127.0.0.1:8081/core",
     "dubhe-viteout": "http://127.0.0.1:8080/core",
+    "vue": "dubhe:vue",
   },
 }
 `;
@@ -25,11 +30,11 @@ exports[`[vite] subscribe module > dist files output [hot mode] 2`] = `
     <link rel=\\"icon\\" type=\\"image/svg+xml\\" href=\\"/vite.svg\\" />
     <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\" />
     <title>Vite + Vue + TS</title>
-    <script type=\\"importmap\\">{\\"imports\\":{\\"dubhe-viteout\\":\\"http://127.0.0.1:8080/core\\",\\"dubhe-esbuildpub\\":\\"http://127.0.0.1:8081/core\\"}}</script>
-    <script type=\\"module\\" crossorigin src=\\"/assets/index-d90a6471.js\\"></script>
+    <script type=\\"importmap\\">{\\"imports\\":{\\"dubhe-viteout\\":\\"http://127.0.0.1:8080/core\\",\\"dubhe-esbuildpub\\":\\"http://127.0.0.1:8081/core\\",\\"vue\\":\\"dubhe:vue\\"}}</script>
+    <script type=\\"module\\" crossorigin src=\\"/assets/index-19a8b30c.js\\"></script>
     <link rel=\\"stylesheet\\" href=\\"/assets/index-78058d01.css\\">
 
-    <script type=\\"systemjs-importmap\\" nomodule>{\\"imports\\":{\\"dubhe-viteout\\":\\"http://127.0.0.1:8080/systemjs\\",\\"dubhe-esbuildpub\\":\\"http://127.0.0.1:8081/systemjs\\"}}</script>
+    <script type=\\"systemjs-importmap\\" nomodule>{\\"imports\\":{\\"dubhe-viteout\\":\\"http://127.0.0.1:8080/systemjs\\",\\"dubhe-esbuildpub\\":\\"http://127.0.0.1:8081/systemjs\\",\\"vue\\":\\"dubhe:vue\\"}}</script>
   </head>
   <body>
     <div id=\\"app\\"></div>

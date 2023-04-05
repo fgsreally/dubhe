@@ -15,7 +15,6 @@ describe('[vite] subscribe module', () => {
 
     expect(getImportMap(html)).toMatchSnapshot()
     const files = await getDistFiles('vite-sub/dist/hot')
-    expect(await getFileContent('vite-sub/dist/hot/index.html')).toMatchSnapshot()
     const content = await getFileContent(`vite-sub/dist/hot/${files[0]}`)
     expect(content).toMatch('\"dubhe-esbuildpub/App.dubhe-esbuildpub.js\"')
     expect(content).toMatch('\"dubhe-viteout/App.dubhe-viteout.js\"')

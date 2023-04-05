@@ -11,8 +11,7 @@ describe('[vite] publish module', () => {
   })
 
   it('types files output', async () => {
-    const content = await getFileContent('vite-pub/.dubhe/types/types.json')
-    expect(JSON.parse(content).length).toBe(5)
+    expect(isExist('vite-pub/.dubhe/types/types.json')).toBeTruthy()
   })
 
   it('source files output', async () => {

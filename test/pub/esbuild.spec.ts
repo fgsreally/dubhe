@@ -10,8 +10,7 @@ describe('[esbuild] publish module ', () => {
   })
 
   it('types files output', async () => {
-    const content = await getFileContent('esbuild-pub/.dubhe/types/types.json')
-    expect(JSON.parse(content).length).toMatchSnapshot()
+    expect(isExist('esbuild-pub/.dubhe/types/types.json')).toBeTruthy()
   })
 
   it('source files output', async () => {

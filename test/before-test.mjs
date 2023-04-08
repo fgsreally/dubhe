@@ -2,8 +2,8 @@
 import { $ } from 'zx'
 import waitOn from 'wait-on'
 
-const opts = {
-  resources: [4100].map(port => `http-get://localhost:${port}`),
+const createOpts = ports => ({
+  resources: ports.map(port => `http-get://localhost:${port}`),
   log: true,
   // vite project need to accept headers
   headers: {
@@ -12,11 +12,7 @@ const opts = {
   validateStatus(status) {
     return status >= 200 && status < 300 // default if not provided
   },
-}
-
-export function sleep(ms = 5000) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
+})
 
 function HotBundle() {
   return $`npm run example:hot`
@@ -39,11 +35,11 @@ function SubDev() {
 async function start() {
   await PubBundle()
   Serve()
-  await sleep()
+  await waitOn(createOpts([8080, 8081]))
   SubDev()
   await HotBundle()
   await ColdBundle()
-  await waitOn(opts)
+  await waitOn(createOpts([4100]))
 
   $`npm run test:unit`
   $`npm run test:e2e`

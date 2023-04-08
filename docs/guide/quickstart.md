@@ -57,7 +57,7 @@ build({
 ```
 
 :::warning 提醒
-顺带一提，`dubhe`没有在生产端支持`webpcak`的计划（实际上是做不到，[详见]()），建议使用`esbuild`代替，
+顺带一提，`dubhe`没有在生产端支持`webpcak`的计划，建议使用`esbuild`代替，
 可以看看[unplugin]()社区有无同时支持`esbuild`，`webpack`的插件
 :::
 

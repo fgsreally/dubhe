@@ -7,7 +7,6 @@ interface PubConfig {
   // 默认：src/dubhe.ts
   entry: string
 
-
   // 是否输出对应源码
   // 默认不输出
   source?: boolean// 是否输出源码
@@ -24,14 +23,12 @@ interface PubConfig {
   // 默认为0.0.0
   version?: string
 
-
   // 项目名称
   project?: string
 
   // 是否输出类型
   // 默认不输出
   types?: boolean
-
 
   // 联调热更新，只用于watch 模式
   HMR?: {
@@ -45,7 +42,7 @@ interface PubConfig {
   dts?: dtsPluginOptions
 
   // 元数据，根据自己需求填
-  meta?:  any
+  meta?: any
 }
 
 ```

@@ -1,3 +1,5 @@
+### 消费端配置
+
 ```ts
 interface SubConfig {
 // 共用cdn依赖，不填会自动判断

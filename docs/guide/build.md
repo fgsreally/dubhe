@@ -5,7 +5,7 @@
 
 ## 垫片
 
-如果希望热模式在非 esm 下工作，需要降级为`systemjs`，可以在配置项中注入垫片。
+如果希望热模式在非 esm 下工作，需要降级为`systemjs`，可以在配置项中注入垫片。垫片为cdn形式
 
 ```ts
 export default {
@@ -21,3 +21,4 @@ export default {
   },
 }
 ```
+> `importmap`其实没有那么理想，比如一旦创建以后，无法更改且全局唯一，反而`systemjs`能提供灵活的动态能力，也许只使用`systemjs`是一个更好的方式

@@ -10,12 +10,14 @@ import {
   VIRTUAL_EMPTY,
   VIRTUAL_PREFIX,
   VIRTUAL_RE,
+  getExposeFromBundle,
+  getFormatDate,
   getRemoteContent,
   getTypes,
   getVirtualContent,
-  log,
-  patchVersion,
-  resolveModuleAlias, resolvePathToModule,
+  log, patchVersion,
+  resolveModuleAlias,
+  resolvePathToModule,
   updateLocalRecord,
 } from 'dubhe'
 import type { HtmlTagDescriptor, ModuleNode, PluginOption, Update, ViteDevServer } from 'vite'
@@ -23,7 +25,7 @@ import colors from 'colors'
 import sirv from 'sirv'
 
 import type {
-  RemoteListType,
+  PubListType,
   SubConfig,
 } from 'dubhe'
 import { state } from '../state'
@@ -199,9 +201,9 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           const { url, mode } = config.remote[i]
           // eslint-disable-next-line prefer-const
           let { data, isCache } = await getVirtualContent(
-            `${url}/core/remoteList.json`,
+            `${url}/core/dubheList.json`,
             i,
-            'remoteList.json',
+            'dubheList.json',
             config.cache,
           )
           if (mode === 'hot' && command === 'build') {
@@ -209,8 +211,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             state.systemjsImportMap[`dubhe-${i}`] = urlResolve(url, 'systemjs')
           }
 
-          const dubheConfig: RemoteListType = JSON.parse(data)
-          state.remoteListMap[i] = dubheConfig
+          const dubheConfig: PubListType = JSON.parse(data)
+          state.pubListMap[i] = dubheConfig
           dubheConfig.externals.forEach(item => state.externalSet.add(item))
 
           if (config.types)
@@ -219,7 +221,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             if (isCache) {
               try {
                 const remoteInfo = await getRemoteContent(
-                  `${url}/core/remoteList.json`,
+                  `${url}/core/dubheList.json`,
                 )
 
                 if (!patchVersion(remoteInfo.version, dubheConfig.version)) {
@@ -232,7 +234,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
               catch (e) {
                 log(`--Project [${i}] Use Offline Mode--`)
               }
-              // const localInfo: RemoteListType = remoteInfo
+              // const localInfo: PubListType = remoteInfo
             }
             else {
               log(`--Project [${i}] Create Local Cache--`)
@@ -322,18 +324,24 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         }
       })
     },
-    // generateBundle(p, data) {
-    //   if (config.importMap)
-    //     return
-    //   for (const i in data) {
-    //     if (/\.js$/.test(i)) {
-    //       (data[i] as OutputChunk).code = replaceBundleImportDeclarations(
-    //         (data[i] as OutputChunk).code,
-    //         externalsMap,
-    //       )
-    //     }
-    //   }
-    // },
+    generateBundle(_, bundle) {
+      const importsGraph = getExposeFromBundle(bundle)
+
+      const metaData = {
+        type: 'subscribe',
+        meta: config.meta || null,
+        timestamp: getFormatDate(),
+        externals: [...state.externalSet],
+        importsGraph,
+
+      }
+      this.emitFile({
+        type: 'asset',
+        name: 'dubheList',
+        fileName: 'dubheList.json',
+        source: JSON.stringify(metaData),
+      })
+    },
     transformIndexHtml(html: string) {
       if (command !== 'build')
         return
@@ -365,7 +373,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       if (config.polyfill) {
         if (config.polyfill.systemjs) {
           tags.push({
-            // importmap polyfill
+            // systemjs polyfill
             tag: 'script',
             attrs: {
               nomodule: true,

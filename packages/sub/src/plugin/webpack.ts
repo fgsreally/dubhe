@@ -7,7 +7,7 @@ import { DEFAULT_POLYFILL, HMRModuleHandler, HMRTypesHandler, VIRTUAL_RE, getLoc
 import { DefinePlugin } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
-import type { RemoteListType, SubConfig } from 'dubhe'
+import type { PubListType, SubConfig } from 'dubhe'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import { state } from '../state'
 
@@ -69,13 +69,13 @@ export class WebpackPlugin {
         try {
           // eslint-disable-next-line prefer-const
           let { data, isCache } = await getVirtualContent(
-            `${this.config.remote[i].url}/core/remoteList.json`,
+            `${this.config.remote[i].url}/core/dubheList.json`,
             i,
-            'remoteList.json',
+            'dubheList.json',
             this.config.cache,
           )
-          const dubheConfig: RemoteListType = JSON.parse(data)
-          state.remoteListMap[i] = dubheConfig
+          const dubheConfig: PubListType = JSON.parse(data)
+          state.dubheListMap[i] = dubheConfig
           dubheConfig.externals.forEach(item => state.externalSet.add(item))
           // if (dubheConfig.config.importMap)
           //   isImportMap = true
@@ -103,7 +103,7 @@ export class WebpackPlugin {
             if (isCache) {
               try {
                 const remoteInfo = await getRemoteContent(
-                  `${this.config.remote[i].url}/core/remoteList.json`,
+                  `${this.config.remote[i].url}/core/dubheList.json`,
                 )
 
                 if (!patchVersion(remoteInfo.version, dubheConfig.version)) {
@@ -116,7 +116,7 @@ export class WebpackPlugin {
               catch (e) {
                 log(`--Project [${i}] Use Offline Mode--`)
               }
-              // const localInfo: RemoteListType = remoteInfo
+              // const localInfo: PubListType = remoteInfo
             }
             else {
               log(`--Project [${i}] Create Local Cache--`)

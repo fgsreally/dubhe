@@ -40,7 +40,7 @@ export interface PubConfig {
   source?: boolean
   outDir?: string
   entry: Record<string, string>
-  externals: (id: string) => boolean | void
+  externals: (id: string) => boolean | { esm?: string; systemjs?: string } | void
   version?: string
   project?: string
   types?: boolean
@@ -49,7 +49,7 @@ export interface PubConfig {
   HMR?: { port: string }[]
   dts?: dtsPluginOptions
   meta?: any
-  beforeEmit?: (param: RemoteListType) => void
+  beforeEmit?: (param: PubListType) => void
 }
 
 export interface SubConfig {
@@ -70,8 +70,9 @@ export interface SubConfig {
 
 }
 
-export interface RemoteListType {
+export interface PubListType {
   from: 'vite' | 'esbuild'
+  type: 'publish'
   files: string[]
   version: string
   externals: string[]
@@ -80,8 +81,17 @@ export interface RemoteListType {
   sourceGraph: { [key: string]: string[] }
   importsGraph: { [key: string]: string[] }
   bundleGraph: { [key: string]: string[] }
-
   timestamp: number
+  meta?: any
+
+}
+
+export interface SubListType {
+  type: 'subscibe'
+  importsGraph: { [key: string]: string[] }
+  timestamp: number
+  meta?: any
+
 }
 
 export type ModulePathMap = { [key in string]: string }

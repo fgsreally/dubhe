@@ -49,7 +49,7 @@ export async function getRemoteList() {
 export async function analyseDep(dubheConfig: SubConfig) {
   const ret = {} as Record<string, Set<string>>
   for (const project in dubheConfig.remote) {
-    const remoteConfig = await getRemoteContent(`${dubheConfig.remote[project].url}/core/remoteList.json`)
+    const remoteConfig = await getRemoteContent(`${dubheConfig.remote[project].url}/core/dubheList.json`)
     if (!remoteConfig)
       continue
     for (const dep in remoteConfig.importsGraph) {

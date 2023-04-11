@@ -30,15 +30,15 @@ cli
   .command('detect', 'contrast cache version & remote version')
   .alias('det')
   .action(async () => {
-    const remoteList = await getRemoteList()
-    for (const project in remoteList) {
-      const PubConfig = await getRemoteContent(`${remoteList[project].url}/core/remoteList.json`)
+    const dubheList = await getRemoteList()
+    for (const project in dubheList) {
+      const PubConfig = await getRemoteContent(`${dubheList[project].url}/core/dubheList.json`)
 
       try {
         // const localConfig = fse.readJSONSync(
-        //   resolve(root, '.dubhe', 'cache', project, 'remoteList.json'),
+        //   resolve(root, '.dubhe', 'cache', project, 'dubheList.json'),
         // )
-        const localConfig = await getLocalContent(project, 'remoteList.json')
+        const localConfig = await getLocalContent(project, 'dubheList.json')
         if (!localConfig) {
           log(`project:${project} cache doesn't exist`, 'yellow')
           continue
@@ -69,15 +69,15 @@ cli
   .action(async (projectId, option) => {
     if (!projectId)
       return
-    const remoteList = await getRemoteList()
+    const dubheList = await getRemoteList()
 
     const [project, id] = projectId.split('/')
 
-    if (!(project in remoteList)) {
+    if (!(project in dubheList)) {
       log(`Project:${project} does't exist in local records`, 'red')
       return
     }
-    const { data: PubConfig } = await getRemoteContent(`${remoteList[project].url}/core/remoteList.json`)
+    const { data: PubConfig } = await getRemoteContent(`${dubheList[project].url}/core/dubheList.json`)
 
     if (PubConfig.from === 'vite') {
       const file = PubConfig.entryFileMap[id]
@@ -93,7 +93,7 @@ cli
         if (!isExist(outputPath)) {
           try {
             downloadFile(
-              `${remoteList[project].url}/source/${i}`,
+              `${dubheList[project].url}/source/${i}`,
               outputPath,
             )
           }
@@ -107,7 +107,7 @@ cli
     if (PubConfig.from === 'esbuild') {
       PubConfig.entryFileMap.files.forEach((item: string) => {
         downloadFile(
-          `${remoteList[project].url}/source/${item}`,
+          `${dubheList[project].url}/source/${item}`,
           resolve(root, option.path, project, item),
         )
       })
@@ -124,8 +124,8 @@ cli
   //   default: false,
   // })
   .action(async (project) => {
-    const remoteList = await getRemoteList()
-    if (!(project in remoteList))
+    const dubheList = await getRemoteList()
+    if (!(project in dubheList))
       return
     removeLocalCache(project)
     removeLocalType(project)
@@ -138,24 +138,24 @@ cli
     default: false,
   })
   .action(async (options) => {
-    const { remote: remoteList } = await getWorkSpaceConfig()
+    const { remote: dubheList } = await getWorkSpaceConfig()
 
     // const dubheConfig = await getConfig()
 
-    for (const project in remoteList) {
+    for (const project in dubheList) {
       try {
-        const remoteConfig = await getRemoteContent(`${remoteList[project].url}/core/remoteList.json`)
-        const localConfig = await getLocalContent(project, 'remoteList.json').catch(() => {
+        const remoteConfig = await getRemoteContent(`${dubheList[project].url}/core/dubheList.json`)
+        const localConfig = await getLocalContent(project, 'dubheList.json').catch(() => {
           return {}
         })
 
         if (options.force || !localConfig.version || !patchVersion(remoteConfig.version, localConfig.version)) {
           log(`Install [${project}] cache`)
-          await installProjectCache(remoteList[project].url, ['remoteList.json', ...remoteConfig.files], project)
+          await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files], project)
           log(`Install [${project}] types`)
-          installProjectTypes(remoteList[project].url, project)
+          installProjectTypes(dubheList[project].url, project)
           updateTsConfig(project, remoteConfig.entryFileMap)
-          updateLocalRecord(remoteList)
+          updateLocalRecord(dubheList)
         }
       }
       catch (e) {
@@ -165,8 +165,8 @@ cli
     }
   })
 cli.command('link', 'link types cache to workspace').action(async () => {
-  const { remote: remoteList } = await getWorkSpaceConfig()
-  for (const project in remoteList) {
+  const { remote: dubheList } = await getWorkSpaceConfig()
+  for (const project in dubheList) {
     const typsFiles = await fse.readJSON(getTypePathInCache(project, 'types.json'))
     linkTypes(project, typsFiles)
     log('Link success')
@@ -194,7 +194,7 @@ cli.command('export', 'get remote module exports')
   .option('--project, -p [p]', '[string] project name')
   .action(async (options) => {
     const { project } = options
-    const PubConfig = await getLocalContent(project, 'remoteList.json')
+    const PubConfig = await getLocalContent(project, 'dubheList.json')
     for (const i of PubConfig.alias) {
       const text = await getLocalContent(project, `${i.url}.js`)
       log(`dubhe-${project}/${i.name}:`)

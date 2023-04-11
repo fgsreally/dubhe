@@ -152,6 +152,7 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         }
 
         const metaData = {
+          type: 'publish',
           from: 'esbuild',
           meta: config.meta,
           version: config.version || '0.0.0',
@@ -166,7 +167,7 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         } as any
         if (config.beforeEmit)
           await config.beforeEmit(metaData)
-        fse.outputJSON(resolve(root, outdir, 'core', 'remoteList.json'), metaData)
+        fse.outputJSON(resolve(root, outdir, 'core', 'dubheList.json'), metaData)
       })
     },
   }

@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
 import { resolve } from 'path'
 import { Pub } from 'dubhe-pub/vite'
 import type { HtmlTagDescriptor, PluginOption } from 'vite'
 import type { PubConfig } from 'dubhe-pub'
-import { execa } from 'execa'
+
 import { DEFAULT_POLYFILL } from 'dubhe-pub'
 import { state } from './state'
 export { state }
@@ -19,7 +18,7 @@ export type FederationType = PubConfig & {
  * @experiment
  * it only work when following rules
  */
-export default function (options: FederationType): PluginOption {
+export function Federation(options: FederationType): PluginOption {
   const entries: Record<string, string> = {}
   let cwd: string
   if (process.pid !== process.ppid) {
@@ -28,9 +27,11 @@ export default function (options: FederationType): PluginOption {
     return [{
       name: 'dubhe-bundle',
       apply: 'build',
-      config() {
-        execa('vite', process.argv.slice(2)).then(({ stdout }) => {
-          console.log(stdout)
+      async config() {
+        const { execa } = await import('execa')
+        execa('vite', process.argv.slice(2)).then(({ stdout, stderr }) => {
+          // console.log(stdout)
+          console.error(stderr)
         })
       },
     }, Pub(options)]

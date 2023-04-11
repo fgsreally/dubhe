@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-// import { Remote } from 'tianshu/vite'
-import { Pub } from 'dubhe-pub/vite'
+import { Federation } from 'dubhe-vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
@@ -21,7 +20,7 @@ export default defineConfig({
     cors: true,
   },
 
-  plugins: [vue(), Pub(config),
+  plugins: [vue(), Federation(config),
 
     AutoImport({
       resolvers: [ElementPlusResolver()],

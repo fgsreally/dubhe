@@ -8,8 +8,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup && yarn build:view",
-    "build:view": "vite build"
+    "build": "tsup "
   },
   "keywords": [],
   "files": [

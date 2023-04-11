@@ -8,10 +8,10 @@ import { log } from 'debug'
 import pkgs from '../../package.json'
 import { CACHE_ROOT, TYPE_ROOT } from '../common'
 import { esmToSystemjs } from '../babel'
-import { removeLocalCache, removeLocalType, updateLocalRecord } from '../cache'
+import { getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, removeLocalCache, removeLocalType, updateLocalRecord } from '../cache'
 import { linkTypes } from '../dts'
-import { getLocalContent, getLocalPath, getPkgName, getRemoteContent, getTypePathInCache, patchVersion } from '../utils'
-import { analyseDep, downloadFile, generateExports, getRemoteList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist, updateTsConfig } from './utils'
+import { getPkgName, patchVersion } from '../utils'
+import { analyseDep, downloadFile, generateExports, getDubheList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist, updateTsConfig } from './utils'
 import { buildExternal } from './build'
 const root = process.cwd()
 
@@ -30,7 +30,7 @@ cli
   .command('detect', 'contrast cache version & remote version')
   .alias('det')
   .action(async () => {
-    const dubheList = await getRemoteList()
+    const dubheList = await getDubheList()
     for (const project in dubheList) {
       const PubConfig = await getRemoteContent(`${dubheList[project].url}/core/dubheList.json`)
 
@@ -69,7 +69,7 @@ cli
   .action(async (projectId, option) => {
     if (!projectId)
       return
-    const dubheList = await getRemoteList()
+    const dubheList = await getDubheList()
 
     const [project, id] = projectId.split('/')
 
@@ -124,7 +124,7 @@ cli
   //   default: false,
   // })
   .action(async (project) => {
-    const dubheList = await getRemoteList()
+    const dubheList = await getDubheList()
     if (!(project in dubheList))
       return
     removeLocalCache(project)

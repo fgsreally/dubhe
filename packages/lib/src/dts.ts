@@ -6,7 +6,7 @@ import { parse } from 'es-module-lexer'
 import { normalizePath } from 'vite'
 import axios from 'axios'
 import fse from 'fs-extra'
-import { getTypePathInCache, getTypePathInWorkspace, log } from './utils'
+import { log } from './utils'
 import {
   TS_CONFIG_PATH,
   TYPE_ROOT,
@@ -16,6 +16,7 @@ import type {
   ModulePathMap,
 
 } from './types'
+import { getTypePathInCache, getTypePathInWorkspace } from './cache'
 
 export async function analyseTSEntry(code: string) {
   const [imports, exports] = await parse(code)

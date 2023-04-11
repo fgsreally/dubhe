@@ -6,9 +6,9 @@ import { normalizePath } from 'vite'
 import fse from 'fs-extra'
 import { loadConfig } from 'unconfig'
 import { log } from 'debug'
-import { getLocalRecord } from '../cache'
+import { getLocalPath, getLocalRecord, getRemoteContent, getTypePathInCache } from '../cache'
 import type { SubConfig } from '../types'
-import { getLocalPath, getPkgName, getRemoteContent, getTypePathInCache } from '../utils'
+import { getPkgName } from '../utils'
 
 const root = process.cwd()
 
@@ -41,7 +41,7 @@ export async function getWorkSpaceConfig() {
   return config as any
 }
 
-export async function getRemoteList() {
+export async function getDubheList() {
   const workspaceConfig = await getWorkSpaceConfig()
   return Object.assign(await getLocalRecord(), workspaceConfig.remote)
 }

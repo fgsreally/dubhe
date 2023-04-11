@@ -1,12 +1,13 @@
-import { basename, extname } from 'path'
+import { basename, extname, relative } from 'path'
 import { parse } from 'es-module-lexer'
 import MagicString from 'magic-string'
 import fse from 'fs-extra'
 import { parseSync, traverse } from '@babel/core'
 import type { OutputBundle, OutputChunk } from 'rollup'
+import { normalizePath } from 'vite'
 import type { AliasType } from './types'
-import { VIRTUAL_PREFIX, VIRTUAL_RE } from './common'
-import { getLocalPath, getRemoteContent, setLocalContent } from './utils'
+import { CACHE_ROOT, VIRTUAL_PREFIX, VIRTUAL_RE } from './common'
+import { getLocalPath, getRemoteContent, setLocalContent } from './cache'
 export function resolveAlias(alias: Record<string, string> = {}) {
   return Object.entries(alias).map((item) => {
     return {
@@ -194,4 +195,8 @@ export function replaceBundleImportDeclarations(
   // });
   // newSource += source.substring(start, end);
   return newSource.toString()
+}
+
+export function getProjectAndModule(path: string) {
+  return normalizePath(relative(CACHE_ROOT, path)).match(/(.*)\/(.*)/)
 }

@@ -1,11 +1,8 @@
 import { resolve } from 'path'
 import { parse } from 'es-module-lexer'
 import MagicString from 'magic-string'
-import {
-  getPackageInfo,
-} from 'local-pkg'
+
 import fse from 'fs-extra'
-import { getPkgName } from './utils'
 export function copySourceFile(p: string, outdir: string) {
   if (fse.existsSync(resolve(process.cwd(), p)))
     fse.copy(p, resolve(process.cwd(), outdir, 'source', p))
@@ -16,6 +13,7 @@ export function isSourceFile(fp: string) {
 }
 
 // work for vite/rollup
+// create virtual entry
 export async function createEntryFile(entryFiles: Record<string, string>) {
   return await fse.outputFile(resolve(process.cwd(), 'dubhe.ts'), Object.entries(entryFiles).reduce((p, c) => {
     return `${p}export const ${c[0]}= () => import('${c[1]}')\n`
@@ -23,7 +21,7 @@ export async function createEntryFile(entryFiles: Record<string, string>) {
 }
 
 export function replaceEntryFile(code: string, source: string) {
-  // work for vite^3
+  // work for vite^3 virtual entry
   const [i1] = parse(source, 'optional-sourcename')
   const [i2] = parse(code, 'optional-sourcename')
   const newSource = new MagicString(source)
@@ -34,10 +32,3 @@ export function replaceEntryFile(code: string, source: string) {
   return newSource.toString()
 }
 
-export async function getLocalPkgVersion(pkgname: string) {
-  const name = getPkgName(pkgname)
-  const info = await getPackageInfo(name)
-  return {
-    name, version: info?.version,
-  }
-}

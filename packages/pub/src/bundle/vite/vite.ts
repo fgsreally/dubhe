@@ -45,7 +45,7 @@ const externalSet = new Set<string>()
 // let vendor: string[]
 const root = process.cwd()
 
-export function isExternal(id: string, handler: (param: string) => boolean | void) {
+export function isExternal(id: string, handler: (param: string) => any) {
   return handler(id)
 }
 
@@ -211,14 +211,6 @@ export function BundlePlugin(config: PubConfig): PluginOption {
       }
       for (const i in sourceGraph)
         outputSourceGraph[i] = [...sourceGraph[i]]
-
-      // if (!HMRconfig.changeFile) {
-      //   for (const i in outputimportsGraph) {
-      //     const { name, version } = await getLocalPkgVersion(i)
-      //     if (!(name in pkgVersionMap))
-      //       pkgVersionMap[name] = version as any
-      //   }
-      // }
 
       metaData = {
         type: 'publish',

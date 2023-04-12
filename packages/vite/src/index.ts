@@ -30,7 +30,7 @@ export function Federation(options: FederationType): PluginOption {
       async config() {
         const { execa } = await import('execa')
         execa('vite', process.argv.slice(2)).then(({ stdout, stderr }) => {
-          // console.log(stdout)
+          console.log(stdout)
           console.error(stderr)
         })
       },

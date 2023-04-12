@@ -104,7 +104,7 @@ export async function linkTypes(project: string, fileSet: string) {
     try {
       const dest = getTypePathInWorkspace(project, file)
       await fse.ensureDir(dirname(dest))
-      await fse.symlink(getTypePathInCache(project, file), dest)
+      await fse.symlink(getTypePathInCache(project, file), dest, 'junction')
     }
     catch (e) {
       log('fail to create symlink', 'red')

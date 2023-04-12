@@ -67,6 +67,7 @@ export interface SubConfig {
     systemjs?: string | boolean
     importMap?: string | boolean
   }
+  meta?: any
 
 }
 

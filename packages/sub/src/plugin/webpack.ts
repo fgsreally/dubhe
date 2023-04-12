@@ -75,7 +75,7 @@ export class WebpackPlugin {
             this.config.cache,
           )
           const dubheConfig: PubListType = JSON.parse(data)
-          state.dubheListMap[i] = dubheConfig
+          state.pubListMap[i] = dubheConfig
           dubheConfig.externals.forEach(item => state.externalSet.add(item))
           // if (dubheConfig.config.importMap)
           //   isImportMap = true

@@ -170,26 +170,35 @@ cli.command('link', 'link types cache to workspace').action(async () => {
   for (const project in dubheList) {
     const typsFiles = await fse.readJSON(getTypePathInCache(project, 'types.json'))
     linkTypes(project, typsFiles)
-    log('Link success')
+    log(`Link [${project}] success`)
   }
 })
-cli.command('transform <dir> <to>', 'transform esm to systemjs').action(async (dir = '', to = 'system') => {
-  const cwd = resolve(root, dir)
-  const entries = await fg(['**/*'], { cwd })
-
-  await fse.ensureDir(resolve(root, to))
-  entries.forEach(async (entry) => {
-    const filePath = resolve(cwd, entry)
-    const destPath = resolve(root, to, entry)
-    if (filePath.endsWith('.js')) {
-      const source = await fse.readFile(filePath, 'utf-8')
-      fse.outputFile(destPath, await esmToSystemjs(source, entry))
-    }
-    else {
-      fse.copyFile(filePath, destPath)
-    }
+cli.command('transform ', 'transform esm to systemjs')
+  .option('--dir', '[string] esm files dir ', {
+    default: 'core',
   })
-})
+  .option('--to', '[string] systemjs files output dir', {
+    default: 'systemjs',
+  })
+  .action(async (options) => {
+    const { dir, to } = options
+    const cwd = resolve(root, dir)
+    const entries = await fg(['**/*'], { cwd })
+    const dest = resolve(root, to)
+    await fse.ensureDir(dest)
+    entries.forEach(async (entry) => {
+      const filePath = resolve(cwd, entry)
+      const destPath = resolve(root, to, entry)
+      if (filePath.endsWith('.js')) {
+        const source = await fse.readFile(filePath, 'utf-8')
+        fse.outputFile(destPath, await esmToSystemjs(source, entry))
+      }
+      else {
+        fse.copyFile(filePath, destPath)
+      }
+    })
+    log(`create systemjs files success to ${dest}`)
+  })
 
 cli.command('export', 'get remote module exports')
   .option('--project, -p [p]', '[string] project name')

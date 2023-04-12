@@ -212,9 +212,7 @@ cli
     'bundle external dependence for function-level treeshake',
   )
   .alias('b')
-  .option('--outDir, -o [o]', '[string] outDir for vite output', {
-    default: 'dist',
-  })
+
   .option('--outDir, -o [o]', '[string] outDir for vite output', {
     default: 'dist',
   })

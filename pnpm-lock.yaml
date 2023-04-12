@@ -112,7 +112,7 @@ importers:
         specifier: ^4.0.1
         version: registry.npmmirror.com/@vitejs/plugin-legacy@4.0.1(terser@5.16.3)(vite@4.1.1)
       dubhe:
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/lib
       dubhe-sub:
         specifier: workspace:*

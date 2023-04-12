@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { Federation } from 'dubhe-vite'
+// import { Remote } from 'tianshu/vite'
+import { Pub } from 'dubhe-pub/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
@@ -13,14 +14,13 @@ export default defineConfig({
       '@': 'src',
     },
   },
-  base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/',
 
   server: {
     port: 8080,
     cors: true,
   },
 
-  plugins: [vue(), Federation(config),
+  plugins: [vue(), Pub(config),
 
     AutoImport({
       resolvers: [ElementPlusResolver()],

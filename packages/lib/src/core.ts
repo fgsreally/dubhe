@@ -148,6 +148,9 @@ export function getExposeFromBundle(bundle: OutputBundle) {
       Object.entries((bundle[i] as OutputChunk).importedBindings).forEach(
         (item) => {
           const packageName = item[0]
+          // importsGraph should not includes remote project in hot mode
+          if (packageName.startsWith('dubhe-'))
+            return
           if (!(packageName in bundle)) {
             if (!importsGraph[packageName])
               importsGraph[packageName] = new Set()

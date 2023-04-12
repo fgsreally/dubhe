@@ -135,6 +135,7 @@ export function updateTsConfig(project: string, fileMap: Record<string, string>)
     tsconfig = {
       compilerOptions: {
         baseUrl: '.',
+        composite: true,
         paths: {},
       },
     }

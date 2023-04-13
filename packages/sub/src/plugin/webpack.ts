@@ -3,11 +3,11 @@
 /* eslint-disable no-async-promise-executor */
 import { resolve } from 'path'
 import { resolve as urlResolve } from 'url'
-import { DEFAULT_POLYFILL, HMRModuleHandler, HMRTypesHandler, VIRTUAL_RE, getLocalPath, getProjectAndModule, getRemoteContent, getTypes, getVirtualContent, isLocalPath, log, patchVersion, resolveModuleAlias, updateLocalRecord } from 'dubhe'
-import { DefinePlugin } from 'webpack'
+import { DEFAULT_POLYFILL, HMRModuleHandler, HMRTypesHandler, VIRTUAL_RE, getFormatDate, getLocalPath, getProjectAndModule, getRemoteContent, getTypes, getVirtualContent, isLocalPath, log, patchVersion, resolveModuleAlias, updateLocalRecord } from 'dubhe'
+import { DefinePlugin, config } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
-import type { PubListType, SubConfig } from 'dubhe'
+import type { PubListType, SubConfig, SubListType } from 'dubhe'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import { state } from '../state'
 
@@ -59,7 +59,7 @@ export class WebpackPlugin {
   apply(compiler: Compiler) {
     updateLocalRecord(this.config.remote)
     const { mode, devServer } = compiler.options
-    const { injectHtml, externals, polyfill } = this.config
+    const { injectHtml, externals, polyfill, version, meta } = this.config
     // virtualmodule does't work when using multiprocess bundle
     const useVirtualModule = !this.config.cache
     compiler.options.externals = []
@@ -228,6 +228,55 @@ export class WebpackPlugin {
         )
       })
     }
+    const importsGraph = {} as Record<string, Set<string>>
+
+    compiler.hooks.normalModuleFactory.tap('dubhe::subscribe', (factory) => {
+      factory.hooks.parser
+        .for('javascript/auto')
+        .tap('dubhe::subscribe', (parser) => {
+          parser.hooks.importSpecifier.tap(
+            'dubhe::subscribe',
+            // @ts-expect-error miss types
+            (_state, source, exportName) => {
+              if (externals(source)) {
+                if (!importsGraph[source])
+                  importsGraph[source] = new Set()
+                importsGraph[source].add(exportName)
+              }
+              /* First call
+              source == 'lodash'
+              exportName == 'default'
+              identifierName == '_'
+            */
+              /* Second call
+              source == 'lodash'
+              exportName == 'has'
+              identifierName == 'has'
+            */
+            },
+          )
+        })
+    })
+    compiler.hooks.emit.tapAsync('dubhe::subscibe', (compilation, callback) => {
+      for (const i in importsGraph)
+        importsGraph[i] = [...importsGraph[i]] as any
+      const metaData = {
+        type: 'subscribe',
+        version,
+        timestamp: getFormatDate(),
+        externals: [...state.externalSet],
+        meta,
+        importsGraph,
+      } as unknown as SubListType
+
+      const content = JSON.stringify(metaData)
+      compilation.assets['dubheList.json'] = {
+        source: () => content,
+        size: () => content.length,
+      } as any
+
+      callback()
+    })
     compiler.hooks.environment.tap('dubhe::subscibe', async () => {
       await initlize
     })

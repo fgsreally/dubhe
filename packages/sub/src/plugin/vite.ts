@@ -14,8 +14,8 @@ import {
   getFormatDate,
   getRemoteContent,
   getTypes,
-  getVirtualContent,
-  log, patchVersion,
+  getVirtualContent, log,
+  patchVersion,
   resolveModuleAlias,
   resolvePathToModule,
   updateLocalRecord,
@@ -27,6 +27,8 @@ import sirv from 'sirv'
 import type {
   PubListType,
   SubConfig,
+
+  SubListType,
 } from 'dubhe'
 import { state } from '../state'
 
@@ -329,12 +331,13 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
       const metaData = {
         type: 'subscribe',
-        meta: config.meta || null,
+        version: config.version,
         timestamp: getFormatDate(),
         externals: [...state.externalSet],
+        meta: config.meta,
         importsGraph,
+      } as unknown as SubListType
 
-      }
       this.emitFile({
         type: 'asset',
         name: 'dubheList',

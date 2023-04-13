@@ -54,7 +54,7 @@ export interface PubConfig {
 
 export interface SubConfig {
   externals: (id: string) => { esm?: string; systemjs?: string } | void
-  version?: number
+  version?: string
   remote: Record<string, {
     url: string
     mode?: 'hot' | 'cold'
@@ -92,7 +92,7 @@ export interface SubListType {
   importsGraph: { [key: string]: string[] }
   timestamp: number
   meta?: any
-
+  version?: string
 }
 
 export type ModulePathMap = { [key in string]: string }

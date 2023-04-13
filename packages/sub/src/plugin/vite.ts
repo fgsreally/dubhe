@@ -100,7 +100,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
   updateLocalRecord(config.remote)
   const projectSet = new Set<string>()
   const devHelper = DevPlugin(config, projectSet)
-
+  const query = (config.query || (config.version && `v=${config.version}`))
   // 返回的是插件对象
   return [devHelper, {
     name: 'dubhe::subscribe',
@@ -124,7 +124,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       // for dubhe remote module which is in hot mode
       if (command === 'build' && config.remote[project]?.mode === 'hot') {
         return {
-          id: module,
+          id: module + query ? `?${query}` : '',
           external: true,
         }
       }

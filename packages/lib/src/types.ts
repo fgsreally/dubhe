@@ -68,7 +68,7 @@ export interface SubConfig {
     importMap?: string | boolean
   }
   meta?: any
-
+  query?: string
 }
 
 export interface PubListType {

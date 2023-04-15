@@ -44,10 +44,13 @@ export function updateTSconfig(project: string, modulePathMap: ModulePathMap) {
   }
 
   for (const i in modulePathMap) {
-    const jsPath = normalizePath(
+    // js file should not be written into tsconfig
+    if (modulePathMap[i].endsWith('.js'))
+      continue
+    const tsPath = normalizePath(
           `./${join('.dubhe/types', `${project}`, modulePathMap[i])}`,
     )
-    tsconfig.compilerOptions.paths[`dubhe-${project}/${i}`] = [jsPath]
+    tsconfig.compilerOptions.paths[`dubhe-${project}/${i}`] = [tsPath]
   }
   fse.outputJSON(TS_CONFIG_PATH, tsconfig)
 }

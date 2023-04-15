@@ -9,8 +9,8 @@ import pkgs from '../../package.json'
 import { CACHE_ROOT, TYPE_ROOT } from '../common'
 import { esmToSystemjs } from '../babel'
 import { getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, removeLocalCache, removeLocalType, updateLocalRecord } from '../cache'
-import { linkTypes } from '../dts'
-import { analysePubDep, analyseSubDep, downloadFile, generateExports, getDubheList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist, updateTsConfig } from './utils'
+import { linkTypes, updateTSconfig } from '../dts'
+import { analysePubDep, analyseSubDep, downloadFile, generateExports, getDubheList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist } from './utils'
 import { buildExternal } from './build'
 const root = process.cwd()
 
@@ -157,7 +157,7 @@ cli
         else {
           log(`${project} doesn't need update`)
         }
-        updateTsConfig(project, remoteConfig.entryFileMap)
+        updateTSconfig(project, remoteConfig.entryFileMap)
       }
       catch (e) {
         log(`Install [${project}] cache fail`, 'red')

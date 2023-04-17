@@ -1,5 +1,4 @@
 export * from './utils'
-export * from './base'
 export * from './types'
 export * from './common'
 export * from './pub'

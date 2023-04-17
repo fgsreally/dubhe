@@ -18,6 +18,7 @@ import {
   copySourceFile,
   createEntryFile,
   getAlias,
+  getExposeFromBundle,
   getFormatDate,
   getRelatedPath,
   isSourceFile,
@@ -38,13 +39,13 @@ const entryFileMap: { [key: string]: string } = {}
 let metaData: any
 let alias: { name: string; url: string }[]
 const sourceGraph: { [key: string]: Set<string> } = {}
-const importsGraph: { [key: string]: Set<string> } = {}
+let importsGraph: { [key: string]: string[] }
 const externalSet = new Set<string>()
 
 // let vendor: string[]
 const root = process.cwd()
 
-export function isExternal(id: string, handler: (param: string) => boolean | void) {
+export function isExternal(id: string, handler: (param: string) => any) {
   return handler(id)
 }
 
@@ -155,7 +156,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
           fs.readFileSync(resolve(root, entryFile)).toString(),
         ))
       alias = ImportExpression(code)
-
+      importsGraph = getExposeFromBundle(data)
       for (const i in data) {
         const name = i.split('.dubhe')[0]
         for (const entry of initEntryFiles) {
@@ -178,24 +179,23 @@ export function BundlePlugin(config: PubConfig): PluginOption {
                 })
               }
             })
-            Object.entries((data[i] as OutputChunk).importedBindings).forEach(
-              (item) => {
-                const packageName = item[0]
-                if (!(packageName in data)) {
-                  if (!importsGraph[packageName])
-                    importsGraph[packageName] = new Set()
+            // Object.entries((data[i] as OutputChunk).importedBindings).forEach(
+            //   (item) => {
+            //     const packageName = item[0]
+            //     if (!(packageName in data)) {
+            //       if (!importsGraph[packageName])
+            //         importsGraph[packageName] = new Set()
 
-                  item[1].forEach(f => importsGraph[packageName].add(f))
-                }
-              },
-            )
+            //       item[1].forEach(f => importsGraph[packageName].add(f))
+            //     }
+            //   },
+            // )
           }
         }
       }
 
       const bundleGraph: { [key: string]: string[] } = {}
       const outputSourceGraph: { [key: string]: string[] } = {}
-      const outputimportsGraph: { [key: string]: string[] } = {}
 
       for (const i in data) {
         if (!i.includes(`.dubhe-${config.project}.js`))
@@ -212,18 +212,8 @@ export function BundlePlugin(config: PubConfig): PluginOption {
       for (const i in sourceGraph)
         outputSourceGraph[i] = [...sourceGraph[i]]
 
-      for (const i in importsGraph)
-        outputimportsGraph[i] = [...importsGraph[i]]
-
-      // if (!HMRconfig.changeFile) {
-      //   for (const i in outputimportsGraph) {
-      //     const { name, version } = await getLocalPkgVersion(i)
-      //     if (!(name in pkgVersionMap))
-      //       pkgVersionMap[name] = version as any
-      //   }
-      // }
-
       metaData = {
+        type: 'publish',
         from: 'vite',
         meta: config.meta || null,
         version: config.version || '0.0.0',
@@ -234,7 +224,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         // initEntryFiles,
         entryFileMap,
         sourceGraph: outputSourceGraph,
-        importsGraph: outputimportsGraph,
+        importsGraph,
         bundleGraph,
         // pkgVersionMap,
       }
@@ -244,8 +234,8 @@ export function BundlePlugin(config: PubConfig): PluginOption {
 
       (this as any).emitFile({
         type: 'asset',
-        name: 'remoteList',
-        fileName: 'remoteList.json',
+        name: 'dubheList',
+        fileName: 'dubheList.json',
         source: JSON.stringify(metaData),
       })
       if (config.source && !isWatch) {

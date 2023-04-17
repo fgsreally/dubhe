@@ -1,5 +1,6 @@
 import { resolve } from 'path'
 import fse from 'fs-extra'
+import axios from 'axios'
 import { CACHE_ROOT, TYPE_ROOT } from './common'
 // update global config
 export async function updateLocalRecord(config: Record<string, { mode?: 'hot' | 'cold'; url: string }>) {
@@ -28,4 +29,35 @@ export async function removeLocalCache(project: string) {
 
 export async function removeLocalType(project: string) {
   return fse.remove(resolve(TYPE_ROOT, project))
+}
+
+export function getLocalPath(project: string,
+  moduleName: string) {
+  return resolve(CACHE_ROOT, project, moduleName)
+}
+export function isLocalPath(path: string) {
+  return path.startsWith(CACHE_ROOT)
+}
+
+export async function getLocalContent(project: string,
+  moduleName: string) {
+  const path = getLocalPath(project, moduleName)
+  if (fse.existsSync(path))
+    return moduleName.endsWith('.json') ? fse.readJSON(path, 'utf-8') : fse.readFile(path, 'utf-8')
+}
+
+export function setLocalContent(path: string, content: string) {
+  return fse.outputFile(path, content, 'utf-8')
+}
+
+export async function getRemoteContent(url: string) {
+  const { data } = await axios.get(url)
+  return data
+}
+
+export function getTypePathInCache(project: string, file: string) {
+  return resolve(TYPE_ROOT, project, file)
+}
+export function getTypePathInWorkspace(project: string, file: string) {
+  return resolve(process.cwd(), '.dubhe', 'types', project, file)
 }

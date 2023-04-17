@@ -1,14 +1,13 @@
-import { join, resolve } from 'path'
+import { resolve } from 'path'
 
 import axios from 'axios'
-import { normalizePath } from 'vite'
 
 import fse from 'fs-extra'
 import { loadConfig } from 'unconfig'
 import { log } from 'debug'
-import { getLocalRecord } from '../cache'
+import { getLocalPath, getLocalRecord, getRemoteContent, getTypePathInCache } from '../cache'
 import type { SubConfig } from '../types'
-import { getLocalPath, getPkgName, getRemoteContent, getTypePathInCache } from '../utils'
+import { getPkgName } from '../utils'
 
 const root = process.cwd()
 
@@ -41,30 +40,50 @@ export async function getWorkSpaceConfig() {
   return config as any
 }
 
-export async function getRemoteList() {
+export async function getDubheList() {
   const workspaceConfig = await getWorkSpaceConfig()
   return Object.assign(await getLocalRecord(), workspaceConfig.remote)
 }
-
-export async function analyseDep(dubheConfig: SubConfig) {
-  const ret = {} as Record<string, Set<string>>
+export async function analysePubDep(dubheConfig: SubConfig, subList?: Record<string, Set<string>>) {
+  const ret: Record<string, Set<string>> = subList || {}
   for (const project in dubheConfig.remote) {
-    const remoteConfig = await getRemoteContent(`${dubheConfig.remote[project].url}/core/remoteList.json`)
-    if (!remoteConfig)
+    const pubList = await getRemoteContent(`${dubheConfig.remote[project].url}/core/dubheList.json`)
+    if (!pubList)
       continue
-    for (const dep in remoteConfig.importsGraph) {
+    for (const dep in pubList.importsGraph) {
       const pkgName = getPkgName(dep)
 
       if (!ret[pkgName])
         ret[pkgName] = new Set()
-      if (remoteConfig.importsGraph[dep].length === 0)
+      if (pubList.importsGraph[dep].length === 0)
         ret[pkgName].add(`#side_effect--${dep}`)
 
       else
-        remoteConfig.importsGraph[dep].forEach((item: string) => ret[pkgName].add(`${item}--${dep}`))
+        pubList.importsGraph[dep].forEach((item: string) => ret[pkgName].add(`${item}--${dep}`))
     }
   }
   return ret
+}
+export async function analyseSubDep(subListPath: string) {
+  const ret = {} as Record<string, Set<string>>
+  try {
+    const subList = await fse.readJSON(subListPath)
+    for (const dep in subList.importsGraph) {
+      const pkgName = getPkgName(dep)
+
+      if (!ret[pkgName])
+        ret[pkgName] = new Set()
+      if (subList.importsGraph[dep].length === 0)
+        ret[pkgName].add(`#side_effect--${dep}`)
+
+      else
+        subList.importsGraph[dep].forEach((item: string) => ret[pkgName].add(`${item}--${dep}`))
+    }
+    return ret
+  }
+  catch (e) {
+    log('can\'t find dubheList.json', 'red')
+  }
 }
 
 export function getDubheDepJS() {
@@ -102,29 +121,30 @@ export async function installProjectTypes(baseUrl: string, project: string) {
   }
 }
 
-export function updateTsConfig(project: string, fileMap: Record<string, string>) {
-  let tsconfig
-  const TS_CONFIG_PATH = resolve(
-    process.cwd(),
-    'tsconfig.dubhe.json',
-  )
-  try {
-    tsconfig = fse.readJSONSync(TS_CONFIG_PATH)
-  }
-  catch (e) {
-    tsconfig = {
-      compilerOptions: {
-        baseUrl: '.',
-        paths: {},
-      },
-    }
-  }
+// export function updateTsConfig(project: string, fileMap: Record<string, string>) {
+//   let tsconfig
+//   const TS_CONFIG_PATH = resolve(
+//     process.cwd(),
+//     'tsconfig.dubhe.json',
+//   )
+//   try {
+//     tsconfig = fse.readJSONSync(TS_CONFIG_PATH)
+//   }
+//   catch (e) {
+//     tsconfig = {
+//       compilerOptions: {
+//         baseUrl: '.',
+//         composite: true,
+//         paths: {},
+//       },
+//     }
+//   }
 
-  for (const i in fileMap) {
-    const jsPath = normalizePath(`./${join('.dubhe/types', project, fileMap[i])}`).replace(/\.ts$/, '')
-    // tsconfig.compilerOptions.paths[`!${project}/${i}.*`] = [jsPath]
-    tsconfig.compilerOptions.paths[`dubhe-${project}/${i}`] = [jsPath]
-  }
-  fse.outputJSON(TS_CONFIG_PATH, tsconfig)
-}
+//   for (const i in fileMap) {
+//     const jsPath = normalizePath(`./${join('.dubhe/types', project, fileMap[i])}`).replace(/\.ts$/, '')
+//     // tsconfig.compilerOptions.paths[`!${project}/${i}.*`] = [jsPath]
+//     tsconfig.compilerOptions.paths[`dubhe-${project}/${i}`] = [jsPath]
+//   }
+//   fse.outputJSON(TS_CONFIG_PATH, tsconfig)
+// }
 

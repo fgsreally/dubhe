@@ -10,11 +10,11 @@ const config = {
   remote: {
     viteout: {
       url: "http://127.0.0.1:8080",
-      mode: process.env.HOTBUILD ? "hot" : "cold",
+      mode:"hot",
     }, // remote static server
   },
   externals: (id) => {
-    if (process.env.TEST) {
+    if (true) {
       if (id === "vue" || id.includes("element-plus"))
         return {
           esm: `dubhe:${id}`,

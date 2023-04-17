@@ -6,6 +6,7 @@ export default {
     test: './src/modules/test.ts',
     app: './src/App.vue',
     hello: './src/components/HelloWorld.vue',
+    test2: './src//test2.js',
   },
   types: true,
   // limit: 1000,
@@ -17,7 +18,7 @@ export default {
     port: 'http://localhost:8081',
   }],
   outDir: '.dubhe',
-  source: true,
+  source: false,
   importMap: true,
 } as PubConfig
 

@@ -4,9 +4,9 @@ export const CACHE_ROOT = envPaths('dubhe').data
 export const TYPE_ROOT = envPaths('dubhe-type').data
 
 export const VIRTUAL_RE = /^dubhe-(.*)\/([^?]*)/
-export const VIRTUAL_PREFIX = '_virtual_DUBHE_'
-export const VIRTUAL_EMPTY = '/@virtual:EmptyModule'
-export const VIRTUAL_HMR_PREFIX = 'VIRTUAL-HMR'
+export const VIRTUAL_PREFIX = 'virtual:dubhe'
+export const VIRTUAL_EMPTY = 'virtual:d_empty'
+export const VIRTUAL_HMR_PREFIX = 'virtual:d_hmr'
 export const ESM_SH_URL = 'https://esm.sh/'
 export const UNPKG_URL = 'https://unpkg.com/'
 

@@ -6,7 +6,7 @@ import { parse } from 'es-module-lexer'
 import { normalizePath } from 'vite'
 import axios from 'axios'
 import fse from 'fs-extra'
-import { getTypePathInCache, getTypePathInWorkspace, log } from './utils'
+import { log } from './utils'
 import {
   TS_CONFIG_PATH,
   TYPE_ROOT,
@@ -16,6 +16,7 @@ import type {
   ModulePathMap,
 
 } from './types'
+import { getTypePathInCache, getTypePathInWorkspace } from './cache'
 
 export async function analyseTSEntry(code: string) {
   const [imports, exports] = await parse(code)
@@ -43,10 +44,13 @@ export function updateTSconfig(project: string, modulePathMap: ModulePathMap) {
   }
 
   for (const i in modulePathMap) {
-    const jsPath = normalizePath(
+    // js file should not be written into tsconfig
+    if (modulePathMap[i].endsWith('.js'))
+      continue
+    const tsPath = normalizePath(
           `./${join('.dubhe/types', `${project}`, modulePathMap[i])}`,
     )
-    tsconfig.compilerOptions.paths[`dubhe-${project}/${i}`] = [jsPath]
+    tsconfig.compilerOptions.paths[`dubhe-${project}/${i}`] = [tsPath]
   }
   fse.outputJSON(TS_CONFIG_PATH, tsconfig)
 }
@@ -83,10 +87,10 @@ export async function getTypes(url: string, project: string, fileMap: { [key: st
     if (fse.existsSync(getTypePathInWorkspace(project, '')))
       return
     const { data: fileSet } = await axios.get(url)
-    if (!fse.existsSync(getTypePathInCache(project, ''))) {
+    if (!fse.existsSync(getTypePathInCache(project, '')))
       await downloadTSFiles(fileSet, url, project)
-      await updateTSconfig(project, fileMap)
-    }
+
+    await updateTSconfig(project, fileMap)
     await linkTypes(project, fileSet)
   }
   catch (e) {
@@ -103,7 +107,7 @@ export async function linkTypes(project: string, fileSet: string) {
     try {
       const dest = getTypePathInWorkspace(project, file)
       await fse.ensureDir(dirname(dest))
-      await fse.symlink(getTypePathInCache(project, file), dest)
+      await fse.symlink(getTypePathInCache(project, file), dest, 'junction')
     }
     catch (e) {
       log('fail to create symlink', 'red')

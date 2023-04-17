@@ -5,9 +5,9 @@ describe('[vite] publish module', () => {
     const files = await getDistFiles('vite-pub/.dubhe/core')
     expect(files.length).toBe(5)
 
-    const remoteList = JSON.parse(await getFileContent('vite-pub/.dubhe/core/remoteList.json'))
-    delete remoteList.timestamp
-    expect(remoteList).toMatchSnapshot()
+    const dubheList = JSON.parse(await getFileContent('vite-pub/.dubhe/core/dubheList.json'))
+    delete dubheList.timestamp
+    expect(dubheList).toMatchSnapshot()
   })
 
   it('types files output', async () => {

@@ -1,12 +1,13 @@
-import { basename, extname } from 'path'
+import { basename, extname, relative } from 'path'
 import { parse } from 'es-module-lexer'
 import MagicString from 'magic-string'
 import fse from 'fs-extra'
 import { parseSync, traverse } from '@babel/core'
+import type { OutputBundle, OutputChunk } from 'rollup'
+import { normalizePath } from 'vite'
 import type { AliasType } from './types'
-import { VIRTUAL_PREFIX, VIRTUAL_RE } from './common'
-import { getLocalPath, getRemoteContent, setLocalContent } from './utils'
-
+import { CACHE_ROOT, VIRTUAL_PREFIX, VIRTUAL_RE } from './common'
+import { getLocalPath, getRemoteContent, setLocalContent } from './cache'
 export function resolveAlias(alias: Record<string, string> = {}) {
   return Object.entries(alias).map((item) => {
     return {
@@ -140,40 +141,31 @@ export function analyseImport(code: string) {
 
   return ret as unknown as Record<string, string[]>
 }
-// export function replaceHotImportDeclarations(
-//   source: any,
-//   config: SubConfig,
-//   aliasMap: { [key: string]: AliasType[] },
-// ) {
-//   const [imports] = parse(source, 'optional-sourcename')
-//   // let newSource = source;
-//   const newSource = new MagicString(source)
-//   let cssImports = ''
-//   for (const i of imports as any) {
-//     if (VIRTUAL_RE.test(i.n)) {
-//       const [project, moduleName] = resolveModuleAlias(i.n, aliasMap)
+export function getExposeFromBundle(bundle: OutputBundle) {
+  const importsGraph = {} as Record<string, Set<string>>
+  for (const i in bundle) {
+    if (bundle[i].type === 'chunk') {
+      Object.entries((bundle[i] as OutputChunk).importedBindings).forEach(
+        (item) => {
+          const packageName = item[0]
+          // importsGraph should not includes remote project in hot mode
+          if (packageName.startsWith('dubhe-'))
+            return
+          if (!(packageName in bundle)) {
+            if (!importsGraph[packageName])
+              importsGraph[packageName] = new Set()
 
-//       if (extname(moduleName) === '.js') {
-//         newSource.overwrite(
-//           i.s,
-//           i.e,
-//           urlResolve(config.remote[project], `core/${moduleName}`),
-//         )
-//       }
+            item[1].forEach(f => importsGraph[packageName].add(f))
+          }
+        },
+      )
+    }
+  }
+  for (const i in importsGraph)
+    importsGraph[i] = [...importsGraph[i]] as any
 
-//       if (extname(moduleName) === '.css') {
-//         cssImports += `\nloadCss("${config.remote[project]}/core/${moduleName}");`
-//         newSource.overwrite(i.ss, i.se, '')
-//       }
-//     }
-//   }
-//   if (cssImports.length > 0) {
-//     newSource
-//       .prepend('import {loadCss} from "dubhe/runtime"\n')
-//       .append(cssImports)
-//   }
-//   return newSource.toString()
-// }
+  return importsGraph as unknown as Record<string, string[]>
+}
 
 export function replaceBundleImportDeclarations(
   source: string,
@@ -206,4 +198,8 @@ export function replaceBundleImportDeclarations(
   // });
   // newSource += source.substring(start, end);
   return newSource.toString()
+}
+
+export function getProjectAndModule(path: string) {
+  return normalizePath(relative(CACHE_ROOT, path)).match(/(.*)\/(.*)/)
 }

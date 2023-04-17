@@ -87,10 +87,10 @@ export async function getTypes(url: string, project: string, fileMap: { [key: st
     if (fse.existsSync(getTypePathInWorkspace(project, '')))
       return
     const { data: fileSet } = await axios.get(url)
-    if (!fse.existsSync(getTypePathInCache(project, ''))) {
+    if (!fse.existsSync(getTypePathInCache(project, '')))
       await downloadTSFiles(fileSet, url, project)
-      await updateTSconfig(project, fileMap)
-    }
+
+    await updateTSconfig(project, fileMap)
     await linkTypes(project, fileSet)
   }
   catch (e) {

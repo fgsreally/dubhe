@@ -22,7 +22,7 @@ export default {
   },
   injectHtml: true,
   systemjs: true,
-  cache: true,
+  cache: false,
   types: true,
   info: false,
   polyfill: {

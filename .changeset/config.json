@@ -3,9 +3,9 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "fixed": [],
-  "linked": ["dubhe","dubhe-pub","dubhe-sub"],
+  "linked": [["dubhe","dubhe-pub","dubhe-sub"]],
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["sub-*","pub-*","dubhe-vite"]
+  "ignore": ["sub-*","pub-*"]
 }

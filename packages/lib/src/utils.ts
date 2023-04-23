@@ -82,7 +82,7 @@ export function log(msg: string, color: keyof Color = 'green') {
 // }
 
 export function getRelatedPath(p: string) {
-  return normalizePath(relative(process.cwd(), p))
+  return normalizePath(relative(process.cwd(), p || ''))
 }
 
 export function addExtension(p: string) {

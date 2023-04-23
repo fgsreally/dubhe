@@ -14,6 +14,7 @@ export default (): UserConfig => {
       exclude: [], // it doesn't work
     },
     build: {
+      sourcemap: true,
       outDir: process.env.HOTBUILD ? 'dist/hot' : 'dist/cold',
 
     },

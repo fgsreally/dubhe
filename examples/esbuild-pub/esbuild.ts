@@ -8,6 +8,7 @@ build({
   format: 'esm',
   splitting: true,
   watch: false,
+  sourcemap: true,
   bundle: true,
   metafile: true,
   plugins: [merge([unplugin.esbuild(), ...Pub(config)])],

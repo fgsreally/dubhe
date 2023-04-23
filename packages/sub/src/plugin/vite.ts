@@ -168,7 +168,15 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             config.cache && !HMRMap.has(module),
             config.cache,
           )
-          return data
+          const { data: map } = await getVirtualContent(
+            `${url}.map`,
+            project,
+            `${moduleName}.map`,
+            config.cache,
+            config.cache,
+          ).catch(() => ({}))
+
+          return { code: data, map: map && JSON.parse(map) }
         }
         catch (e) {
           log(

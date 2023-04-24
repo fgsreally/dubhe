@@ -300,18 +300,29 @@ export class WebpackPlugin {
                   id,
                   state.aliasMap,
                 )
-                this.dp.definitions[`__DUBHE_${project}_`] = `"${this.config.remote[project].url}/core"`
+                const { url } = this.config.remote[project]
+                this.dp.definitions[`__DUBHE_${project}_`] = `"${url}/core"`
                 const { data } = await getVirtualContent(
-                  `${this.config.remote[project].url}/core/${moduleName}`,
+                  `${url}/core/${moduleName}`,
                   project,
                   moduleName,
                   this.config.cache,
                   this.config.cache,
                 )
+                const { data: map } = await getVirtualContent(
+                  `${url}.map`,
+                  project,
+                  `${moduleName}.map`,
+                  this.config.cache,
+                  this.config.cache,
+                ).catch(() => ({}))
+
                 const modulePath = getLocalPath(project, moduleName)
                 request.request = modulePath
-                if (useVirtualModule)
+                if (useVirtualModule) {
                   this.vfs.writeModule(modulePath, data)
+                  this.vfs.writeModule(`${modulePath}.map`, map)
+                }
 
                 return resolver.doResolve(
                   target,

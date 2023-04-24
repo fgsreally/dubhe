@@ -71,8 +71,8 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         const outputs = (ret.outputFiles as OutputFile[])
         const meta = (ret.metafile as Metafile)
         const sourceGraph = {} as Record<string, Set<string> | string[]>
+
         Object.values(meta.outputs).forEach((item) => {
-          console.log(meta.outputs)
           Object.values(entryFileMap).forEach((entry) => {
             if (resolve(root, item.entryPoint || '') === resolve(root, entry)) {
               sourceGraph[entry] = new Set()

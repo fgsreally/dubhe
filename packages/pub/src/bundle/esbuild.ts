@@ -128,13 +128,15 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         }
         else {
           for (const i of outputs) {
-            Object.entries(analyseImport(i.text)).forEach(([k, v]) => {
-              if (!importsGraph[k])
-                importsGraph[k] = new Set()
-              v.forEach((imported) => {
-                importsGraph[k].add(imported)
+            if (i.path.endsWith('.js')) {
+              Object.entries(analyseImport(i.text)).forEach(([k, v]) => {
+                if (!importsGraph[k])
+                  importsGraph[k] = new Set()
+                v.forEach((imported) => {
+                  importsGraph[k].add(imported)
+                })
               })
-            })
+            }
           }
 
           for (const importer in importsGraph)

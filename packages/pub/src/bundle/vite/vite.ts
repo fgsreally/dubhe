@@ -150,6 +150,8 @@ export function BundlePlugin(config: PubConfig): PluginOption {
       }
     },
     async generateBundle(_, data) {
+      const bundleGraph: { [key: string]: string[] } = {}
+      const outputSourceGraph: { [key: string]: string[] } = {}
       const code = ((data['remoteEntry.js'] as OutputChunk).code
         = replaceEntryFile(
           (data['remoteEntry.js'] as OutputChunk).code,
@@ -158,7 +160,16 @@ export function BundlePlugin(config: PubConfig): PluginOption {
       alias = ImportExpression(code)
       importsGraph = getExposeFromBundle(data)
       for (const i in data) {
+        if (!i.endsWith('.js'))
+          continue
         const name = i.split('.dubhe')[0]
+        if (i.includes(`.dubhe-${config.project}.js`)) {
+          bundleGraph[name] = [];
+          (data[i] as any).imports.forEach((item: string) => {
+            if (item.includes(`.dubhe-${config.project}.js`))
+              bundleGraph[name].push(item)
+          })
+        }
         for (const entry of initEntryFiles) {
           if (name === basename(entry, extname(entry))) {
             const entryFilePath = (entryFileMap[getAlias(i, alias) as string]
@@ -170,15 +181,18 @@ export function BundlePlugin(config: PubConfig): PluginOption {
             Object.keys((data[i] as OutputChunk).modules).forEach((fp) => {
               if (isSourceFile(fp))
                 sourceGraph[entryFilePath].add(getRelatedPath(fp))
-            });
-            (data[i] as OutputChunk).imports.forEach((item) => {
-              if (item in data) {
-                Object.keys((data[item] as OutputChunk).modules).forEach((fp) => {
-                  if (isSourceFile(fp))
-                    sourceGraph[entryFilePath].add(getRelatedPath(fp))
-                })
-              }
             })
+
+            if ((data[i] as OutputChunk).imports) {
+              (data[i] as OutputChunk).imports.forEach((item) => {
+                if (item in data) {
+                  Object.keys((data[item] as OutputChunk).modules || {}).forEach((fp) => {
+                    if (isSourceFile(fp))
+                      sourceGraph[entryFilePath].add(getRelatedPath(fp))
+                  })
+                }
+              })
+            }
             // Object.entries((data[i] as OutputChunk).importedBindings).forEach(
             //   (item) => {
             //     const packageName = item[0]
@@ -194,21 +208,6 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         }
       }
 
-      const bundleGraph: { [key: string]: string[] } = {}
-      const outputSourceGraph: { [key: string]: string[] } = {}
-
-      for (const i in data) {
-        if (!i.includes(`.dubhe-${config.project}.js`))
-          continue
-
-        const name = i.split('.')[0] // filename
-
-        bundleGraph[name] = [];
-        (data[i] as any).imports.forEach((item: string) => {
-          if (item.includes(`.dubhe-${config.project}.js`))
-            bundleGraph[name].push(item)
-        })
-      }
       for (const i in sourceGraph)
         outputSourceGraph[i] = [...sourceGraph[i]]
 

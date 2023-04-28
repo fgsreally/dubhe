@@ -4,7 +4,7 @@
 import { resolve } from 'path'
 import { resolve as urlResolve } from 'url'
 import { DEFAULT_POLYFILL, HMRModuleHandler, HMRTypesHandler, VIRTUAL_RE, getFormatDate, getLocalPath, getProjectAndModule, getRemoteContent, getTypes, getVirtualContent, isLocalPath, log, patchVersion, resolveModuleAlias, updateLocalRecord } from 'dubhe'
-import { DefinePlugin, config } from 'webpack'
+import { DefinePlugin } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
 import type { PubListType, SubConfig, SubListType } from 'dubhe'
@@ -300,18 +300,29 @@ export class WebpackPlugin {
                   id,
                   state.aliasMap,
                 )
-                this.dp.definitions[`__DUBHE_${project}_`] = `"${this.config.remote[project].url}/core"`
+                const { url } = this.config.remote[project]
+                this.dp.definitions[`__DUBHE_${project}_`] = `"${url}/core"`
                 const { data } = await getVirtualContent(
-                  `${this.config.remote[project].url}/core/${moduleName}`,
+                  `${url}/core/${moduleName}`,
                   project,
                   moduleName,
                   this.config.cache,
                   this.config.cache,
                 )
+                const { data: map } = await getVirtualContent(
+                  `${url}.map`,
+                  project,
+                  `${moduleName}.map`,
+                  this.config.cache,
+                  this.config.cache,
+                ).catch(() => ({} as any))
+
                 const modulePath = getLocalPath(project, moduleName)
                 request.request = modulePath
-                if (useVirtualModule)
+                if (useVirtualModule) {
                   this.vfs.writeModule(modulePath, data)
+                  map && this.vfs.writeModule(`${modulePath}.map`, map)
+                }
 
                 return resolver.doResolve(
                   target,
@@ -329,16 +340,27 @@ export class WebpackPlugin {
               ) {
                 id = resolve(importer, '../', id)
                 const [, project, moduleName] = getProjectAndModule(id) as any
-
+                const { url } = this.config.remote[project]
                 const { data } = await getVirtualContent(
-                  `${this.config.remote[project].url}/core/${moduleName}`,
+                  `${url}/core/${moduleName}`,
                   project,
                   moduleName,
                   this.config.cache,
                   this.config.cache,
                 )
+                const { data: map } = await getVirtualContent(
+                  `${url}.map`,
+                  project,
+                  `${moduleName}.map`,
+                  this.config.cache,
+                  this.config.cache,
+                ).catch(() => ({} as any))
 
-                useVirtualModule && this.vfs.writeModule(getVirtualFilePath(id), data)
+                if (useVirtualModule) {
+                  const virtualPath = getVirtualFilePath(id)
+                  this.vfs.writeModule(virtualPath, data)
+                  map && this.vfs.writeModule(`${virtualPath}.map`, map)
+                }
               }
 
               return callback()

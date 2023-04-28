@@ -71,6 +71,7 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         const outputs = (ret.outputFiles as OutputFile[])
         const meta = (ret.metafile as Metafile)
         const sourceGraph = {} as Record<string, Set<string> | string[]>
+
         Object.values(meta.outputs).forEach((item) => {
           Object.values(entryFileMap).forEach((entry) => {
             if (resolve(root, item.entryPoint || '') === resolve(root, entry)) {
@@ -127,13 +128,15 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         }
         else {
           for (const i of outputs) {
-            Object.entries(analyseImport(i.text)).forEach(([k, v]) => {
-              if (!importsGraph[k])
-                importsGraph[k] = new Set()
-              v.forEach((imported) => {
-                importsGraph[k].add(imported)
+            if (i.path.endsWith('.js')) {
+              Object.entries(analyseImport(i.text)).forEach(([k, v]) => {
+                if (!importsGraph[k])
+                  importsGraph[k] = new Set()
+                v.forEach((imported) => {
+                  importsGraph[k].add(imported)
+                })
               })
-            })
+            }
           }
 
           for (const importer in importsGraph)

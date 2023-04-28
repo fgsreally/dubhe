@@ -16,7 +16,7 @@
     "dubhe-pub": "workspace:*",
     "esbuild": "^0.16.9",
     "esbuild-plugin-merge": "^1.0.6",
-    "unplugin-vue": "^4.0.2",
+    "unplugin-vue": "^4.1.0",
     "vue": "^3.2.45"
   },
   "devDependencies": {

@@ -7,20 +7,27 @@ const config = require('./dubhe.config')
 /** @type {import('webpack').Configuration} */
 module.exports = webpackEnv => ({
   mode: webpackEnv,
+  devtool: 'source-map',
   entry: './src/index.js',
   experiments: {
     outputModule: true,
   },
   externalsType: 'module',
-
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: ['source-map-loader'],
+        enforce: 'pre',
+      },
+    ],
+  },
   output: {
     path: path.join(__dirname, 'dist'),
     library: { type: 'module' },
     environment: { module: true },
   },
-  module: {
-    rules: [],
-  },
+
   externals: { },
   plugins: [new HtmlWebpackPlugin(), new Sub(config)],
   devServer: {

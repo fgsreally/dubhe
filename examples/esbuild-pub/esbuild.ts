@@ -1,14 +1,10 @@
 import { build } from 'esbuild'
 import { Pub } from 'dubhe-pub/esbuild'
 import { merge } from 'esbuild-plugin-merge'
-import unplugin from 'unplugin-vue'
+import vue from 'unplugin-vue/esbuild'
 import config from './dubhe.config'
 build({
-  outdir: 'dist',
-  format: 'esm',
-  splitting: true,
   watch: false,
-  bundle: true,
-  metafile: true,
-  plugins: [merge([unplugin.esbuild(), ...Pub(config)])],
+  // sourcemap: true, // it seems like that unplugin-vue doesn't support sourcemap in esbuild
+  plugins: [merge([vue(), ...Pub(config)])],
 })

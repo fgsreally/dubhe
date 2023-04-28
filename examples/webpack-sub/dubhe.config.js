@@ -7,7 +7,7 @@ module.exports = ({
   },
   externals: id => false,
   systemjs: true,
-  cache: false,
+  cache: true,
   types: true,
   polyfill: {
     importMap: true,

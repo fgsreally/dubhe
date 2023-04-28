@@ -13,6 +13,9 @@ export default defineConfig({
       '@': 'src',
     },
   },
+  build: {
+    sourcemap: true,
+  },
 
   server: {
     port: 8080,

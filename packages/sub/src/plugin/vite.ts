@@ -174,7 +174,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             `${moduleName}.map`,
             config.cache,
             config.cache,
-          ).catch(() => ({ data: null }))
+          ).catch(() => ({ } as any))
 
           return { code: data, map: map && JSON.parse(map) }
         }

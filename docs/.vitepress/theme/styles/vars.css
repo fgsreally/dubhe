@@ -12,6 +12,7 @@
   --vp-c-brand-dimm: #0e1b37;
   --vp-z-index-nav: 999 !important;
   --vp-z-index-footer: -10;
+  /* --vp-c-text-dark-1:#000000 */
 }
 
 /**
@@ -56,3 +57,11 @@
   }
 }
 
+.VPHero{
+  overflow: hidden;
+}
+
+.VPImage{
+ 
+  transform: scale(4) translate(-12.5%, -12.5%) !important;
+}

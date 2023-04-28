@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Share from './components/Share.vue'
 const { msg } = defineProps<{ msg: string }>()
-throw new Error('miss')
 </script>
 
 <template>

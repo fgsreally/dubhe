@@ -1,6 +1,6 @@
 {
   "name": "dubhe-pub",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -47,7 +47,7 @@
   "dependencies": {
     "@vue/compiler-sfc": "^3.2.45",
     "debug": "^4.3.4",
-    "dubhe": "workspace:^1.0.1",
+    "dubhe": "workspace:^1.0.3",
     "es-module-lexer": "^0.10.5",
     "fast-glob": "^3.2.12",
     "fs-extra": "^10.1.0",

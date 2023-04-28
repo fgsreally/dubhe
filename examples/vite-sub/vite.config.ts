@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import type { UserConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { Sub } from 'dubhe-sub/vite'

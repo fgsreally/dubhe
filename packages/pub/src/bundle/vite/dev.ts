@@ -2,7 +2,9 @@ import fs from 'fs'
 import type { PluginOption } from 'vite'
 import type { PubConfig } from 'dubhe'
 import type { ResolvedId } from 'rollup'
+import debug from 'debug'
 import { isExternal } from './vite'
+const Debug = debug('dubhe:pub')
 export function DevPlugin(conf: PubConfig): PluginOption {
   const externals = new Set<string>()
   return {
@@ -13,6 +15,7 @@ export function DevPlugin(conf: PubConfig): PluginOption {
     async resolveId(id, i) {
       if (isExternal(id, conf.externals) && i !== 'dubhe') {
         externals.add(id)
+        Debug(`find external dependence --${id}`)
         return id
       }
       if (externals.has(i!)) {
@@ -24,6 +27,8 @@ export function DevPlugin(conf: PubConfig): PluginOption {
     async  load(id) {
       if (externals.has(id)) {
         const { id: resolveID } = await this.resolve(id, 'dubhe') as any
+        Debug(`load external dependence--${resolveID}`)
+
         return fs.promises.readFile(resolveID.split('?')[0], 'utf-8')
       }
     },

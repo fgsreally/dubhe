@@ -11,6 +11,8 @@ import type {
 } from 'rollup'
 
 import type { PubConfig } from 'dubhe'
+import debug from 'debug'
+
 import {
   ImportExpression,
   VIRTUAL_HMR_PREFIX,
@@ -41,7 +43,7 @@ let alias: { name: string; url: string }[]
 const sourceGraph: { [key: string]: Set<string> } = {}
 let importsGraph: { [key: string]: string[] }
 const externalSet = new Set<string>()
-
+const Debug = debug('dubhe:pub')
 // let vendor: string[]
 const root = process.cwd()
 
@@ -97,18 +99,6 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         }
       output.assetFileNames
         = '[name][extname]'
-
-      // let userManualChunks = output.manualChunks
-      // const dubheManualChunks = (id: string, { getModuleInfo }: any) => {
-      //   // if (chunkSet.has(id))
-      //   //   return basename(id).split('.')[0]
-      // }
-
-      // output.manualChunks = (id: string, api: GetManualChunkApi) => {
-      //   if (typeof userManualChunks !== 'function')
-      //     userManualChunks = () => null
-      //   return userManualChunks(id, api) ?? dubheManualChunks(id, api)
-      // }
     },
 
     watchChange(id: string, change: any) {
@@ -124,11 +114,13 @@ export function BundlePlugin(config: PubConfig): PluginOption {
           if (module[i].modules && HMRconfig.changeFile in module[i].modules)
             updateList.push(i)
         }
+        log('send HMR info')
 
         for (const home of config.HMR) {
           setTimeout (async () => {
             try {
-              log('Send HMR information to home ')
+              Debug(`send HMR info to ${home.port} `)
+
               await sendHMRInfo({
                 url: `${home.port}/${VIRTUAL_HMR_PREFIX}`,
                 types: config.types || false,
@@ -159,6 +151,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         ))
       alias = ImportExpression(code)
       importsGraph = getExposeFromBundle(data)
+      Debug('generate bundleGraph/sourceGraph')
       for (const i in data) {
         if (!i.endsWith('.js'))
           continue
@@ -193,17 +186,6 @@ export function BundlePlugin(config: PubConfig): PluginOption {
                 }
               })
             }
-            // Object.entries((data[i] as OutputChunk).importedBindings).forEach(
-            //   (item) => {
-            //     const packageName = item[0]
-            //     if (!(packageName in data)) {
-            //       if (!importsGraph[packageName])
-            //         importsGraph[packageName] = new Set()
-
-            //       item[1].forEach(f => importsGraph[packageName].add(f))
-            //     }
-            //   },
-            // )
           }
         }
       }
@@ -229,7 +211,9 @@ export function BundlePlugin(config: PubConfig): PluginOption {
       }
 
       if (config.beforeEmit)
-        await config.beforeEmit(metaData);
+        await config.beforeEmit(metaData)
+
+      Debug('output dubheList.json');
 
       (this as any).emitFile({
         type: 'asset',
@@ -239,6 +223,8 @@ export function BundlePlugin(config: PubConfig): PluginOption {
       })
       if (config.source && !isWatch) {
         log('Copy source file to source dir')
+        Debug('output source files')
+
         isWatch = true
         fse.ensureDirSync(resolve(root, outDir, 'source'));
         [...new Set(Object.values(outputSourceGraph).flat())].forEach((item) => {
@@ -263,23 +249,8 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         return {
           id, external: true,
         }
-        // if (config.importMap) {
-        //   externalsMap[id] = id
-
-        //   return {
-        //     id, external: true,
-        //   }
-        // }
-        // else {
-        //   externalsMap[externalID] = id
-        //   return { id: externalID, external: true }
-        // }
       }
     },
-    // transform(code, id) {
-    //   if (config.limit && !initEntryFiles.includes(id) && fse.existsSync(resolve(root, id)) && normalizePath(resolve(root, entryFile)) !== id && code.length < config.limit)
-    //     vendor.push(id)
-    // },
 
   }
 }

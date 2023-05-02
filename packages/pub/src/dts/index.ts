@@ -15,7 +15,7 @@ import { debounce, ensureAbsolute, ensureArray, isNativeObj, log, mergeObjects, 
 import type { ProPlugin } from 'esbuild-plugin-merge'
 import { VueCompiler } from './compile'
 import { normalizeGlob, removePureImport, transformAliasImport } from './transform'
-const Debug = debug('dubhe-dts')
+const Debug = debug('dubhe:dts')
 const virtualPrefix = '\0'
 
 // const vueRE = /\.vue$/

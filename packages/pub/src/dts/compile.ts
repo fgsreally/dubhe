@@ -18,7 +18,7 @@ function parseCode(code: string) {
 
 export const VueCompiler: dtsCompiler = {
   key: /\.vue$/,
-  handler(code, id, project, config) {
+  handler(code, id, project) {
     const { content, ext } = compileVueCode(code)
 
     const virtualPath = `${id}.${ext || 'js'}`
@@ -26,12 +26,9 @@ export const VueCompiler: dtsCompiler = {
     if (project.getSourceFile(virtualPath))
       project.removeSourceFile(project.getSourceFile(virtualPath)!)
 
-    console.log(content)
-
     if (content)
-      project.createSourceFile(virtualPath, content, { overwrite: true })
-    return `${code}\n<dubhe>export default (block)=>{block.projectID="${config.project || 'dubhe'
-}";block.fileID="${basename(id)}";}</dubhe>`
+      project.createSourceFile(virtualPath, `${content}\nexport const addon:any`, { overwrite: true })
+    return code
   },
 }
 

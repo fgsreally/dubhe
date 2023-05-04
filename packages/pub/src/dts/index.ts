@@ -31,11 +31,9 @@ export const dtsPlugin = (remoteConf: Required<PubConfig>) => {
   const options: dtsPluginOptions = remoteConf.dts || {}
   const {
     tsConfigFilePath = 'tsconfig.json',
-    // aliasesExclude = [],
     clearPureImport = true,
     noEmitOnError = false,
     compiler = [VueCompiler],
-    // afterBuild = noop,
   } = options
 
   const compilerOptions = options.compilerOptions ?? {}
@@ -193,9 +191,10 @@ export const dtsPlugin = (remoteConf: Required<PubConfig>) => {
       return null
     if (tjsRE.test(id) || compiler?.some(item => item.key.test(id))) {
       for (const i of compiler || []) {
-        if (i.key.test(id))
-
-          return i.handler(code, id, project, remoteConf)
+        if (i.key.test(id)) {
+          i.handler(code, id, project, remoteConf)
+          return
+        }
       }
 
       if (fse.existsSync(id) && (tsRE.test(id) || (allowJs && jsRE.test(id)))) {
@@ -249,12 +248,7 @@ export const dtsPlugin = (remoteConf: Required<PubConfig>) => {
         const aliasOptions = config?.resolve?.alias ?? []
         getAlias(aliasOptions as AliasOptions)
       },
-      // configResolved(config) {
-      //   root = ensureAbsolute(options.root ?? '', config.root)
-      //   tsConfigPath = resolve(root, tsConfigFilePath)
-      //   outputDir = resolve(root, config.build.outDir, '../', 'types')
-      //   entry = normalizePath(ensureAbsolute(remoteConf.entry, root))
-      // },
+
     },
   }
 }

@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export function loadCss(url: string) {
   const css = document.createElement('link')
   css.href = url

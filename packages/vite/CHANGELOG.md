@@ -1,5 +1,12 @@
 # dubhe-vite
 
+## 1.0.5
+
+### Patch Changes
+
+- Updated dependencies
+  - dubhe-pub@1.0.5
+
 ## 1.0.4
 
 ### Patch Changes

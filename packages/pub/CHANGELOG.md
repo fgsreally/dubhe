@@ -1,5 +1,11 @@
 # dubhe-pub
 
+## 1.0.5
+
+### Patch Changes
+
+- compiler in dubhe:dts won't do anything but generate dts. it seems that custom tag and devtools api is useless,so remove it
+
 ## 1.0.4
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "dubhe-pub",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Micro module publishing side",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

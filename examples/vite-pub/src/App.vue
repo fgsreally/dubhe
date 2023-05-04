@@ -1,12 +1,9 @@
-<script setup lang="ts">
+<script setup >
 import Share from './components/Share.vue'
-const { msg } = defineProps<{ msg: string }>()
 </script>
 
 <template>
-  <p id="vite-r-app" data-testid="vite-pub-text">
-    {{ msg }}
-  </p>
+  <p id="vite-r-app" data-testid="vite-pub-text" />
   <img src="/vite.svg" class="logo" alt="Vite logo">
 
   <el-button data-testid="vite-pub-btn">

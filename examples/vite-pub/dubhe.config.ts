@@ -17,6 +17,6 @@ export default {
     port: 'http://localhost:8081',
   }],
   outDir: '.dubhe',
-  source: false,
+  source: true,
 } as PubConfig
 

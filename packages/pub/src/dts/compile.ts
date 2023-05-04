@@ -26,6 +26,8 @@ export const VueCompiler: dtsCompiler = {
     if (project.getSourceFile(virtualPath))
       project.removeSourceFile(project.getSourceFile(virtualPath)!)
 
+    console.log(content)
+
     if (content)
       project.createSourceFile(virtualPath, content, { overwrite: true })
     return `${code}\n<dubhe>export default (block)=>{block.projectID="${config.project || 'dubhe'

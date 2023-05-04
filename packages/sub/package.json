@@ -1,6 +1,6 @@
 {
   "name": "dubhe-sub",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Micro module subscription side",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -10,7 +10,12 @@
     "build": "tsup && yarn build:view",
     "build:view": "vite build"
   },
-  "keywords": ["module federation","micro module","vite","webpack"],
+  "keywords": [
+    "module federation",
+    "micro module",
+    "vite",
+    "webpack"
+  ],
   "files": [
     "dist"
   ],

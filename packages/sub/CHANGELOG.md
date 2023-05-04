@@ -1,5 +1,11 @@
 # dubhe-sub
 
+## 1.0.4
+
+### Patch Changes
+
+- 0da2c7e: add debug support
+
 ## 1.0.3
 
 ### Patch Changes

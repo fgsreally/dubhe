@@ -1,6 +1,6 @@
 {
   "name": "dubhe-pub",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Micro module publishing side",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -13,8 +13,12 @@
   "files": [
     "dist"
   ],
-  "keywords": ["module federation","micro module","vite","esbuild"],
-
+  "keywords": [
+    "module federation",
+    "micro module",
+    "vite",
+    "esbuild"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.mjs",

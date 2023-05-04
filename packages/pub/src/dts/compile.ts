@@ -1,4 +1,3 @@
-import { basename } from 'path'
 import type { SFCDescriptor } from '@vue/compiler-sfc'
 import { compileScript, parse, rewriteDefault } from '@vue/compiler-sfc'
 import type { dtsCompiler } from 'dubhe'

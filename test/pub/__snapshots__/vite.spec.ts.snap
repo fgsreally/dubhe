@@ -42,6 +42,11 @@ exports[`[vite] publish module > core files output 1`] = `
     "App.dubhe-viteout.js",
     "HelloWorld.dubhe-viteout.js",
     "_plugin-vue_export-helper.dubhe-viteout.js",
+    "remoteEntry.js.map",
+    "_plugin-vue_export-helper.dubhe-viteout.js.map",
+    "test.dubhe-viteout.js.map",
+    "App.dubhe-viteout.js.map",
+    "HelloWorld.dubhe-viteout.js.map",
   ],
   "from": "vite",
   "importsGraph": {
@@ -76,6 +81,7 @@ exports[`[vite] publish module > core files output 1`] = `
       "src/modules/test.ts",
     ],
   },
+  "type": "publish",
   "version": "0.0.0",
 }
 `;

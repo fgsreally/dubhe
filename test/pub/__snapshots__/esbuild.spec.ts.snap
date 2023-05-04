@@ -53,8 +53,6 @@ exports[`[esbuild] publish module  > core files output 1`] = `
       "createElementBlock",
       "pushScopeId",
       "popScopeId",
-      "*",
-      "default",
     ],
   },
   "sourceGraph": {
@@ -67,6 +65,7 @@ exports[`[esbuild] publish module  > core files output 1`] = `
       "src/module.ts",
     ],
   },
+  "type": "publish",
   "version": "0.0.0",
 }
 `;

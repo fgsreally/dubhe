@@ -1,7 +1,7 @@
 {
   "name": "dubhe-pub",
   "version": "1.0.3",
-  "description": "",
+  "description": "Micro module publishing side",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -13,6 +13,8 @@
   "files": [
     "dist"
   ],
+  "keywords": ["module federation","micro module","vite","esbuild"],
+
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
@@ -42,8 +44,8 @@
       ]
     }
   },
-  "author": "",
-  "license": "ISC",
+  "author": "fgsreally",
+  "license": "MIT",
   "dependencies": {
     "@vue/compiler-sfc": "^3.2.45",
     "debug": "^4.3.4",

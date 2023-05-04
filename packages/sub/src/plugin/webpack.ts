@@ -8,10 +8,14 @@ import { DefinePlugin } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
 import type { PubListType, SubConfig, SubListType } from 'dubhe'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
 import debug from 'debug'
+import type HtmlWebpackPlugin from 'html-webpack-plugin'
+
 import { state } from '../state'
 const Debug = debug('dubhe:sub')
+
+let htmlPlugin: typeof HtmlWebpackPlugin
+
 function getVirtualFilePath(id: string) {
   return `_VIRTUAL_DUBHE_/${id}`
 }
@@ -60,6 +64,11 @@ export class WebpackPlugin {
   // use virtual-module in development
   // use local-cache in production with parallel
   apply(compiler: Compiler) {
+    for (const plugin of compiler.options.plugins) {
+      if (plugin.constructor.name === 'HtmlWebpackPlugin')
+        htmlPlugin = plugin.constructor as any
+    }
+
     updateLocalRecord(this.config.remote)
     const { mode, devServer } = compiler.options
     const { injectHtml, externals, polyfill, version, meta } = this.config
@@ -175,8 +184,8 @@ export class WebpackPlugin {
       }
     }
     else {
-      compiler.hooks.compilation.tap('dubhe::subscribe', (compilation) => {
-        HtmlWebpackPlugin.getHooks(compilation).alterAssetTags.tap(
+      htmlPlugin && compiler.hooks.compilation.tap('dubhe::subscribe', (compilation) => {
+        htmlPlugin.getHooks(compilation).alterAssetTags.tap(
           'dubhe::subscribe',
 
           (data) => {

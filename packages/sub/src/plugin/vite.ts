@@ -129,7 +129,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         Debug(`find remote entry in hot mode --${module}`)
 
         return {
-          id: module + query ? `?${query}` : '',
+          id: module + (query ? `?${query}` : ''),
           external: true,
         }
       }

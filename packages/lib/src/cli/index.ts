@@ -14,7 +14,7 @@ import { analysePubDep, analyseSubDep, downloadFile, generateExports, getDubheLi
 import { buildExternal } from './build'
 const root = process.cwd()
 
-const cli = cac()
+const cli = cac('dubhe')
 
 cli.command('root', 'show dubhe CACHE_ROOT/TYPE_ROOT path').action(() => {
   log(`CACHE_ROOT:${CACHE_ROOT}`)

@@ -18,6 +18,5 @@ export default {
   }],
   outDir: '.dubhe',
   source: false,
-  importMap: true,
 } as PubConfig
 

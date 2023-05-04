@@ -16,9 +16,7 @@ export default (): UserConfig => {
     build: {
       sourcemap: true,
       outDir: process.env.HOTBUILD ? 'dist/hot' : 'dist/cold',
-      rollupOptions: {
 
-      },
     },
     server: {
       port: 4100,

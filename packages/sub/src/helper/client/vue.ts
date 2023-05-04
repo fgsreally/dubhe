@@ -1,6 +1,9 @@
 import type { App } from '@vue/devtools-api'
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
 const FEDERATION_KEY = 'dubhe'
+/**
+ * @deprecated
+ */
 export function vueDev(isForce = false) {
   return {
     install(app: App) {

@@ -1,4 +1,3 @@
-import { basename } from 'path'
 import type { SFCDescriptor } from '@vue/compiler-sfc'
 import { compileScript, parse, rewriteDefault } from '@vue/compiler-sfc'
 import type { dtsCompiler } from 'dubhe'
@@ -18,7 +17,7 @@ function parseCode(code: string) {
 
 export const VueCompiler: dtsCompiler = {
   key: /\.vue$/,
-  handler(code, id, project, config) {
+  handler(code, id, project) {
     const { content, ext } = compileVueCode(code)
 
     const virtualPath = `${id}.${ext || 'js'}`
@@ -27,9 +26,8 @@ export const VueCompiler: dtsCompiler = {
       project.removeSourceFile(project.getSourceFile(virtualPath)!)
 
     if (content)
-      project.createSourceFile(virtualPath, content, { overwrite: true })
-    return `${code}\n<dubhe>export default (block)=>{block.projectID="${config.project || 'dubhe'
-}";block.fileID="${basename(id)}";}</dubhe>`
+      project.createSourceFile(virtualPath, `${content}\nexport const addon:any`, { overwrite: true })
+    return code
   },
 }
 

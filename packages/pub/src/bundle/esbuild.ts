@@ -6,7 +6,9 @@ import type { Metafile, OutputFile } from 'esbuild'
 import fse from 'fs-extra'
 import { init } from 'es-module-lexer'
 import type { PubConfig } from 'dubhe'
+import debug from 'debug'
 import { isExternal } from './vite/vite'
+const Debug = debug('dubhe:pub')
 const root = process.cwd()
 const externalSet = new Set<string>()
 export function CSSPlugin(): ProPlugin {
@@ -17,12 +19,15 @@ export function CSSPlugin(): ProPlugin {
       const cssReg = new RegExp(virtualCssHelper)
       build.onTransform({ filter: /\.css$/ }, (ret, params) => {
         if (ret.loader !== 'js') {
+          Debug(`transform css file --${params.path}`)
           ret.contents = mountStyle(ret.contents as string, params.path)
           ret.loader = 'js'
         }
       })
 
       build.onResolve({ filter: cssReg }, (args) => {
+        Debug(`resolve css file path --${args.path}`)
+
         return {
           path: resolve(args.resolveDir, args.path),
         }
@@ -63,6 +68,8 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
 
       build.onResolve({ filter: /\.*/ }, (args) => {
         if (isExternal(args.path, config.externals)) {
+          Debug(`find external--${args.path} `)
+
           externalSet.add(args.path)
           return { path: args.path, external: true }
         }
@@ -71,6 +78,8 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         const outputs = (ret.outputFiles as OutputFile[])
         const meta = (ret.metafile as Metafile)
         const sourceGraph = {} as Record<string, Set<string> | string[]>
+
+        Debug('generate sourceGraph')
 
         Object.values(meta.outputs).forEach((item) => {
           Object.values(entryFileMap).forEach((entry) => {
@@ -85,6 +94,9 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         })
 
         const bundleGraph = {} as Record<string, string[]>
+
+        Debug('generate bundleGraph')
+
         for (const i in meta.outputs) {
           if (!i.includes(`.dubhe-${config.project}.js`))
             continue
@@ -102,9 +114,13 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         if (outputs.length === 0)
           return
 
+        Debug('output bundle')
+
         for (const i of outputs)
           await fse.outputFile(i.path, i.text, 'utf-8')
         if (changeFile) {
+          Debug('send HMR info')
+
           for (const home of config.HMR) {
             setTimeout(async () => {
               try {
@@ -127,6 +143,8 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
           }
         }
         else {
+          Debug('generate importsGraph')
+
           for (const i of outputs) {
             if (i.path.endsWith('.js')) {
               Object.entries(analyseImport(i.text)).forEach(([k, v]) => {
@@ -143,6 +161,8 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
             (importsGraph as any)[importer] = [...importsGraph[importer]]
 
           if (config.source) {
+            Debug('output sourcefile')
+
             for (const i in (ret.metafile as Metafile).inputs) {
               const sourcePath = resolve(root, i)
               if (fse.existsSync(sourcePath)) {
@@ -170,6 +190,8 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         } as any
         if (config.beforeEmit)
           await config.beforeEmit(metaData)
+        Debug('output dubheList.json')
+
         fse.outputJSON(resolve(root, outdir, 'core', 'dubheList.json'), metaData)
       })
     },

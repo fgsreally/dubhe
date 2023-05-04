@@ -8,8 +8,13 @@ import { DefinePlugin } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
 import type { PubListType, SubConfig, SubListType } from 'dubhe'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
+import debug from 'debug'
+import type HtmlWebpackPlugin from 'html-webpack-plugin'
+
 import { state } from '../state'
+const Debug = debug('dubhe:sub')
+
+let htmlPlugin: typeof HtmlWebpackPlugin
 
 function getVirtualFilePath(id: string) {
   return `_VIRTUAL_DUBHE_/${id}`
@@ -30,6 +35,8 @@ export class WebpackPlugin {
         HMRTypesHandler(url, this.config.remote)
         ret.forEach(async (id) => {
           const [project, moduleName] = resolveModuleAlias(id, state.aliasMap)
+          Debug(`refresh remote file --${project}/${moduleName}`)
+
           const { data } = await getVirtualContent(
             `${this.config.remote[project].url}/core/${moduleName}`,
             project,
@@ -57,6 +64,11 @@ export class WebpackPlugin {
   // use virtual-module in development
   // use local-cache in production with parallel
   apply(compiler: Compiler) {
+    for (const plugin of compiler.options.plugins) {
+      if (plugin.constructor.name === 'HtmlWebpackPlugin')
+        htmlPlugin = plugin.constructor as any
+    }
+
     updateLocalRecord(this.config.remote)
     const { mode, devServer } = compiler.options
     const { injectHtml, externals, polyfill, version, meta } = this.config
@@ -67,6 +79,8 @@ export class WebpackPlugin {
     const initlize = new Promise<void>(async (resolve, _reject) => {
       for (const i in this.config.remote) {
         try {
+          Debug(`get remote info --${i}`)
+
           // eslint-disable-next-line prefer-const
           let { data, isCache } = await getVirtualContent(
             `${this.config.remote[i].url}/core/dubheList.json`,
@@ -97,9 +111,14 @@ export class WebpackPlugin {
               (compiler as any).options.externals.push({ [`dubhe-${i}/${item.name}`]: `dubhe-${i}/${item.url}.js` })
           }
 
-          if (this.config.types)
+          if (this.config.types) {
+            Debug(`get remote dts --${i}`)
+
             getTypes(`${this.config.remote[i].url}/types/types.json`, i, dubheConfig.entryFileMap)
+          }
           if (this.config.cache) {
+            Debug('compare version between local and remote')
+
             if (isCache) {
               try {
                 const remoteInfo = await getRemoteContent(
@@ -131,7 +150,7 @@ export class WebpackPlugin {
           console.table(dubheConfig.files)
         }
         catch (e) {
-          console.log(e)
+          Debug(`fail to get remote info --${i} `)
           log(`can't find remote module [${i}] -- ${this.config.remote[i].url}`, 'red')
         }
       }
@@ -165,11 +184,13 @@ export class WebpackPlugin {
       }
     }
     else {
-      compiler.hooks.compilation.tap('dubhe::subscribe', (compilation) => {
-        HtmlWebpackPlugin.getHooks(compilation).alterAssetTags.tap(
+      htmlPlugin && compiler.hooks.compilation.tap('dubhe::subscribe', (compilation) => {
+        htmlPlugin.getHooks(compilation).alterAssetTags.tap(
           'dubhe::subscribe',
 
           (data) => {
+            Debug('inject importmap and polyfill to html')
+
             const tags = data.assetTags.scripts
             if (polyfill) {
               [...state.externalSet].forEach((dep) => {
@@ -243,16 +264,6 @@ export class WebpackPlugin {
                   importsGraph[source] = new Set()
                 importsGraph[source].add(exportName)
               }
-              /* First call
-              source == 'lodash'
-              exportName == 'default'
-              identifierName == '_'
-            */
-              /* Second call
-              source == 'lodash'
-              exportName == 'has'
-              identifierName == 'has'
-            */
             },
           )
         })
@@ -268,6 +279,7 @@ export class WebpackPlugin {
         meta,
         importsGraph,
       } as unknown as SubListType
+      Debug('generate dubheList.json')
 
       const content = JSON.stringify(metaData)
       compilation.assets['dubheList.json'] = {
@@ -300,6 +312,7 @@ export class WebpackPlugin {
                   id,
                   state.aliasMap,
                 )
+                Debug(`get remote entry --${project}/${moduleName}`)
                 const { url } = this.config.remote[project]
                 this.dp.definitions[`__DUBHE_${project}_`] = `"${url}/core"`
                 const { data } = await getVirtualContent(
@@ -309,6 +322,8 @@ export class WebpackPlugin {
                   this.config.cache,
                   this.config.cache,
                 )
+                Debug(`get sourcemap --${project}/${moduleName}`)
+
                 const { data: map } = await getVirtualContent(
                   `${url}.map`,
                   project,
@@ -339,7 +354,10 @@ export class WebpackPlugin {
                 && id.startsWith('.')
               ) {
                 id = resolve(importer, '../', id)
+
                 const [, project, moduleName] = getProjectAndModule(id) as any
+                Debug(`get remote file --${project}/${moduleName}`)
+
                 const { url } = this.config.remote[project]
                 const { data } = await getVirtualContent(
                   `${url}/core/${moduleName}`,
@@ -348,6 +366,8 @@ export class WebpackPlugin {
                   this.config.cache,
                   this.config.cache,
                 )
+                Debug(`get sourcemap --${project}/${moduleName}`)
+
                 const { data: map } = await getVirtualContent(
                   `${url}.map`,
                   project,

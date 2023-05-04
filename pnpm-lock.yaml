@@ -376,9 +376,6 @@ importers:
 
   packages/sub:
     dependencies:
-      '@vue/devtools-api':
-        specifier: ^6.2.1
-        version: registry.npmmirror.com/@vue/devtools-api@6.5.0
       axios:
         specifier: ^0.27.2
         version: registry.npmmirror.com/axios@0.27.2(debug@4.3.4)
@@ -394,9 +391,6 @@ importers:
       fs-extra:
         specifier: ^10.1.0
         version: registry.npmmirror.com/fs-extra@10.1.0
-      html-webpack-plugin:
-        specifier: ^5.5.0
-        version: registry.npmmirror.com/html-webpack-plugin@5.5.0(webpack@5.75.0)
       sirv:
         specifier: ^2.0.2
         version: registry.npmmirror.com/sirv@2.0.2
@@ -404,7 +398,7 @@ importers:
         specifier: ^3.1.0
         version: registry.npmmirror.com/vite@3.2.5(@types/node@17.0.45)
       webpack:
-        specifier: ^5.75.0
+        specifier: ^5.0.0
         version: registry.npmmirror.com/webpack@5.75.0(esbuild@0.16.17)
       webpack-virtual-modules:
         specifier: ^0.5.0
@@ -425,6 +419,9 @@ importers:
       graphology:
         specifier: ^0.25.1
         version: registry.npmmirror.com/graphology@0.25.1(graphology-types@0.24.7)
+      html-webpack-plugin:
+        specifier: ^5.5.0
+        version: registry.npmmirror.com/html-webpack-plugin@5.5.0(webpack@5.75.0)
       rollup:
         specifier: 2.78.1
         version: registry.npmmirror.com/rollup@2.78.1
@@ -867,7 +864,6 @@ packages:
     hasBin: true
     dependencies:
       '@babel/types': 7.21.4
-    dev: true
 
   /@babel/plugin-proposal-dynamic-import@7.18.6(@babel/core@7.21.0):
     resolution: {integrity: sha512-1auuwmK+Rz13SJj36R+jqFPMJWyKEDd7lLSdOj4oJK0UTgGueSAtkrCvz9ewmgyU/P941Rv2fQwZJN8s6QruXw==}
@@ -1032,7 +1028,6 @@ packages:
       '@babel/helper-string-parser': 7.19.4
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
-    dev: true
 
   /@ctrl/tinycolor@3.5.0:
     resolution: {integrity: sha512-tlJpwF40DEQcfR/QF+wNMVyGMaO9FQp6Z1Wahj4Gk3CJQYHwA2xVG7iKDFdW6zuxZY9XWOpGcfNCTsX4McOsOg==}
@@ -1718,7 +1713,7 @@ packages:
   /@vue/compiler-core@3.2.47:
     resolution: {integrity: sha512-p4D7FDnQb7+YJmO2iPEv0SQNeNzcbHdGByJDsT4lynf63AFkOTFN07HsiRSvjGo0QrxR/o3d0hUyNCUnBU2Tig==}
     dependencies:
-      '@babel/parser': 7.21.2
+      '@babel/parser': 7.21.4
       '@vue/shared': 3.2.47
       estree-walker: 2.0.2
       source-map: 0.6.1
@@ -1732,7 +1727,7 @@ packages:
   /@vue/compiler-sfc@3.2.47:
     resolution: {integrity: sha512-rog05W+2IFfxjMcFw10tM9+f7i/+FFpZJJ5XHX72NP9eC2uRD+42M3pYcQqDXVYoj74kHMSEdQ/WmCjt8JFksQ==}
     dependencies:
-      '@babel/parser': 7.21.2
+      '@babel/parser': 7.21.4
       '@vue/compiler-core': 3.2.47
       '@vue/compiler-dom': 3.2.47
       '@vue/compiler-ssr': 3.2.47
@@ -1825,7 +1820,7 @@ packages:
   /@vue/reactivity-transform@3.2.47:
     resolution: {integrity: sha512-m8lGXw8rdnPVVIdIFhf0LeQ/ixyHkH5plYuS83yop5n7ggVJU+z5v0zecwEnX7fa7HNLBhh2qngJJkxpwEEmYA==}
     dependencies:
-      '@babel/parser': 7.21.2
+      '@babel/parser': 7.21.4
       '@vue/compiler-core': 3.2.47
       '@vue/shared': 3.2.47
       estree-walker: 2.0.2
@@ -8373,12 +8368,6 @@ packages:
       - whiskers
     dev: true
 
-  registry.npmmirror.com/@vue/devtools-api@6.5.0:
-    resolution: {integrity: sha512-o9KfBeaBmCKl10usN4crU53fYtC1r7jJwdGKjPT24t348rHxgfpZ0xL3Xm/gLUYnc0oTp8LAmrxOeLyu6tbk2Q==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@vue/devtools-api/-/devtools-api-6.5.0.tgz}
-    name: '@vue/devtools-api'
-    version: 6.5.0
-    dev: false
-
   registry.npmmirror.com/@vue/eslint-config-typescript@9.1.0(@typescript-eslint/eslint-plugin@5.51.0)(@typescript-eslint/parser@5.51.0)(eslint-plugin-vue@8.7.1)(eslint@7.32.0)(typescript@4.5.5):
     resolution: {integrity: sha512-j/852/ZYQ5wDvCD3HE2q4uqJwJAceer2FwoEch1nFo+zTOsPrbzbE3cuWIs3kvu5hdFsGTMYwRwjI6fqZKDMxQ==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@vue/eslint-config-typescript/-/eslint-config-typescript-9.1.0.tgz}
     id: registry.npmmirror.com/@vue/eslint-config-typescript/9.1.0
@@ -11999,7 +11988,7 @@ packages:
       lodash: registry.npmmirror.com/lodash@4.17.21
       pretty-error: registry.npmmirror.com/pretty-error@4.0.0
       tapable: registry.npmmirror.com/tapable@2.2.1
-      webpack: registry.npmmirror.com/webpack@5.75.0(webpack-cli@5.0.1)
+      webpack: registry.npmmirror.com/webpack@5.75.0(esbuild@0.16.17)
 
   registry.npmmirror.com/htmlparser2@6.1.0:
     resolution: {integrity: sha512-gyyPk6rgonLFEDGoeRgQNaEUvdJ4ktTmmUh/h2t7s+M8oPpIPxgNACWa+6ESR57kXstwqPiCut0V8NRpcwgU7A==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/htmlparser2/-/htmlparser2-6.1.0.tgz}

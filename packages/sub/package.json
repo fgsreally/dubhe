@@ -1,7 +1,7 @@
 {
   "name": "dubhe-sub",
-  "version": "1.0.3",
-  "description": "",
+  "version": "1.0.5",
+  "description": "Micro module subscription side",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -10,7 +10,12 @@
     "build": "tsup && yarn build:view",
     "build:view": "vite build"
   },
-  "keywords": [],
+  "keywords": [
+    "module federation",
+    "micro module",
+    "vite",
+    "webpack"
+  ],
   "files": [
     "dist"
   ],
@@ -53,20 +58,22 @@
       ]
     }
   },
-  "author": "",
-  "license": "ISC",
+  "author": "fgsreally",
+  "license": "MIT",
   "dependencies": {
-    "@vue/devtools-api": "^6.2.1",
     "axios": "^0.27.2",
     "colors": "^1.4.0",
     "debug": "^4.3.4",
     "dubhe": "workspace:*",
     "fs-extra": "^10.1.0",
-    "html-webpack-plugin": "^5.5.0",
     "sirv": "^2.0.2",
     "vite": "^3.1.0",
-    "webpack": "^5.75.0",
+    "webpack": "^5.0.0",
     "webpack-virtual-modules": "^0.5.0"
+  },
+  "peerDependencies": {
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.0.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",
@@ -74,6 +81,7 @@
     "@types/node": "^17.0.40",
     "esbuild": "^0.16.9",
     "graphology": "^0.25.1",
+    "html-webpack-plugin": "^5.5.0",
     "rollup": "2.78.1",
     "sigma": "^2.4.0",
     "tsup": "^6.1.2",

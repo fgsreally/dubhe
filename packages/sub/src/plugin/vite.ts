@@ -30,13 +30,13 @@ import type {
 
   SubListType,
 } from 'dubhe'
+import debug from 'debug'
 import { state } from '../state'
-
 import { Graph } from '../helper/node/graph'
 
 let server: ViteDevServer
 let command = 'build'
-
+const Debug = debug('dubhe:sub')
 const _dirname
   = typeof __dirname !== 'undefined'
     ? __dirname
@@ -53,6 +53,7 @@ function reloadModule(id: string, time: number) {
   if (module) {
     const ret = [] as any
     moduleGraph.invalidateModule(module)
+    Debug(`refrash module --${module}`)
 
     traverseModule(module)
 
@@ -111,7 +112,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       // for dep like vue
       if (command === 'build') {
         const { systemjs, esm } = externals(id) || {}
-
+        Debug(`find external --${id}`)
         if (systemjs || esm) {
           if (esm)
             state.esmImportMap[id] = esm
@@ -125,13 +126,17 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       const module = `dubhe-${project}/${moduleName}`
       // for dubhe remote module which is in hot mode
       if (command === 'build' && config.remote[project]?.mode === 'hot') {
+        Debug(`find remote entry in hot mode --${module}`)
+
         return {
-          id: module + query ? `?${query}` : '',
+          id: module + (query ? `?${query}` : ''),
           external: true,
         }
       }
 
       if (i?.startsWith(VIRTUAL_PREFIX) && id.startsWith('.')) {
+        Debug(`find remote file --${id}`)
+
         id = urlResolve(i, id)
 
         graph.addModule(resolvePathToModule(id), resolvePathToModule(i))
@@ -145,6 +150,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       }
 
       if (VIRTUAL_RE.test(id) && !id.startsWith(VIRTUAL_PREFIX)) {
+        Debug(`find remote entry --${module}`)
+
         const query = HMRMap.has(module) ? `?t=${HMRMap.get(module)}` : ''
         graph.addModule(module, resolvePathToModule(i))
 
@@ -161,6 +168,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         const module = `dubhe-${project}/${moduleName}`
         const url = `${config.remote[project].url}/core/${moduleName}`
         try {
+          Debug(`load remote module --${module}`)
+
           const { data } = await getVirtualContent(
             url,
             project,
@@ -168,11 +177,14 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             config.cache && !HMRMap.has(module),
             config.cache,
           )
+
+          Debug(`load remote sourcemap --${module}`)
+
           const { data: map } = await getVirtualContent(
             `${url}.map`,
             project,
             `${moduleName}.map`,
-            config.cache,
+            config.cache && !HMRMap.has(module),
             config.cache,
           ).catch(() => ({ } as any))
 
@@ -204,9 +216,11 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       for (const i in config.remote) {
         try {
           if (projectSet.has(i)) {
-            log(`${i} has mount`)
+            log(`${i} has been mounted`, 'yellow')
             continue
           } // 向远程请求清单
+
+          Debug(`get remote info --${i}`)
 
           const { url, mode } = config.remote[i]
           // eslint-disable-next-line prefer-const
@@ -225,9 +239,14 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           state.pubListMap[i] = dubheConfig
           dubheConfig.externals.forEach(item => state.externalSet.add(item))
 
-          if (config.types)
+          if (config.types) {
+            Debug(`get remote dts --${i}`)
+
             getTypes(`${url}/types/types.json`, i, dubheConfig.entryFileMap)
+          }
           if (config.cache) {
+            Debug('compare version between local and remote')
+
             if (isCache) {
               try {
                 const remoteInfo = await getRemoteContent(
@@ -262,6 +281,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           }
         }
         catch (e) {
+          Debug(`fail to get remote info --${i}`)
+
           log(`can't find remote module [${i}] -- ${config.remote[i].url}`, 'red')
         }
       }
@@ -345,6 +366,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         meta: config.meta,
         importsGraph,
       } as unknown as SubListType
+      Debug('output dubheList.json')
 
       this.emitFile({
         type: 'asset',
@@ -357,6 +379,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       if (command !== 'build')
         return
       const tags = [] as HtmlTagDescriptor[]
+
+      Debug('inject importmap and polyfill to html')
 
       if (config.injectHtml !== false) {
         tags.push({
@@ -434,6 +458,8 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
         // 向远程请求清单
         const { url } = config.remote[project]
 
+        Debug(`get dev info --${project}`)
+
         try {
           const { externals, entry, isDubhe } = await getRemoteContent(
             urlResolve(url, 'dubhe'),
@@ -460,6 +486,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
           log(`${project} use Dev Mode`)
         }
         catch (e) {
+          Debug(`fail to get dev info --${project}`)
         }
       }
     },
@@ -484,12 +511,16 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
     async load(id) {
       if (state.externalSet.has(id)) {
         const { id: resolveID } = await this.resolve(id, 'dubhe') as any
+        Debug(`load external module --${resolveID}`)
+
         return fs.promises.readFile(resolveID.split('?')[0], 'utf-8')
       }
     },
 
     transformIndexHtml(html) {
       if (isFirstTime) {
+        Debug('inject importmap to html')
+
         tags.push({
           tag: 'script',
           attrs: {

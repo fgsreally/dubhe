@@ -41,8 +41,8 @@ async function start() {
   await ColdBundle()
   await waitOn(createOpts([4100]))
 
-  $`npm run test:e2e`
   $`npm run test:unit`
+  $`npm run test:e2e`
 }
 
 start()

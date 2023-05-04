@@ -11,7 +11,7 @@
     "lint": "eslint . --ext .ts",
     "test": "cross-env TEST=true node test/before-test.mjs",
     "test:e2e": "playwright test e2e/",
-    "test:unit": "vitest",
+    "test:unit": "vitest --run",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",  

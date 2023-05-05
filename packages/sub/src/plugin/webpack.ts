@@ -93,10 +93,7 @@ export class WebpackPlugin {
           dubheConfig.externals.forEach(item => state.externalSet.add(item))
           // if (dubheConfig.config.importMap)
           //   isImportMap = true
-          if (this.config.remote[i].mode === 'hot' && mode !== 'development') {
-            state.esmImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'core')
-            state.systemjsImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'systemjs')
-
+          if (mode !== 'development') {
             for (const external of dubheConfig.externals) {
               const { esm, systemjs } = externals(external) || {}
               if (!state.esmImportMap[external] && (esm || systemjs)) {
@@ -107,8 +104,12 @@ export class WebpackPlugin {
                   state.systemjsImportMap[external] = systemjs
               }
             }
-            for (const item of dubheConfig.alias)
-              (compiler as any).options.externals.push({ [`dubhe-${i}/${item.name}`]: `dubhe-${i}/${item.url}.js` })
+            if (this.config.remote[i].mode === 'hot') {
+              state.esmImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'core')
+              state.systemjsImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'systemjs')
+              for (const item of dubheConfig.alias)
+                (compiler as any).options.externals.push({ [`dubhe-${i}/${item.name}`]: `dubhe-${i}/${item.url}.js` })
+            }
           }
 
           if (this.config.types) {
@@ -192,15 +193,14 @@ export class WebpackPlugin {
             Debug('inject importmap and polyfill to html')
 
             const tags = data.assetTags.scripts
+            // [...state.externalSet].forEach((dep) => {
+            //   const { esm, systemjs } = externals(dep) || {}
+            //   if (esm)
+            //     state.esmImportMap[dep] = esm
+            //   if (systemjs)
+            //     state.systemjsImportMap[dep] = systemjs
+            // })
             if (polyfill) {
-              [...state.externalSet].forEach((dep) => {
-                const { esm, systemjs } = externals(dep) || {}
-                if (esm)
-                  state.esmImportMap[dep] = esm
-                if (systemjs)
-                  state.systemjsImportMap[dep] = systemjs
-              })
-
               if (polyfill.systemjs) {
                 tags.unshift({
                   // importmap polyfill
@@ -355,7 +355,6 @@ export class WebpackPlugin {
                 && id.startsWith('.')
               ) {
                 id = resolve(importer, '../', id)
-
                 const [, project, moduleName] = getProjectAndModule(id) as any
                 Debug(`get remote file --${project}/${moduleName}`)
 

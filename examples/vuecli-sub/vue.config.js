@@ -14,6 +14,7 @@ const config = {
     }, // remote static server
   },
   externals: (id) => {
+ 
     if (process.env.TEST) {
       if (id === "vue" || id.includes("element-plus"))
         return {

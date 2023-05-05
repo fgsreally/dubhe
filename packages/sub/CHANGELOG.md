@@ -1,5 +1,12 @@
 # dubhe-sub
 
+## 1.0.6
+
+### Patch Changes
+
+- 3696a96: webpack plugin can handle externals and importmap correctly in both hot and cold mode
+- 59c1395: webpack plugin can handle virtual module correctly
+
 ## 1.0.5
 
 ### Patch Changes

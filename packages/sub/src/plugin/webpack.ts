@@ -269,15 +269,16 @@ export class WebpackPlugin {
         })
     })
     compiler.hooks.emit.tapAsync('dubhe::subscibe', (compilation, callback) => {
+      const ret = {} as Record<string, string>
       for (const i in importsGraph)
-        importsGraph[i] = [...importsGraph[i]] as any
+        ret[i] = [...importsGraph[i]] as any
       const metaData = {
         type: 'subscribe',
         version,
         timestamp: getFormatDate(),
         externals: [...state.externalSet],
         meta,
-        importsGraph,
+        importsGraph: ret,
       } as unknown as SubListType
       Debug('generate dubheList.json')
 

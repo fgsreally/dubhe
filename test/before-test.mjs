@@ -30,7 +30,7 @@ function Serve() {
 }
 
 function SubDev() {
-  $`npm run example:sub`
+  $`pnpm --filter=sub-vite run dev`
 }
 async function start() {
   await PubBundle()
@@ -41,8 +41,9 @@ async function start() {
   await ColdBundle()
   await waitOn(createOpts([4100]))
 
-  $`npm run test:unit`
-  $`npm run test:e2e`
+  await $`npm run test:unit`
+  await $`npm run test:e2e`
+  process.exit(0)
 }
 
 start()

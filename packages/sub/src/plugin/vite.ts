@@ -100,7 +100,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
   const { externals } = config
 
   const graph = new Graph(Object.keys(config.remote), [])
-  updateLocalRecord(config.remote)
+  config.cache && updateLocalRecord(config.remote)
   const projectSet = new Set<string>()
   const devHelper = DevPlugin(config, projectSet)
   const query = (config.query || (config.version && `v=${config.version}`))

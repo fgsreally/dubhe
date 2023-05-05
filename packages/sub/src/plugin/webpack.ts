@@ -69,7 +69,7 @@ export class WebpackPlugin {
         htmlPlugin = plugin.constructor as any
     }
 
-    updateLocalRecord(this.config.remote)
+    this.config.cache && updateLocalRecord(this.config.remote)
     const { mode, devServer } = compiler.options
     const { injectHtml, externals, polyfill, version, meta } = this.config
     // virtualmodule does't work when using multiprocess bundle

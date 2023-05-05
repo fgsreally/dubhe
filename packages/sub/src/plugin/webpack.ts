@@ -16,9 +16,6 @@ const Debug = debug('dubhe:sub')
 
 let htmlPlugin: typeof HtmlWebpackPlugin
 
-function getVirtualFilePath(id: string) {
-  return `_VIRTUAL_DUBHE_/${id}`
-}
 export class WebpackPlugin {
   vfs: VirtualModulesPlugin
   dp: DefinePlugin
@@ -46,7 +43,8 @@ export class WebpackPlugin {
           )
 
           this.vfs.writeModule(
-            getVirtualFilePath(`dubhe-${project}/${moduleName}`),
+            getLocalPath(project, moduleName)
+            ,
             data,
           )
         })
@@ -69,7 +67,7 @@ export class WebpackPlugin {
         htmlPlugin = plugin.constructor as any
     }
 
-    updateLocalRecord(this.config.remote)
+    this.config.cache && updateLocalRecord(this.config.remote)
     const { mode, devServer } = compiler.options
     const { injectHtml, externals, polyfill, version, meta } = this.config
     // virtualmodule does't work when using multiprocess bundle
@@ -93,10 +91,7 @@ export class WebpackPlugin {
           dubheConfig.externals.forEach(item => state.externalSet.add(item))
           // if (dubheConfig.config.importMap)
           //   isImportMap = true
-          if (this.config.remote[i].mode === 'hot' && mode !== 'development') {
-            state.esmImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'core')
-            state.systemjsImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'systemjs')
-
+          if (mode !== 'development') {
             for (const external of dubheConfig.externals) {
               const { esm, systemjs } = externals(external) || {}
               if (!state.esmImportMap[external] && (esm || systemjs)) {
@@ -107,8 +102,12 @@ export class WebpackPlugin {
                   state.systemjsImportMap[external] = systemjs
               }
             }
-            for (const item of dubheConfig.alias)
-              (compiler as any).options.externals.push({ [`dubhe-${i}/${item.name}`]: `dubhe-${i}/${item.url}.js` })
+            if (this.config.remote[i].mode === 'hot') {
+              state.esmImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'core')
+              state.systemjsImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'systemjs')
+              for (const item of dubheConfig.alias)
+                (compiler as any).options.externals.push({ [`dubhe-${i}/${item.name}`]: `dubhe-${i}/${item.url}.js` })
+            }
           }
 
           if (this.config.types) {
@@ -192,15 +191,8 @@ export class WebpackPlugin {
             Debug('inject importmap and polyfill to html')
 
             const tags = data.assetTags.scripts
-            if (polyfill) {
-              [...state.externalSet].forEach((dep) => {
-                const { esm, systemjs } = externals(dep) || {}
-                if (esm)
-                  state.esmImportMap[dep] = esm
-                if (systemjs)
-                  state.systemjsImportMap[dep] = systemjs
-              })
 
+            if (polyfill) {
               if (polyfill.systemjs) {
                 tags.unshift({
                   // importmap polyfill
@@ -269,15 +261,16 @@ export class WebpackPlugin {
         })
     })
     compiler.hooks.emit.tapAsync('dubhe::subscibe', (compilation, callback) => {
+      const ret = {} as Record<string, string>
       for (const i in importsGraph)
-        importsGraph[i] = [...importsGraph[i]] as any
+        ret[i] = [...importsGraph[i]] as any
       const metaData = {
         type: 'subscribe',
         version,
         timestamp: getFormatDate(),
         externals: [...state.externalSet],
         meta,
-        importsGraph,
+        importsGraph: ret,
       } as unknown as SubListType
       Debug('generate dubheList.json')
 
@@ -354,9 +347,8 @@ export class WebpackPlugin {
                 && id.startsWith('.')
               ) {
                 id = resolve(importer, '../', id)
-
                 const [, project, moduleName] = getProjectAndModule(id) as any
-                Debug(`get remote file --${project}/${moduleName}`)
+                Debug(`get remote file --${project}/${moduleName} --${id}`)
 
                 const { url } = this.config.remote[project]
                 const { data } = await getVirtualContent(
@@ -377,9 +369,8 @@ export class WebpackPlugin {
                 ).catch(() => ({} as any))
 
                 if (useVirtualModule) {
-                  const virtualPath = getVirtualFilePath(id)
-                  this.vfs.writeModule(virtualPath, data)
-                  map && this.vfs.writeModule(`${virtualPath}.map`, map)
+                  this.vfs.writeModule(id, data)
+                  map && this.vfs.writeModule(`${id}.map`, map)
                 }
               }
 

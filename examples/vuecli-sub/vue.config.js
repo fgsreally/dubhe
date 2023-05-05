@@ -14,6 +14,7 @@ const config = {
     }, // remote static server
   },
   externals: (id) => {
+ 
     if (process.env.TEST) {
       if (id === "vue" || id.includes("element-plus"))
         return {
@@ -23,7 +24,7 @@ const config = {
     }
   },
   systemjs: true,
-  cache: !process.env.DEV,
+  cache: !process.env.CI,
   types: true,
   injectHtml: {
     importMap: true,
@@ -33,6 +34,7 @@ const config = {
 
 const app = new Sub(config);
 module.exports = defineConfig({
+  parallel:!process.env.CI,
   transpileDependencies: true,
   outputDir: process.env.HOTBUILD ? "dist/hot" : "dist/cold",
   lintOnSave: false,

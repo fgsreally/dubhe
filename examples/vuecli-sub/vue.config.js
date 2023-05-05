@@ -23,7 +23,7 @@ const config = {
     }
   },
   systemjs: true,
-  cache: false,
+  cache: !process.env.CI,
   types: true,
   injectHtml: {
     importMap: true,
@@ -33,6 +33,7 @@ const config = {
 
 const app = new Sub(config);
 module.exports = defineConfig({
+  parallel:!process.env.CI,
   transpileDependencies: true,
   outputDir: process.env.HOTBUILD ? "dist/hot" : "dist/cold",
   lintOnSave: false,

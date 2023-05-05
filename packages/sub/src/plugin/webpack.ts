@@ -16,9 +16,6 @@ const Debug = debug('dubhe:sub')
 
 let htmlPlugin: typeof HtmlWebpackPlugin
 
-function getVirtualFilePath(id: string) {
-  return `_VIRTUAL_DUBHE_/${id}`
-}
 export class WebpackPlugin {
   vfs: VirtualModulesPlugin
   dp: DefinePlugin
@@ -46,7 +43,8 @@ export class WebpackPlugin {
           )
 
           this.vfs.writeModule(
-            getVirtualFilePath(`dubhe-${project}/${moduleName}`),
+            getLocalPath(project, moduleName)
+            ,
             data,
           )
         })
@@ -193,13 +191,7 @@ export class WebpackPlugin {
             Debug('inject importmap and polyfill to html')
 
             const tags = data.assetTags.scripts
-            // [...state.externalSet].forEach((dep) => {
-            //   const { esm, systemjs } = externals(dep) || {}
-            //   if (esm)
-            //     state.esmImportMap[dep] = esm
-            //   if (systemjs)
-            //     state.systemjsImportMap[dep] = systemjs
-            // })
+
             if (polyfill) {
               if (polyfill.systemjs) {
                 tags.unshift({
@@ -356,7 +348,7 @@ export class WebpackPlugin {
               ) {
                 id = resolve(importer, '../', id)
                 const [, project, moduleName] = getProjectAndModule(id) as any
-                Debug(`get remote file --${project}/${moduleName}`)
+                Debug(`get remote file --${project}/${moduleName} --${id}`)
 
                 const { url } = this.config.remote[project]
                 const { data } = await getVirtualContent(
@@ -377,9 +369,8 @@ export class WebpackPlugin {
                 ).catch(() => ({} as any))
 
                 if (useVirtualModule) {
-                  const virtualPath = getVirtualFilePath(id)
-                  this.vfs.writeModule(virtualPath, data)
-                  map && this.vfs.writeModule(`${virtualPath}.map`, map)
+                  this.vfs.writeModule(id, data)
+                  map && this.vfs.writeModule(`${id}.map`, map)
                 }
               }
 

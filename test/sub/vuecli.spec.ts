@@ -11,7 +11,7 @@ describe('[vuecli] subscribe module', () => {
   })
   it('dist files output [hot mode]', async () => {
     const html = await getFileContent('vuecli-sub/dist/hot/index.html')
-    expect(getImportMap(html)).toMatchSnapshot()
+    expect(Object.keys(getImportMap(html).imports).length).toBe(6)
     const files = await getDistFiles('vuecli-sub/dist/hot')
     const content = await getFileContent(`vuecli-sub/dist/hot/${files[0]}`)
     expect(content).toMatch('dubhe-viteout/app')

@@ -4,4 +4,4 @@
 "dubhe-sub": major
 ---
 
-add support for app&lib(only in vite);add hash support;
+add support for app&lib(only in vite);add hash support;refactor virtual entry; refactor importmap format

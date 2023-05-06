@@ -1,4 +1,4 @@
-import { basename, extname, relative, resolve } from 'path'
+import { relative, resolve } from 'path'
 import { normalizePath } from 'vite'
 import type { PluginOption } from 'vite'
 import { init } from 'es-module-lexer'
@@ -14,7 +14,6 @@ import {
   VIRTUAL_HMR_PREFIX,
   copySourceFile,
   createEntryFile,
-  getAlias,
   getExposeFromBundle,
   getFormatDate,
   getRelatedPath,
@@ -33,7 +32,6 @@ const HMRconfig: HMRInfo = {
   changeFile: '',
   cssFiles: {},
 }
-const initEntryFiles: string[] = []
 const entryFileMap: { [key: string]: string } = {}
 let metaData: any
 const alias: { name: string; url: string }[] = []
@@ -172,16 +170,16 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         if (!i.endsWith('.js'))
           continue
         const name = i.split('.dubhe')[0]
-        if (i) {
+        if (alias.some(item => item.name === name)) {
           bundleGraph[name] = [];
           (data[i] as any).imports.forEach((item: string) => {
             if (item.includes(`.dubhe-${config.project}`))
               bundleGraph[name].push(item)
           })
         }
-        for (const entry of initEntryFiles) {
-          if (name === basename(entry, extname(entry))) {
-            const entryFilePath = (entryFileMap[getAlias(i, alias) as string]
+        for (const entry of alias.map(({ name }) => name)) {
+          if (name === entry) {
+            const entryFilePath = (entryFileMap[name]
               = getRelatedPath(
                 (data[i] as OutputChunk).facadeModuleId as string,
               ))
@@ -249,14 +247,14 @@ export function BundlePlugin(config: PubConfig): PluginOption {
       }
     },
 
-    resolveId(id, importer) {
-      if (importer === 'dubhe') {
-        log(`Find entry file --${id}`)
+    resolveId(id) {
+      // if (importer === 'dubhe') {
+      //   log(`Find entry file --${id}`)
 
-        const filePath = normalizePath(resolve(root, id))
-        if (!initEntryFiles.includes(filePath))
-          initEntryFiles.push(filePath)
-      }
+      //   const filePath = normalizePath(resolve(root, id))
+      //   if (!initEntryFiles.includes(filePath))
+      //     initEntryFiles.push(filePath)
+      // }
       // if (importer)
       //   resolveImport(resolve(importer, id))
       if (isExternal(id, config.externals)) {

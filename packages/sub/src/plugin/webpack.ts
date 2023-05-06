@@ -103,10 +103,12 @@ export class WebpackPlugin {
               }
             }
             if (this.config.remote[i].mode === 'hot') {
-              state.esmImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'core')
-              state.systemjsImportMap[`dubhe-${i}`] = urlResolve(this.config.remote[i].url, 'systemjs')
-              for (const item of dubheConfig.alias)
-                (compiler as any).options.externals.push({ [`dubhe-${i}/${item.name}`]: `dubhe-${i}/${item.url}.js` })
+              for (const item of dubheConfig.alias) {
+                (compiler as any).options.externals.push(`dubhe-${i}/${item.name}`)
+
+                state.esmImportMap[`dubhe-${i}/${item.name}`] = urlResolve(this.config.remote[i].url, `core/${item.url}`)
+                state.systemjsImportMap[`dubhe-${i}/${item.name}`] = urlResolve(this.config.remote[i].url, `systemjs/${item.url}`)
+              }
             }
           }
 

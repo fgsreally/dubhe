@@ -1,5 +1,5 @@
 import { basename, relative, resolve } from 'path'
-import { INJECT_STYLE_SCRIPT, ImportExpression, VIRTUAL_HMR_PREFIX, analyseImport, createEntryFile, getFormatDate, log, mountStyle, sendHMRInfo, virtualCssHelper } from 'dubhe'
+import { INJECT_STYLE_SCRIPT, VIRTUAL_HMR_PREFIX, analyseImport, createEntryFile, getFormatDate, log, mountStyle, sendHMRInfo, virtualCssHelper } from 'dubhe'
 import type { ProPlugin } from 'esbuild-plugin-merge'
 
 import type { Metafile, OutputFile } from 'esbuild'
@@ -18,6 +18,8 @@ export function CSSPlugin(): ProPlugin {
     setup(build) {
       const cssReg = new RegExp(virtualCssHelper)
       build.onTransform({ filter: /\.css$/ }, (ret, params) => {
+        if (params.path.includes('main.css'))
+          return
         if (ret.loader !== 'js') {
           Debug(`transform css file --${params.path}`)
           ret.contents = mountStyle(ret.contents as string, params.path)
@@ -48,7 +50,7 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
       await init
       await createEntryFile()
       let changeFile = ''
-      let alias: any
+      const alias: any = []
       const entryFileMap = config.entry
       const importsGraph = {} as Record<string, Set<string>>
       build.onUpdate((id) => {
@@ -62,6 +64,7 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         bundle: true,
         write: false,
         metafile: true,
+        entryNames: `[name].dubhe-${config.project}.[hash]`,
         chunkNames: `[name].dubhe-${config.project}.[hash]`,
       })
 
@@ -80,10 +83,10 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
 
         Debug('generate sourceGraph')
 
-        Object.values(meta.outputs).forEach((item) => {
-          console.log(item)
-          Object.values(entryFileMap).forEach((entry) => {
+        Object.entries(meta.outputs).forEach(([filename, item]) => {
+          Object.entries(entryFileMap).forEach(([name, entry]) => {
             if (resolve(root, item.entryPoint || '') === resolve(root, entry)) {
+              alias.push({ name, url: basename(filename) })
               sourceGraph[entry] = new Set()
               Object.keys(item.inputs).forEach((input) => {
                 if (fse.existsSync(resolve(root, input)))

@@ -3,7 +3,7 @@ import { getDistFiles, isExist } from '../utils'
 describe('[esbuild] publish module ', () => {
   it('core files output', async () => {
     const files = await getDistFiles('esbuild-pub/.dubhe/core')
-    expect(files.length).toBe(5)
+    expect(files.length).toBe(4)
     expect(isExist('esbuild-pub/.dubhe/core/dubheList.json')).toBeTruthy()
   })
 

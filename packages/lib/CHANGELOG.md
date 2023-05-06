@@ -1,5 +1,11 @@
 # dubhe
 
+## 2.0.0-alpha.0
+
+### Major Changes
+
+- 756ffad: add support for app&lib(only in vite);add hash support;refactor virtual entry; refactor importmap format
+
 ## 1.0.3
 
 ### Patch Changes

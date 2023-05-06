@@ -103,7 +103,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
   config.cache && updateLocalRecord(config.remote)
   const projectSet = new Set<string>()
   const devHelper = DevPlugin(config, projectSet)
-  const query = (config.query || (config.version && `v=${config.version}`))
   // 返回的是插件对象
   return [devHelper, {
     name: 'dubhe::subscribe',
@@ -126,16 +125,16 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       const module = `dubhe-${project}/${moduleName}`
       // for dubhe remote module which is in hot mode
       if (command === 'build' && config.remote[project]?.mode === 'hot') {
-        Debug(`find remote entry in hot mode --${module}`)
+        Debug(`find remote entry in hot mode --${id}`)
 
         return {
-          id: module + (query ? `?${query}` : ''),
+          id,
           external: true,
         }
       }
 
       if (i?.startsWith(VIRTUAL_PREFIX) && id.startsWith('.')) {
-        Debug(`find remote file --${id}`)
+        Debug(`Looking for remote file --${id}`)
 
         id = urlResolve(i, id)
 
@@ -146,14 +145,18 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
         const query = HMRMap.has(module) ? `?t=${HMRMap.get(module)}` : ''
 
+        Debug(`Find  remote file --${id + query}`)
+
         return { id: id + query }
       }
 
       if (VIRTUAL_RE.test(id) && !id.startsWith(VIRTUAL_PREFIX)) {
-        Debug(`find remote entry --${module}`)
+        Debug(`Looking for remote entry --${module}`)
 
         const query = HMRMap.has(module) ? `?t=${HMRMap.get(module)}` : ''
         graph.addModule(module, resolvePathToModule(i))
+
+        Debug(`Find remote entry --${VIRTUAL_PREFIX}${module}${query}`)
 
         return `${VIRTUAL_PREFIX}${module}${query}`
       }
@@ -206,7 +209,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         viteConfig.define = {}
       for (const i in config.remote) {
         const url = config.remote[i].url
-        viteConfig.define[`__DUBHE_${i}_`] = `"${url}/core"`
+        viteConfig.define[`globalThis.__DP_${i}_`] = `"${url}/core"`
       }
     },
     async configResolved(resolvedConfig) {
@@ -230,12 +233,15 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             'dubheList.json',
             config.cache,
           )
+          const dubheConfig: PubListType = JSON.parse(data)
+
           if (mode === 'hot' && command === 'build') {
-            state.esmImportMap[`dubhe-${i}`] = urlResolve(url, 'core')
-            state.systemjsImportMap[`dubhe-${i}`] = urlResolve(url, 'systemjs')
+            for (const { name, url: aliasUrl } of dubheConfig.alias) {
+              state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `core/${aliasUrl}.js`)
+              state.systemjsImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `systemjs/${aliasUrl}.js`)
+            }
           }
 
-          const dubheConfig: PubListType = JSON.parse(data)
           state.pubListMap[i] = dubheConfig
           dubheConfig.externals.forEach(item => state.externalSet.add(item))
 

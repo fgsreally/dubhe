@@ -23,16 +23,9 @@ export const HMT_TYPES_TIMEOUT = 10000
 
 export const VIRTUAL_CSS_PREFIX = '/@virtual:DUBHE_CSS/'
 
-export const DUBHE_DOC_SYMBOL = '__dubhe_doc__'
-export const INJECT_STYLE = `export function injectStyle(styleStr, id) {
-  const dubheDoc=globalThis.${DUBHE_DOC_SYMBOL}||document
-  let style = dubheDoc.querySelector(\`#dubhe-style-\${id}\`)
-  if (!style) {
-    style = dubheDoc.createElement('style')
-    style.id = \`dubhe-style-\${id}\`
-    dubheDoc.head.appendChild(style)
-  }
-  style.innerHTML = styleStr
-}
-`
+export const DUBHE_DOC_SYMBOL = '__DP_DOC__'
+
+export const DUBHE_PATH_SYMBOL = '/__dubhe_path__/'
+
+export const DUBHE_IMPORT_STYLE_SYMBOL = '__D_IS__'
 

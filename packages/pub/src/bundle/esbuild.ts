@@ -1,5 +1,5 @@
 import { basename, relative, resolve } from 'path'
-import { INJECT_STYLE, ImportExpression, VIRTUAL_HMR_PREFIX, analyseImport, createEntryFile, getFormatDate, log, mountStyle, sendHMRInfo, virtualCssHelper } from 'dubhe'
+import { INJECT_STYLE_SCRIPT, VIRTUAL_HMR_PREFIX, analyseImport, createEntryFile, getFormatDate, log, mountStyle, sendHMRInfo, virtualCssHelper } from 'dubhe'
 import type { ProPlugin } from 'esbuild-plugin-merge'
 
 import type { Metafile, OutputFile } from 'esbuild'
@@ -18,6 +18,8 @@ export function CSSPlugin(): ProPlugin {
     setup(build) {
       const cssReg = new RegExp(virtualCssHelper)
       build.onTransform({ filter: /\.css$/ }, (ret, params) => {
+        if (params.path.includes('main.css'))
+          return
         if (ret.loader !== 'js') {
           Debug(`transform css file --${params.path}`)
           ret.contents = mountStyle(ret.contents as string, params.path)
@@ -34,7 +36,7 @@ export function CSSPlugin(): ProPlugin {
       })
 
       build.onLoad({ filter: cssReg }, () => {
-        return { contents: INJECT_STYLE, loader: 'js' }
+        return { contents: INJECT_STYLE_SCRIPT, loader: 'js' }
       })
     },
   }
@@ -46,24 +48,24 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
     name: 'dubhe::bundle',
     async setup(build) {
       await init
-      await createEntryFile(config.entry)
+      await createEntryFile()
       let changeFile = ''
-      let alias: any
+      const alias: any = []
       const entryFileMap = config.entry
       const importsGraph = {} as Record<string, Set<string>>
       build.onUpdate((id) => {
         changeFile = id
       })
       build.initialOptions = Object.assign(build.initialOptions, {
-        entryPoints: ['dubhe.ts'],
-        entryNames: 'remoteEntry',
+        entryPoints: Object.values(config.entry),
         outdir: `${outdir}/core`,
         splitting: true,
         format: 'esm',
         bundle: true,
         write: false,
         metafile: true,
-        chunkNames: `[name].dubhe-${config.project}`,
+        entryNames: `[name].dubhe-${config.project}.[hash]`,
+        chunkNames: `[name].dubhe-${config.project}.[hash]`,
       })
 
       build.onResolve({ filter: /\.*/ }, (args) => {
@@ -81,9 +83,10 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
 
         Debug('generate sourceGraph')
 
-        Object.values(meta.outputs).forEach((item) => {
-          Object.values(entryFileMap).forEach((entry) => {
+        Object.entries(meta.outputs).forEach(([filename, item]) => {
+          Object.entries(entryFileMap).forEach(([name, entry]) => {
             if (resolve(root, item.entryPoint || '') === resolve(root, entry)) {
+              alias.push({ name, url: basename(filename) })
               sourceGraph[entry] = new Set()
               Object.keys(item.inputs).forEach((input) => {
                 if (fse.existsSync(resolve(root, input)))
@@ -98,12 +101,12 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         Debug('generate bundleGraph')
 
         for (const i in meta.outputs) {
-          if (!i.includes(`.dubhe-${config.project}.js`))
+          if (!i.includes(`.dubhe-${config.project}.`))
             continue
           const name = basename(i).split('.')[0]
           bundleGraph[name] = []
           meta.outputs[i].imports.forEach((item) => {
-            if (item.path.includes(`.dubhe-${config.project}.js`))
+            if (item.path.includes(`.dubhe-${config.project}`))
               bundleGraph[name].push(basename(item.path))
           })
         }
@@ -171,7 +174,6 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
               }
             }
           }
-          alias = ImportExpression(outputs[0].text)
         }
 
         const metaData = {

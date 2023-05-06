@@ -229,7 +229,7 @@ export const dtsPlugin = (remoteConf: Required<PubConfig>) => {
 
         build.onTransform({ filter: /.*/ }, (args, options) => {
           const id = options.path + options.suffix
-          transform(args.contents as string, id)
+          transform(args?.contents as string, id)
         })
         build.onEnd(buildEnd)
       },

@@ -1,11 +1,11 @@
 import type { PluginOption } from 'vite'
 import type { ResolvedId } from 'rollup'
 import { getShortHash } from './utils'
-import { INJECT_STYLE, VIRTUAL_CSS_PREFIX } from './common'
+import { VIRTUAL_CSS_PREFIX } from './common'
+import { INJECT_STYLE_SCRIPT } from './style'
 const cssCodeMap: Map<string, string> = new Map()
 const cssIDMap: Map<string, string> = new Map()
 const cssIDset: Set<string> = new Set()
-
 export const virtualCssHelper = 'virtual:dubhe-injectstyle'
 export function CSS(): PluginOption {
   return {
@@ -13,6 +13,8 @@ export function CSS(): PluginOption {
     enforce: 'pre',
     apply: 'build',
     async resolveId(id, i) {
+      if (id.endsWith('main.css'))
+        return
       if (id.endsWith('.css') && !cssIDset.has(id)) {
         cssIDset.add(id)
         const { id: originID } = await this.resolve(id, i) as ResolvedId
@@ -31,10 +33,10 @@ export function CSS(): PluginOption {
         return mountStyle(cssCodeMap.get(originID) as string, originID.split('?')[0])
       }
       if (id === virtualCssHelper)
-        return INJECT_STYLE
+        return INJECT_STYLE_SCRIPT
     },
     transform(code, id) {
-      if (id.endsWith('.css')) {
+      if (id.endsWith('.css') && !id.endsWith('main.css')) {
         cssCodeMap.set(id, code)
         return ''
       }

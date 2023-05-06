@@ -12,14 +12,14 @@ export function isSourceFile(fp: string) {
   return fse.existsSync(fp) && !fp.includes('node_modules')
 }
 
-// work for vite/rollup
 // create virtual entry
-export async function createEntryFile(entryFiles: Record<string, string>) {
-  return await fse.outputFile(resolve(process.cwd(), 'dubhe.ts'), Object.entries(entryFiles).reduce((p, c) => {
-    return `${p}export const ${c[0]}= () => import('${c[1]}')\n`
-  }, ''))
+export async function createEntryFile() {
+  return await fse.outputFile(resolve(process.cwd(), 'dubhe.ts'), '')
 }
 
+export function removeEntryFile() {
+  fse.removeSync(resolve(process.cwd(), 'dubhe.ts'))
+}
 export function replaceEntryFile(code: string, source: string) {
   // work for vite^3 virtual entry
   const [i1] = parse(source, 'optional-sourcename')

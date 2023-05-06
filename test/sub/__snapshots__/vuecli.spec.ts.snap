@@ -13,7 +13,9 @@ exports[`[vuecli] subscribe module > dist files output [cold mode] 1`] = `
 exports[`[vuecli] subscribe module > dist files output [hot mode] 1`] = `
 {
   "imports": {
-    "dubhe-viteout": "http://127.0.0.1:8080/core",
+    "dubhe-viteout/app": "http://127.0.0.1:8080/core/app.dubhe-viteout.8865ed6c.js",
+    "dubhe-viteout/hello": "http://127.0.0.1:8080/core/hello.dubhe-viteout.1d993f3e.js",
+    "dubhe-viteout/test": "http://127.0.0.1:8080/core/test.dubhe-viteout.d279c637.js",
     "element-plus/es": "dubhe:element-plus/es",
     "element-plus/es/components/button/style/css": "dubhe:element-plus/es/components/button/style/css",
     "vue": "dubhe:vue",

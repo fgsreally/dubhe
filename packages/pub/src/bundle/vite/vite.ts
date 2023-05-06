@@ -1,33 +1,29 @@
-import { basename, extname, relative, resolve } from 'path'
-import fs from 'fs'
+import { relative, resolve } from 'path'
 import { normalizePath } from 'vite'
-import type { PluginOption, UserConfig } from 'vite'
+import type { PluginOption } from 'vite'
 import { init } from 'es-module-lexer'
 import fse from 'fs-extra'
 // import contentHash from 'content-hash'
 import type {
   OutputChunk,
-  OutputOptions,
 } from 'rollup'
 
 import type { PubConfig } from 'dubhe'
-import debug from 'debug'
-
 import {
-  ImportExpression,
+  DUBHE_PATH_SYMBOL,
   VIRTUAL_HMR_PREFIX,
-  addExtension,
   copySourceFile,
   createEntryFile,
-  getAlias,
   getExposeFromBundle,
   getFormatDate,
   getRelatedPath,
+  injectScriptToPub,
   isSourceFile,
   log,
-  replaceEntryFile,
+  removeEntryFile,
   sendHMRInfo,
 } from 'dubhe'
+import debug from 'debug'
 interface HMRInfo {
   changeFile: string
   cssFiles: { [key in string]: number }
@@ -36,10 +32,9 @@ const HMRconfig: HMRInfo = {
   changeFile: '',
   cssFiles: {},
 }
-const initEntryFiles: string[] = []
 const entryFileMap: { [key: string]: string } = {}
 let metaData: any
-let alias: { name: string; url: string }[]
+const alias: { name: string; url: string }[] = []
 const sourceGraph: { [key: string]: Set<string> } = {}
 let importsGraph: { [key: string]: string[] }
 const externalSet = new Set<string>()
@@ -64,47 +59,57 @@ export function BundlePlugin(config: PubConfig): PluginOption {
     enforce: 'pre',
 
     // init config
-    async config(opts: UserConfig) {
+    async config() {
       await init
-      await createEntryFile(config.entry)
-      // vendor = config.vendor || []
-      if (!opts.build)
-        opts.build = {}
-      if (!opts.build.outDir)
-        opts.build.outDir = `${outDir}/core`
-      if (!opts.base)
-        opts.base = '/__dubhe/'
 
-      if (!opts.build.lib) {
-        opts.build.lib = {
-          entry: entryFile,
-          name: 'remoteEntry',
-          formats: ['es'],
-          fileName: () => {
-            return 'remoteEntry.js'
+      return {
+        base: DUBHE_PATH_SYMBOL,
+        build: {
+          outDir: `${outDir}/core`,
+          lib: config.app
+            ? undefined
+            : {
+                entry: entryFile,
+                name: 'remoteEntry',
+                formats: ['es'],
+                fileName: () => {
+                  return 'remoteEntry.js'
+                },
+              },
+          cssCodeSplit: true,
+
+          rollupOptions: {
+            output: {
+              entryFileNames: `[name].dubhe-${config.project}.[hash].js`,
+              chunkFileNames: `[name].dubhe-${config.project}.[hash].js`,
+            },
           },
-        }
+        },
       }
+    },
+    buildEnd() {
+      removeEntryFile()
+    },
+    async buildStart() {
+      if (!config.app)
+        await createEntryFile()
+      for (const i in config.entry) {
+        const id = this.emitFile({
+          type: 'chunk',
+          id: config.entry[i],
+          name: i,
+          preserveSignature: 'allow-extension',
 
-      if (!opts.build.rollupOptions)
-        opts.build.rollupOptions = {}
-
-      if (!opts.build.rollupOptions.output)
-        opts.build.rollupOptions.output = {}
-
-      const output = opts.build.rollupOptions.output as OutputOptions
-      output.chunkFileNames
-        = () => {
-          return `[name].dubhe-${config.project}.js`// experiment
-        }
-      output.assetFileNames
-        = '[name][extname]'
+        })
+        alias.push({ name: i, url: id })
+      }
     },
 
     watchChange(id: string, change: any) {
       if (change.event === 'update')
         HMRconfig.changeFile = id.replace(/\\/g, '/')
     },
+    // // for outline css
 
     async writeBundle(_: any, module: any) {
       const updateList: string[] = []
@@ -141,31 +146,40 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         }
       }
     },
+    transformIndexHtml(html) {
+      return {
+        html: html.replaceAll(DUBHE_PATH_SYMBOL, './'),
+        tags: [
+          {
+            tag: 'script',
+
+            children: injectScriptToPub(config.project),
+            injectTo: 'head-prepend',
+          },
+        ],
+      }
+    },
+
     async generateBundle(_, data) {
       const bundleGraph: { [key: string]: string[] } = {}
       const outputSourceGraph: { [key: string]: string[] } = {}
-      const code = ((data['remoteEntry.js'] as OutputChunk).code
-        = replaceEntryFile(
-          (data['remoteEntry.js'] as OutputChunk).code,
-          fs.readFileSync(resolve(root, entryFile)).toString(),
-        ))
-      alias = ImportExpression(code)
+      alias.forEach(item => item.url = this.getFileName(item.url))
       importsGraph = getExposeFromBundle(data)
       Debug('generate bundleGraph/sourceGraph')
       for (const i in data) {
         if (!i.endsWith('.js'))
           continue
         const name = i.split('.dubhe')[0]
-        if (i.includes(`.dubhe-${config.project}.js`)) {
+        if (alias.some(item => item.name === name)) {
           bundleGraph[name] = [];
           (data[i] as any).imports.forEach((item: string) => {
-            if (item.includes(`.dubhe-${config.project}.js`))
+            if (item.includes(`.dubhe-${config.project}`))
               bundleGraph[name].push(item)
           })
         }
-        for (const entry of initEntryFiles) {
-          if (name === basename(entry, extname(entry))) {
-            const entryFilePath = (entryFileMap[getAlias(i, alias) as string]
+        for (const entry of alias.map(({ name }) => name)) {
+          if (name === entry) {
+            const entryFilePath = (entryFileMap[name]
               = getRelatedPath(
                 (data[i] as OutputChunk).facadeModuleId as string,
               ))
@@ -233,14 +247,14 @@ export function BundlePlugin(config: PubConfig): PluginOption {
       }
     },
 
-    resolveId(id, importer) {
-      if (importer === normalizePath(resolve(root, entryFile))) {
-        log(`Find entry file --${id}`)
+    resolveId(id) {
+      // if (importer === 'dubhe') {
+      //   log(`Find entry file --${id}`)
 
-        const filePath = id.startsWith('.') ? normalizePath(resolve(importer, '../', addExtension(id))) : id
-        if (!initEntryFiles.includes(filePath))
-          initEntryFiles.push(filePath)
-      }
+      //   const filePath = normalizePath(resolve(root, id))
+      //   if (!initEntryFiles.includes(filePath))
+      //     initEntryFiles.push(filePath)
+      // }
       // if (importer)
       //   resolveImport(resolve(importer, id))
       if (isExternal(id, config.externals)) {

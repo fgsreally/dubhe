@@ -13,7 +13,9 @@ export function Pub(dubheConfig: PubConfig): any {
 
   return [Dev(config), dtsPlugin(config).vite, Bundle(config), CSS(), dynamicBase({
     // dynamic public path var string, default window.__dynamic_base__
-    publicPath: `__DUBHE_${dubheConfig.project}_`,
+    publicPath: `globalThis.__DP_${config.project}_`,
+    transformIndexHtml: false,
+
   })]
 }
 

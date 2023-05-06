@@ -8,6 +8,7 @@ import { normalizePath } from 'vite'
 import type { AliasType } from './types'
 import { CACHE_ROOT, VIRTUAL_PREFIX, VIRTUAL_RE } from './common'
 import { getLocalPath, getRemoteContent, setLocalContent } from './cache'
+import { removeDynamicCss } from './style'
 export function resolveAlias(alias: Record<string, string> = {}) {
   return Object.entries(alias).map((item) => {
     return {
@@ -28,6 +29,20 @@ export function getAlias(
   if (extname(filename) === '.js')
     return alias.find(item => item.url === basename(filename, '.js'))?.name
 }
+// base on chunkfilename
+export function removeHash(str: string) {
+  if (str.endsWith('.js')) {
+    const arr = str.split('.')
+    arr.splice(arr.length - 2, 1)
+    return arr.join('.')
+  }
+  if (str.endsWith('.map')) {
+    const arr = str.split('.')
+    arr.splice(arr.length - 3, 1)
+    return arr.join('.')
+  }
+  return str
+}
 
 // get content from file cache or http
 export async function getVirtualContent(
@@ -38,7 +53,7 @@ export async function getVirtualContent(
   forceRewrite?: boolean,
 ) {
   // const path = resolve(process.cwd(), '.dubhe', 'cache', project, moduleName)
-  const path = getLocalPath(project, moduleName)
+  const path = getLocalPath(project, removeHash(moduleName))
   if (allowCache && fse.existsSync(path))
 
     return { data: await fse.readFile(path, 'utf-8'), isCache: true }
@@ -46,7 +61,7 @@ export async function getVirtualContent(
   const data = await getRemoteContent(url)
   const content = typeof data === 'string' ? data : JSON.stringify(data)
   if (allowCache || forceRewrite)
-    setLocalContent(path, content)
+    setLocalContent(path, path.endsWith('.js') ? removeDynamicCss(content) : content)
 
   return { data: content, isCache: false }
 }
@@ -71,7 +86,7 @@ export function resolveModuleAlias(
   let baseName = moduleName
   for (const i of alias[project]) {
     if (i.name === baseName)
-      baseName = `${i.url}.js`
+      baseName = i.url
   }
 
   return [project, `${baseName}`, baseName]
@@ -101,7 +116,7 @@ export function ImportExpression(source: string) {
   source.replace(
     /\s([^\s]*)\s*=.*import\(['|"]\.\/(.*)\.js['|"]\)/g,
     (_: string, name: string, i: string) => {
-      ret.push({ url: i, name })
+      ret.push({ url: `${i}.js`, name })
       return ''
     },
   )

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import Share from './Share.vue'
 /**
  * @props msg string
  */
@@ -7,6 +8,7 @@ defineProps<{ msg: string }>()
 </script>
 
 <template>
+  <Share />
   <h1 id="vite-r-hello">
     {{ msg }}
   </h1>

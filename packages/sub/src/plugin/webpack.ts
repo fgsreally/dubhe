@@ -3,7 +3,7 @@
 /* eslint-disable no-async-promise-executor */
 import { resolve } from 'path'
 import { resolve as urlResolve } from 'url'
-import { DEFAULT_POLYFILL, HMRModuleHandler, HMRTypesHandler, VIRTUAL_RE, getFormatDate, getLocalPath, getProjectAndModule, getRemoteContent, getTypes, getVirtualContent, isLocalPath, log, patchVersion, resolveModuleAlias, updateLocalRecord } from 'dubhe'
+import { DEFAULT_POLYFILL, HMRModuleHandler, HMRTypesHandler, VIRTUAL_RE, getFormatDate, getLocalPath, getProjectAndModule, getRemoteContent, getTypes, getVirtualContent, isLocalPath, log, patchVersion, removeHash, resolveModuleAlias, updateLocalRecord } from 'dubhe'
 import { DefinePlugin } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
@@ -43,7 +43,7 @@ export class WebpackPlugin {
           )
 
           this.vfs.writeModule(
-            getLocalPath(project, moduleName)
+            getLocalPath(project, removeHash(moduleName))
             ,
             data,
           )
@@ -307,7 +307,7 @@ export class WebpackPlugin {
                 )
                 Debug(`get remote entry --${project}/${moduleName}`)
                 const { url } = this.config.remote[project]
-                this.dp.definitions[`__DUBHE_${project}_`] = `"${url}/core"`
+                this.dp.definitions[`globalThis.__DP_${project}_`] = `"${url}/core"`
                 const { data } = await getVirtualContent(
                   `${url}/core/${moduleName}`,
                   project,

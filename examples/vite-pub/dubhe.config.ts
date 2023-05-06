@@ -13,6 +13,7 @@ export default {
     if (id.startsWith('element-plus') || id === 'vue')
       return true
   },
+  app: false,
   HMR: [{
     port: 'http://localhost:8081',
   }],

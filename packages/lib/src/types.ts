@@ -42,9 +42,9 @@ export interface PubConfig {
   entry: Record<string, string>
   externals: (id: string) => boolean | { esm?: string; systemjs?: string } | void
   version?: string
-  project?: string
+  project: string
   types?: boolean
-
+  app?: boolean
   // vendor?: string[];
   HMR?: { port: string }[]
   dts?: dtsPluginOptions

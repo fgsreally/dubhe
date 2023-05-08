@@ -61,16 +61,16 @@ cli
   })
 
 cli
-  .command('import <projectId>', 'import source code from <projectId>(like viteout/test)')
+  .command('import <project/entry>', 'import source code from <project/entry>(like viteout/test)')
   .option('--path, -p [p]', '[string] dir path ', {
     default: '.dubhe-source',
   })
-  .action(async (projectId, option) => {
-    if (!projectId)
+  .action(async (projectEntry, option) => {
+    if (!projectEntry)
       return
     const dubheList = await getDubheList()
 
-    const [project, id] = projectId.split('/')
+    const [project, id] = projectEntry.split('/')
 
     if (!(project in dubheList)) {
       log(`Project:${project} does't exist in local records`, 'red')
@@ -85,7 +85,7 @@ cli
         return
       }
 
-      log(`Import [${projectId}] source code`)
+      log(`Import [${projectEntry}] source code`)
       if (pubList.from === 'esbuild' && !pubList.sourceGraph[file].includes(file))
         pubList.sourceGraph[file].push(file)
       for (const i of pubList.sourceGraph[file]) {
@@ -146,17 +146,21 @@ cli
         const localConfig = await getLocalContent(project, 'dubheList.json').catch(() => {
           return {}
         })
+        const isForceUpdate = options.force || !localConfig || !patchVersion(remoteConfig.version, localConfig.version)
 
-        if (options.force || !localConfig || !patchVersion(remoteConfig.version, localConfig.version)) {
-          log(`Install [${project}] cache`)
-          await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files], project)
+        log(`Install [${project}] cache`)
+        await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files.filter((file: string) => {
+          if (isForceUpdate)
+            return true
+          return !localConfig.files.includes(file)
+        })], project)
+        if (isForceUpdate) {
           log(`Install [${project}] types`)
+
           installProjectTypes(dubheList[project].url, project)
           updateLocalRecord(dubheList)
         }
-        else {
-          log(`${project} doesn't need update`)
-        }
+
         updateTSconfig(project, remoteConfig.entryFileMap)
       }
       catch (e) {

@@ -8,6 +8,7 @@ import { log } from 'debug'
 import { getLocalPath, getLocalRecord, getRemoteContent, getTypePathInCache } from '../cache'
 import type { SubConfig } from '../types'
 import { getPkgName } from '../utils'
+import { removeHash } from '../core'
 
 const root = process.cwd()
 
@@ -110,7 +111,7 @@ export async function downloadFile(url: string, output: string) {
 
 export async function installProjectCache(baseUrl: string, files: string[], project: string) {
   for (const file of files)
-    downloadFile(`${baseUrl}/core/${file}`, getLocalPath(project, file))
+    downloadFile(`${baseUrl}/core/${file}`, removeHash(getLocalPath(project, file)))
 }
 
 export async function installProjectTypes(baseUrl: string, project: string) {

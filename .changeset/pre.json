@@ -13,6 +13,7 @@
     "dubhe-vite": "1.0.5"
   },
   "changesets": [
+    "lemon-coats-taste",
     "lemon-glasses-return"
   ]
 }

@@ -1,5 +1,11 @@
 # dubhe
 
+## 2.0.0-alpha.1
+
+### Patch Changes
+
+- a5b2537: cli can handle hash correctly and download file on demand
+
 ## 2.0.0-alpha.0
 
 ### Major Changes

@@ -1,5 +1,12 @@
 # dubhe-sub
 
+## 2.0.0-alpha.1
+
+### Patch Changes
+
+- Updated dependencies [a5b2537]
+  - dubhe@2.0.0-alpha.1
+
 ## 2.0.0-alpha.0
 
 ### Major Changes

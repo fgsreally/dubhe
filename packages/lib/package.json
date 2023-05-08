@@ -1,6 +1,6 @@
 {
   "name": "dubhe",
-  "version": "1.0.3",
+  "version": "2.0.0-alpha.0",
   "description": "Provide cli and utility functions for others dubhe project",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -15,7 +15,11 @@
   "files": [
     "dist"
   ],
-  "keywords": ["micro module","module federation","cli"],
+  "keywords": [
+    "micro module",
+    "module federation",
+    "cli"
+  ],
   "author": "fgsreally",
   "dependencies": {
     "@babel/core": "^7.21.0",

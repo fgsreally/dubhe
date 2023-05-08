@@ -4,10 +4,9 @@ import axios from 'axios'
 
 import fse from 'fs-extra'
 import { loadConfig } from 'unconfig'
-import { log } from 'debug'
 import { getLocalPath, getLocalRecord, getRemoteContent, getTypePathInCache } from '../cache'
 import type { SubConfig } from '../types'
-import { getPkgName } from '../utils'
+import { getPkgName, log } from '../utils'
 import { removeHash } from '../core'
 
 const root = process.cwd()
@@ -104,14 +103,16 @@ export async function downloadFile(url: string, output: string) {
     )
   }
   catch (e) {
-    log(`get remote content fail--${url}`)
+    log(`get remote content fail--${url}`, 'red')
     process.exit(1)
   }
 }
 
 export async function installProjectCache(baseUrl: string, files: string[], project: string) {
-  for (const file of files)
+  for (const file of files) {
     downloadFile(`${baseUrl}/core/${file}`, removeHash(getLocalPath(project, file)))
+    log(`download file from ${baseUrl}/core/${file}`, 'grey')
+  }
 }
 
 export async function installProjectTypes(baseUrl: string, project: string) {

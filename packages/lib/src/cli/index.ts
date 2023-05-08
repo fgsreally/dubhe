@@ -146,17 +146,21 @@ cli
         const localConfig = await getLocalContent(project, 'dubheList.json').catch(() => {
           return {}
         })
+        const isForceUpdate = options.force || !localConfig || !patchVersion(remoteConfig.version, localConfig.version)
 
-        if (options.force || !localConfig || !patchVersion(remoteConfig.version, localConfig.version)) {
-          log(`Install [${project}] cache`)
-          await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files], project)
+        log(`Install [${project}] cache`)
+        await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files.filter((file: string) => {
+          if (isForceUpdate)
+            return true
+          return !localConfig.files.includes(file)
+        })], project)
+        if (isForceUpdate) {
           log(`Install [${project}] types`)
+
           installProjectTypes(dubheList[project].url, project)
           updateLocalRecord(dubheList)
         }
-        else {
-          log(`${project} doesn't need update`)
-        }
+
         updateTSconfig(project, remoteConfig.entryFileMap)
       }
       catch (e) {

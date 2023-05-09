@@ -237,8 +237,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
           if (mode === 'hot' && command === 'build') {
             for (const { name, url: aliasUrl } of dubheConfig.alias) {
-              state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `core/${aliasUrl}.js`)
-              state.systemjsImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `systemjs/${aliasUrl}.js`)
+              state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./core/${aliasUrl}.js`)
+              state.systemjsImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./systemjs/${aliasUrl}.js`)
             }
           }
 
@@ -468,7 +468,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
 
         try {
           const { externals, entry, isDubhe } = await getRemoteContent(
-            urlResolve(url, 'dubhe'),
+            urlResolve(url, '/dubhe'),
           ) as { externals: string[]; entry: Record<string, string>; isDubhe: boolean }
           if (!isDubhe)
             throw new Error('it\'s not a valid pub server')
@@ -477,13 +477,13 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
 
           externals.forEach((item) => {
             state.externalSet.add(item)
-            resolvedDepMap[urlResolve(url, `/@id/${item}`)] = `/@id/${item}`
+            resolvedDepMap[urlResolve(url, `./@id/${item}`)] = `./@id/${item}`
           })
           tags.push({
             tag: 'script',
             attrs: {
               type: 'module',
-              src: urlResolve(url, '/@vite/client'),
+              src: urlResolve(url, './@vite/client'),
             },
             injectTo: 'head',
           })
@@ -507,18 +507,20 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
 
         return id
 
-      // if (state.externalSet.has(i!)) {
-      //   const { id: resolveImporter } = await this.resolve(i!, 'dubhe') as any
-      //   const { id: resolveID } = await this.resolve(id, resolveImporter) as any
-      //   return resolveID
-      // }
+      if (state.externalSet.has(i!)) {
+        const { id: resolveImporter } = await this.resolve(i!, 'dubhe') as any
+        const { id: resolveID } = await this.resolve(id, resolveImporter) as any
+        return resolveID
+      }
     },
 
+    /**
+     * useless?
+     */
     async load(id) {
       if (state.externalSet.has(id)) {
         const { id: resolveID } = await this.resolve(id, 'dubhe') as any
         Debug(`load external module --${resolveID}`)
-
         return fs.promises.readFile(resolveID.split('?')[0], 'utf-8')
       }
     },
@@ -542,3 +544,4 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
     },
   }
 }
+

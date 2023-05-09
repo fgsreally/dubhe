@@ -1,5 +1,5 @@
 <template>
-  <p>share1xxx?</p>
+  <p>share</p>
 </template>
 
 <style scoped>

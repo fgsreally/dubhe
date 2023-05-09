@@ -106,8 +106,8 @@ export class WebpackPlugin {
               for (const item of dubheConfig.alias) {
                 (compiler as any).options.externals.push(`dubhe-${i}/${item.name}`)
 
-                state.esmImportMap[`dubhe-${i}/${item.name}`] = urlResolve(this.config.remote[i].url, `core/${item.url}`)
-                state.systemjsImportMap[`dubhe-${i}/${item.name}`] = urlResolve(this.config.remote[i].url, `systemjs/${item.url}`)
+                state.esmImportMap[`dubhe-${i}/${item.name}`] = urlResolve(this.config.remote[i].url, `./core/${item.url}`)
+                state.systemjsImportMap[`dubhe-${i}/${item.name}`] = urlResolve(this.config.remote[i].url, `./systemjs/${item.url}`)
               }
             }
           }

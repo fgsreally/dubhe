@@ -1,5 +1,11 @@
 # dubhe-sub
 
+## 2.0.0-alpha.2
+
+### Patch Changes
+
+- 26f17d5: it support dev mode for vite pub.it can handle base path correctly
+
 ## 2.0.0-alpha.1
 
 ### Patch Changes

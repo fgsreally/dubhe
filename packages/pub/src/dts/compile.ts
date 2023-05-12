@@ -27,7 +27,6 @@ export const VueCompiler: dtsCompiler = {
 
     if (content)
       project.createSourceFile(virtualPath, `${content}\nexport const addon:any`, { overwrite: true })
-    return code
   },
 }
 

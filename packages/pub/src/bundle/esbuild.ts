@@ -1,5 +1,5 @@
 import { basename, relative, resolve } from 'path'
-import { INJECT_STYLE_SCRIPT, VIRTUAL_HMR_PREFIX, analyseImport, createEntryFile, getFormatDate, log, mountStyle, sendHMRInfo, virtualCssHelper } from 'dubhe'
+import { INJECT_STYLE_SCRIPT, VIRTUAL_HMR_PREFIX, analyseImport, getFormatDate, log, mountStyle, sendHMRInfo, virtualCssHelper } from 'dubhe'
 import type { ProPlugin } from 'esbuild-plugin-merge'
 
 import type { Metafile, OutputFile } from 'esbuild'
@@ -42,13 +42,12 @@ export function CSSPlugin(): ProPlugin {
   }
 }
 
-export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
-  const outdir = config.outDir
+export function BundlePlugin(config: PubConfig): ProPlugin {
+  const outdir = config.outDir || '.dubhe'
   return {
     name: 'dubhe::bundle',
     async setup(build) {
       await init
-      await createEntryFile()
       let changeFile = ''
       const alias: any = []
       const entryFileMap = config.entry
@@ -124,7 +123,7 @@ export function BundlePlugin(config: Required<PubConfig>): ProPlugin {
         if (changeFile) {
           Debug('send HMR info')
 
-          for (const home of config.HMR) {
+          for (const home of (config.HMR || [])) {
             setTimeout(async () => {
               try {
                 log('Send HMR information to home ')

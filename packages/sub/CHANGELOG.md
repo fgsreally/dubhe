@@ -1,5 +1,18 @@
 # dubhe-sub
 
+## 2.0.0
+
+### Major Changes
+
+- 756ffad: add support for app&lib(only in vite);add hash support;refactor virtual entry; refactor importmap format
+
+### Patch Changes
+
+- 26f17d5: it support dev mode for vite pub.it can handle base path correctly
+- Updated dependencies [a5b2537]
+- Updated dependencies [756ffad]
+  - dubhe@2.0.0
+
 ## 2.0.0-alpha.2
 
 ### Patch Changes

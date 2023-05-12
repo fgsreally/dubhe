@@ -27,7 +27,7 @@ const dtsRE = /\.d\.tsx?$/
 let aliases: Alias[] = []
 
 const { readConfigFile } = TS
-export const dtsPlugin = (remoteConf: Required<PubConfig>) => {
+export const dtsPlugin = (remoteConf: PubConfig) => {
   const options: dtsPluginOptions = remoteConf.dts || {}
   const {
     tsConfigFilePath = 'tsconfig.json',
@@ -42,7 +42,7 @@ export const dtsPlugin = (remoteConf: Required<PubConfig>) => {
   let entryRoot = options.entryRoot ?? ''
   const root = process.cwd()
   const tsConfigPath = resolve(root, tsConfigFilePath)
-  const outputDir = resolve(root, remoteConf.outDir, 'types')
+  const outputDir = resolve(root, remoteConf.outDir || '.dubhe', 'types')
   const entry = normalizePath(ensureAbsolute('dubhe.ts', root))
 
   const noneExport = 'export {};\n'

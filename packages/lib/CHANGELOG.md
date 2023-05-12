@@ -1,5 +1,21 @@
 # dubhe
 
+## 2.0.1
+
+### Patch Changes
+
+- e444958: support dubhe-project/A.js or dubhe-project/A.json(created by this.emitFile in rollup),now it more like npm assets
+
+## 2.0.0
+
+### Major Changes
+
+- 756ffad: add support for app&lib(only in vite);add hash support;refactor virtual entry; refactor importmap format
+
+### Patch Changes
+
+- a5b2537: cli can handle hash correctly and download file on demand
+
 ## 2.0.0-alpha.1
 
 ### Patch Changes

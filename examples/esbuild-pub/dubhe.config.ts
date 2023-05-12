@@ -2,11 +2,11 @@ import type { PubConfig } from 'dubhe-pub'
 export default {
   project: 'esbuildpub',
   entry: {
-    app: './src/App.vue',
-    hello: './src/HelloWorld.vue',
+    // app: './src/App.vue',
+    // hello: './src/HelloWorld.vue',
     module: './src/module.ts',
   },
-  types: false,
+  types: true,
   // limit: 1000,
   externals: (id) => {
     if (id === 'vue')

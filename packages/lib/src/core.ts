@@ -31,16 +31,16 @@ export function getAlias(
 }
 // base on chunkfilename
 export function removeHash(str: string) {
-  if (str.endsWith('.js')) {
-    const arr = str.split('.')
-    arr.splice(arr.length - 2, 1)
-    return arr.join('.')
+  const arr = str.split('.').reverse()
+  if (arr[0] === 'js' && arr[2]?.startsWith('dubhe-')) {
+    arr.splice(1, 1)
+    return arr.reverse().join('.')
   }
-  if (str.endsWith('.map')) {
-    const arr = str.split('.')
-    arr.splice(arr.length - 3, 1)
-    return arr.join('.')
+  if (arr[0] === 'map' && arr[3]?.startsWith('dubhe-')) {
+    arr.splice(2, 1)
+    return arr.reverse().join('.')
   }
+
   return str
 }
 
@@ -54,11 +54,13 @@ export async function getVirtualContent(
 ) {
   // const path = resolve(process.cwd(), '.dubhe', 'cache', project, moduleName)
   const path = getLocalPath(project, removeHash(moduleName))
+
   if (allowCache && fse.existsSync(path))
 
     return { data: await fse.readFile(path, 'utf-8'), isCache: true }
 
   const data = await getRemoteContent(url)
+
   const content = typeof data === 'string' ? data : JSON.stringify(data)
   if (allowCache || forceRewrite)
     setLocalContent(path, path.endsWith('.js') ? removeDynamicCss(content) : content)
@@ -89,7 +91,7 @@ export function resolveModuleAlias(
       baseName = i.url
   }
 
-  return [project, `${baseName}`, baseName]
+  return [project, baseName]
 }
 
 export function replaceImportDeclarations(source: any, externals: Record<string, string>) {

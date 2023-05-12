@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import { testFromViteRemote } from 'dubhe-viteout/test'
 $viteout_test_testFromViteRemote()
 </script>
 

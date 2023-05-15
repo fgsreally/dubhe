@@ -1,7 +1,6 @@
 import { relative, resolve } from 'path'
 import { normalizePath } from 'vite'
 import type { PluginOption } from 'vite'
-import { init } from 'es-module-lexer'
 import fse from 'fs-extra'
 // import contentHash from 'content-hash'
 import type {
@@ -60,8 +59,6 @@ export function BundlePlugin(config: PubConfig): PluginOption {
 
     // init config
     async config() {
-      await init
-
       return {
         base: DUBHE_PATH_SYMBOL,
         build: {

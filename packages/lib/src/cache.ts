@@ -58,6 +58,7 @@ export async function getRemoteContent(url: string) {
 export function getTypePathInCache(project: string, file: string) {
   return resolve(TYPE_ROOT, project, file)
 }
+
 export function getTypePathInWorkspace(project: string, file: string) {
   return resolve(process.cwd(), '.dubhe', 'types', project, file)
 }

@@ -1,6 +1,4 @@
 import { basename, extname, relative } from 'path'
-import { parse } from 'es-module-lexer'
-import MagicString from 'magic-string'
 import fse from 'fs-extra'
 import { parseSync, traverse } from '@babel/core'
 import type { OutputBundle, OutputChunk } from 'rollup'
@@ -68,6 +66,10 @@ export async function getVirtualContent(
   return { data: content, isCache: false }
 }
 
+/**
+ * @deprecated
+ * only work for devtool, it will be moved in future
+ */
 export function resolvePathToModule(id?: string) {
   if (id?.includes(VIRTUAL_PREFIX))
     id = id.split(VIRTUAL_PREFIX)[1]
@@ -94,38 +96,7 @@ export function resolveModuleAlias(
   return [project, baseName]
 }
 
-export function replaceImportDeclarations(source: any, externals: Record<string, string>) {
-  // let newSource = source;
-  const newSource = new MagicString(source)
-
-  const [imports] = parse(source, 'optional-sourcename')
-  for (const i of imports as any) {
-    for (const j in externals) {
-      if (i.n === j) {
-        // newSource = newSource.replace(i.n, j);
-        newSource.overwrite(i.s, i.e, externals[j])
-
-        break
-      }
-    }
-  }
-
-  return newSource.toString()
-}
-
-export function ImportExpression(source: string) {
-  const ret: { url: string; name: string }[] = []
-  source.replace(
-    /\s([^\s]*)\s*=.*import\(['|"]\.\/(.*)\.js['|"]\)/g,
-    (_: string, name: string, i: string) => {
-      ret.push({ url: `${i}.js`, name })
-      return ''
-    },
-  )
-
-  return ret
-}
-
+// get importGraph, only work in esbuild
 export function analyseImport(code: string) {
   const ret = {} as Record<string, Set<string>>
   const ast = parseSync(code)
@@ -158,6 +129,7 @@ export function analyseImport(code: string) {
 
   return ret as unknown as Record<string, string[]>
 }
+// get importgraph
 export function getExposeFromBundle(bundle: OutputBundle) {
   const importsGraph = {} as Record<string, Set<string>>
   for (const i in bundle) {
@@ -184,39 +156,7 @@ export function getExposeFromBundle(bundle: OutputBundle) {
   return importsGraph as unknown as Record<string, string[]>
 }
 
-export function replaceBundleImportDeclarations(
-  source: string,
-  externals: Record<string, string>,
-) {
-  const [imports] = parse(source, 'optional-sourcename')
-  // let newSource = ``;
-  const newSource = new MagicString(source)
-
-  // const replacement: [ImportSpecifier, string][] = []
-
-  for (const i of imports) {
-    for (const j in externals) {
-      if (i.n === externals[j]) {
-        // const replaceID = getExternalId(j, externals[j])
-        // log(` ${j} has been replaced to ${replaceID}`)
-        // replacement.push([i, replaceID])
-        newSource.overwrite(i.s, i.e, j)
-        break
-      }
-    }
-  }
-  // let start = 0,
-  //   end: any = replacement[0]?.[0]?.s || undefined;
-
-  // replacement.forEach((k, i) => {
-  //   newSource += source.substring(start, end) + k[1];
-  //   start = replacement[i][0].e;
-  //   end = replacement[i + 1]?.[0]?.s || undefined;
-  // });
-  // newSource += source.substring(start, end);
-  return newSource.toString()
-}
-
+// transform path to [project,module],work in webpack
 export function getProjectAndModule(path: string) {
   return normalizePath(relative(CACHE_ROOT, path)).match(/(.*)\/(.*)/)
 }

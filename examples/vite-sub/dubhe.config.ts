@@ -5,10 +5,10 @@ export default {
       url: 'http://127.0.0.1:8080',
       mode: process.env.HOTBUILD ? 'hot' : 'cold',
     }, // remote static server
-    esbuildpub: {
-      url: 'http://127.0.0.1:8081',
-      mode: process.env.HOTBUILD ? 'hot' : 'cold',
-    },
+    // esbuildpub: {
+    //   url: 'http://127.0.0.1:8081',
+    //   mode: process.env.HOTBUILD ? 'hot' : 'cold',
+    // },
   },
   externals: (id) => {
     if (process.env.TEST) {

@@ -5,6 +5,6 @@ $viteout_test_testFromViteRemote()
 <template>
   <!-- <vite_dubhe-app msg="remote app component" /> -->
   <viteout-app msg="remote app component from viteout" />
-  <esbuildpub-app msg="remote app component from esbuildpub" />
+  <!-- <esbuildpub-app msg="remote app component from esbuildpub" /> -->
 </template>
 

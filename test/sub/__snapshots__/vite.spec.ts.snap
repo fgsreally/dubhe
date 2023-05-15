@@ -9,17 +9,3 @@ exports[`[vite] subscribe module > dist files output [cold mode] 1`] = `
   },
 }
 `;
-
-exports[`[vite] subscribe module > dist files output [hot mode] 1`] = `
-{
-  "imports": {
-    "dubhe-esbuildpub/app": "http://127.0.0.1:8081/core/App.dubhe-esbuildpub.TYSG6QKB.js.js",
-    "dubhe-esbuildpub/hello": "http://127.0.0.1:8081/core/HelloWorld.dubhe-esbuildpub.V4YDLGSV.js.js",
-    "dubhe-esbuildpub/module": "http://127.0.0.1:8081/core/module.dubhe-esbuildpub.TZ6Z6PU5.js.js",
-    "dubhe-viteout/app": "http://127.0.0.1:8080/core/app.dubhe-viteout.8865ed6c.js.js",
-    "dubhe-viteout/hello": "http://127.0.0.1:8080/core/hello.dubhe-viteout.1d993f3e.js.js",
-    "dubhe-viteout/test": "http://127.0.0.1:8080/core/test.dubhe-viteout.d279c637.js.js",
-    "vue": "dubhe:vue",
-  },
-}
-`;

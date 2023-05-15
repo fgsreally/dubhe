@@ -11,11 +11,11 @@ test.describe('should import component from remote [dev]', () => {
     await expect(page.getByTestId('vite-pub-btn')).toHaveClass('el-button')
     await expect(page.getByTestId('vite-pub-text')).toContainText('remote app component from viteout')
   })
-  test('component from esbuild-pub should exist and work', async ({ page }) => {
-    // Assertions use the expect API.
-    await expect(page.getByTestId('esbuild-pub-btn')).toBeVisible()
-    await expect(page.getByTestId('esbuild-pub-text')).toContainText('remote app component from esbuildpub')
+  // test('component from esbuild-pub should exist and work', async ({ page }) => {
+  //   // Assertions use the expect API.
+  //   await expect(page.getByTestId('esbuild-pub-btn')).toBeVisible()
+  //   await expect(page.getByTestId('esbuild-pub-text')).toContainText('remote app component from esbuildpub')
 
-    // await expect(page.getByTestId('esbuild-pub-text')).toHaveClass()
-  })
+  //   // await expect(page.getByTestId('esbuild-pub-text')).toHaveClass()
+  // })
 })

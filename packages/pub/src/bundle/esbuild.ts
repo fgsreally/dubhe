@@ -4,7 +4,6 @@ import type { ProPlugin } from 'esbuild-plugin-merge'
 
 import type { Metafile, OutputFile } from 'esbuild'
 import fse from 'fs-extra'
-import { init } from 'es-module-lexer'
 import type { PubConfig } from 'dubhe'
 import debug from 'debug'
 import { isExternal } from './vite/vite'
@@ -47,7 +46,6 @@ export function BundlePlugin(config: PubConfig): ProPlugin {
   return {
     name: 'dubhe::bundle',
     async setup(build) {
-      await init
       let changeFile = ''
       const alias: any = []
       const entryFileMap = config.entry

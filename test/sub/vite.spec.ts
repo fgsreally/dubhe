@@ -12,7 +12,7 @@ describe('[vite] subscribe module', () => {
   })
   it('dist files output [hot mode]', async () => {
     const html = await getFileContent('vite-sub/dist/hot/index.html')
-    expect(Object.keys(getImportMap(html).imports).length).toBe(7)
+    expect(Object.keys(getImportMap(html).imports).length).toBe(4)
 
     const files = await getDistFiles('vite-sub/dist/hot')
     const content = await getFileContent(`vite-sub/dist/hot/${files[0]}`)

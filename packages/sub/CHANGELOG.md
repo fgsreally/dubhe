@@ -1,5 +1,13 @@
 # dubhe-sub
 
+## 2.0.2
+
+### Patch Changes
+
+- 2b5408f: remove repeated .js suffix in html importmap when using hot mode in vite
+- Updated dependencies [2b5408f]
+  - dubhe@2.0.2
+
 ## 2.0.1
 
 ### Patch Changes

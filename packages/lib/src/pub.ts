@@ -1,5 +1,4 @@
 import { resolve } from 'path'
-import MagicString from 'magic-string'
 
 import fse from 'fs-extra'
 export function copySourceFile(p: string, outdir: string) {
@@ -19,5 +18,4 @@ export async function createEntryFile() {
 export function removeEntryFile() {
   fse.removeSync(resolve(process.cwd(), 'dubhe.ts'))
 }
-
 

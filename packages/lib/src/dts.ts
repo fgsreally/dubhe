@@ -17,8 +17,6 @@ import type {
 } from './types'
 import { getTypePathInCache, getTypePathInWorkspace } from './cache'
 
-
-
 export function updateTSconfig(project: string, modulePathMap: ModulePathMap) {
   let tsconfig: any
   try {

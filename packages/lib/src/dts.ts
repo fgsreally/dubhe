@@ -1,7 +1,6 @@
 import { dirname, join, resolve } from 'path'
 // eslint-disable-next-line n/no-deprecated-api
 import { resolve as urlResolve } from 'url'
-import { parse } from 'es-module-lexer'
 
 import { normalizePath } from 'vite'
 import axios from 'axios'
@@ -18,14 +17,7 @@ import type {
 } from './types'
 import { getTypePathInCache, getTypePathInWorkspace } from './cache'
 
-export async function analyseTSEntry(code: string) {
-  const [imports, exports] = await parse(code)
-  const modulePathMap: ModulePathMap = {}
-  exports.forEach((item, i) => {
-    modulePathMap[item] = imports[i].n as string
-  })
-  return modulePathMap
-}
+
 
 export function updateTSconfig(project: string, modulePathMap: ModulePathMap) {
   let tsconfig: any

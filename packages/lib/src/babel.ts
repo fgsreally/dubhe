@@ -16,7 +16,6 @@ const plugins = [
   babelPluginProposalExportNamespaceFrom,
   babelPluginSyntaxClassProperties,
   babelPluginNumericSeparator,
-
   babelPluginProposalDynamicImport,
   babelPluginTransformModulesSystemJS,
 ]

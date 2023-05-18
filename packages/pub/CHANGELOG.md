@@ -1,5 +1,11 @@
 # dubhe-pub
 
+## 2.0.3
+
+### Patch Changes
+
+- 7710964: fix types option in vite
+
 ## 2.0.2
 
 ### Patch Changes

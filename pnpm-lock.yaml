@@ -85,7 +85,7 @@ importers:
         version: registry.npmmirror.com/unplugin-auto-import@0.11.5
       unplugin-vue-components:
         specifier: ^0.22.12
-        version: registry.npmmirror.com/unplugin-vue-components@0.22.12(rollup@2.78.1)(vue@3.2.47)
+        version: registry.npmmirror.com/unplugin-vue-components@0.22.12(vue@3.2.47)
       vue:
         specifier: ^3.2.45
         version: registry.npmmirror.com/vue@3.2.47
@@ -93,15 +93,12 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^4.0.0
         version: registry.npmmirror.com/@vitejs/plugin-vue@4.0.0(vite@4.1.1)(vue@3.2.47)
-      dubhe-vite:
-        specifier: workspace:^
-        version: link:../../packages/vite
       typescript:
         specifier: ^4.9.3
         version: registry.npmmirror.com/typescript@4.9.5
       vite:
         specifier: ^4.0.0
-        version: registry.npmmirror.com/vite@4.1.1(terser@5.17.1)
+        version: registry.npmmirror.com/vite@4.1.1
       vue-tsc:
         specifier: ^1.0.11
         version: registry.npmmirror.com/vue-tsc@1.0.24(typescript@4.9.5)
@@ -7068,6 +7065,22 @@ packages:
     name: '@polka/url'
     version: 1.0.0-next.21
 
+  registry.npmmirror.com/@rollup/pluginutils@5.0.2:
+    resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@rollup/pluginutils/-/pluginutils-5.0.2.tgz}
+    name: '@rollup/pluginutils'
+    version: 5.0.2
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@types/estree': registry.npmmirror.com/@types/estree@1.0.0
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
+    dev: false
+
   registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@2.78.1):
     resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@rollup/pluginutils/-/pluginutils-5.0.2.tgz}
     id: registry.npmmirror.com/@rollup/pluginutils/5.0.2
@@ -7714,7 +7727,7 @@ packages:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: registry.npmmirror.com/vite@4.1.1(terser@5.17.1)
+      vite: registry.npmmirror.com/vite@4.1.1
       vue: registry.npmmirror.com/vue@3.2.47
     dev: true
 
@@ -15713,7 +15726,7 @@ packages:
     name: unimport
     version: 1.3.0
     dependencies:
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@2.78.1)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2
       escape-string-regexp: registry.npmmirror.com/escape-string-regexp@5.0.0
       fast-glob: 3.2.12
       local-pkg: registry.npmmirror.com/local-pkg@0.4.3
@@ -15790,7 +15803,7 @@ packages:
         optional: true
     dependencies:
       '@antfu/utils': registry.npmmirror.com/@antfu/utils@0.7.2
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@2.78.1)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2
       local-pkg: registry.npmmirror.com/local-pkg@0.4.3
       magic-string: registry.npmmirror.com/magic-string@0.26.7
       unimport: registry.npmmirror.com/unimport@1.3.0
@@ -15849,6 +15862,35 @@ packages:
     transitivePeerDependencies:
       - rollup
       - supports-color
+
+  registry.npmmirror.com/unplugin-vue-components@0.22.12(vue@3.2.47):
+    resolution: {integrity: sha512-FxyzsuBvMCYPIk+8cgscGBQ345tvwVu+qY5IhE++eorkyvA4Z1TiD/HCiim+Kbqozl10i4K+z+NCa2WO2jexRA==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/unplugin-vue-components/-/unplugin-vue-components-0.22.12.tgz}
+    id: registry.npmmirror.com/unplugin-vue-components/0.22.12
+    name: unplugin-vue-components
+    version: 0.22.12
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@babel/parser': ^7.15.8
+      vue: 2 || 3
+    peerDependenciesMeta:
+      '@babel/parser':
+        optional: true
+    dependencies:
+      '@antfu/utils': registry.npmmirror.com/@antfu/utils@0.7.2
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2
+      chokidar: registry.npmmirror.com/chokidar@3.5.3
+      debug: registry.npmmirror.com/debug@4.3.4
+      fast-glob: registry.npmmirror.com/fast-glob@3.2.12
+      local-pkg: registry.npmmirror.com/local-pkg@0.4.3
+      magic-string: registry.npmmirror.com/magic-string@0.27.0
+      minimatch: registry.npmmirror.com/minimatch@5.1.6
+      resolve: registry.npmmirror.com/resolve@1.22.1
+      unplugin: registry.npmmirror.com/unplugin@1.0.1
+      vue: registry.npmmirror.com/vue@3.2.47
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
+    dev: false
 
   registry.npmmirror.com/unplugin@1.0.1:
     resolution: {integrity: sha512-aqrHaVBWW1JVKBHmGo33T5TxeL0qWzfvjWokObHA9bYmN7eNDkwOxmLjhioHl9878qDFMAaT51XNroRyuz7WxA==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/unplugin/-/unplugin-1.0.1.tgz}
@@ -16005,6 +16047,41 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: false
+
+  registry.npmmirror.com/vite@4.1.1:
+    resolution: {integrity: sha512-LM9WWea8vsxhr782r9ntg+bhSFS06FJgCvvB0+8hf8UWtvaiDagKYWXndjfX6kGl74keHJUcpzrQliDXZlF5yg==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/vite/-/vite-4.1.1.tgz}
+    name: vite
+    version: 4.1.1
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: registry.npmmirror.com/esbuild@0.16.17
+      postcss: registry.npmmirror.com/postcss@8.4.21
+      resolve: registry.npmmirror.com/resolve@1.22.1
+      rollup: registry.npmmirror.com/rollup@3.14.0
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
 
   registry.npmmirror.com/vite@4.1.1(terser@5.17.1):
     resolution: {integrity: sha512-LM9WWea8vsxhr782r9ntg+bhSFS06FJgCvvB0+8hf8UWtvaiDagKYWXndjfX6kGl74keHJUcpzrQliDXZlF5yg==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/vite/-/vite-4.1.1.tgz}

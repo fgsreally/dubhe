@@ -11,7 +11,7 @@ export { dtsPlugin as Dts }
 export function Pub(dubheConfig: PubConfig): any {
   const config = Object.assign({}, dubheConfig) as Required<PubConfig>
 
-  return [Dev(config), dtsPlugin(config).vite, Bundle(config), CSS(), dynamicBase({
+  return [Dev(config), dubheConfig.types && dtsPlugin(config).vite, Bundle(config), CSS(), dynamicBase({
     // dynamic public path var string, default window.__dynamic_base__
     publicPath: `globalThis.__DP_${config.project}_`,
     transformIndexHtml: false,

@@ -64,7 +64,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
           lib: config.app
             ? undefined
             : {
-                entry: Object.values(config.entry),
+                entry: config.entry,
                 name: 'remoteEntry',
                 formats: ['es'],
                 fileName: () => {
@@ -84,17 +84,19 @@ export function BundlePlugin(config: PubConfig): PluginOption {
     },
 
     async buildStart() {
+      if (isWatch)
+        return
+      if (config.app) {
+        for (const i in config.entry) {
+          this.emitFile({
+            type: 'chunk',
+            id: config.entry[i],
+            name: i,
+            preserveSignature: 'allow-extension',
 
-      // for (const i in config.entry) {
-      //   const id = this.emitFile({
-      //     type: 'chunk',
-      //     id: config.entry[i],
-      //     name: i,
-      //     preserveSignature: 'allow-extension',
-
-      //   })
-      //   alias.push({ name: i, url: id })
-      // }
+          })
+        }
+      }
     },
 
     watchChange(id: string, change: any) {
@@ -146,20 +148,25 @@ export function BundlePlugin(config: PubConfig): PluginOption {
     async generateBundle(_, data) {
       const bundleGraph: { [key: string]: string[] } = {}
       const outputSourceGraph: { [key: string]: string[] } = {}
-      alias.forEach(item => item.url = this.getFileName(item.url))
+
+      // alias.forEach(item => item.url = this.getFileName(item.url))
       importsGraph = getExposeFromBundle(data)
       Debug('generate bundleGraph/sourceGraph')
       for (const i in data) {
         if (!i.endsWith('.js'))
           continue
-        const name = i.split('.dubhe')[0]
-        if (alias.some(item => item.name === name)) {
-          bundleGraph[name] = [];
-          (data[i] as any).imports.forEach((item: string) => {
-            if (item.includes(`.dubhe-${config.project}`))
-              bundleGraph[name].push(item)
-          })
+        const { isEntry, name, fileName, imports } = data[i] as any
+        if (isEntry && name !== 'index') {
+          alias.push({ name, url: fileName })
+          if (alias.some(item => item.name === name)) {
+            bundleGraph[name] = []
+            imports.forEach((item: string) => {
+              if (item.includes(`.dubhe-${config.project}`))
+                bundleGraph[name].push(item)
+            })
+          }
         }
+
         for (const entry of alias.map(({ name }) => name)) {
           if (name === entry) {
             const entryFilePath = (entryFileMap[name]
@@ -196,7 +203,8 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         meta: config.meta || null,
         version: config.version || '0.0.0',
         timestamp: getFormatDate(),
-        files: Object.keys(data),
+        //TODO to handle/filter all assets
+        files: Object.keys(data).filter((item: string) => !item.endsWith('.css')),
         externals: [...externalSet],
         alias,
         // initEntryFiles,

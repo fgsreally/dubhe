@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Share from './components/Share.vue'
-const { msg } = defineProps<{ msg: string }>()
+const { msg } = defineProps<{ msg: number }>()
 </script>
 
 <template>

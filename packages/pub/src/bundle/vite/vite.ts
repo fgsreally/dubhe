@@ -66,7 +66,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
           lib: config.app
             ? undefined
             : {
-                entry: entryFile,
+                entry: Object.values(config.entry),
                 name: 'remoteEntry',
                 formats: ['es'],
                 fileName: () => {
@@ -84,22 +84,19 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         },
       }
     },
-    buildEnd() {
-      removeEntryFile()
-    },
-    async buildStart() {
-      if (!config.app)
-        await createEntryFile()
-      for (const i in config.entry) {
-        const id = this.emitFile({
-          type: 'chunk',
-          id: config.entry[i],
-          name: i,
-          preserveSignature: 'allow-extension',
 
-        })
-        alias.push({ name: i, url: id })
-      }
+    async buildStart() {
+
+      // for (const i in config.entry) {
+      //   const id = this.emitFile({
+      //     type: 'chunk',
+      //     id: config.entry[i],
+      //     name: i,
+      //     preserveSignature: 'allow-extension',
+
+      //   })
+      //   alias.push({ name: i, url: id })
+      // }
     },
 
     watchChange(id: string, change: any) {

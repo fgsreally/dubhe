@@ -36,6 +36,7 @@ export function resolveURLQuery(url: string) {
   const query = new URLSearchParams(queryUrl)
   return {
     file: query.get('file'),
+    dir: query.get('dir') || '',
     types: query.get('types') === 'true',
     project: query.get('project'),
     module: JSON.parse(query.get('module') as string) as string[],

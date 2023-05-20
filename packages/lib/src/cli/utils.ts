@@ -116,10 +116,18 @@ export async function installProjectCache(baseUrl: string, files: string[], proj
 }
 
 export async function installProjectTypes(baseUrl: string, project: string) {
-  const typesFiles = await getRemoteContent(`${baseUrl}/types/types.json`)
-  for (const file of typesFiles) {
-    const typesPath = getTypePathInCache(project, file)
-    downloadFile(`${baseUrl}/types/${file}`, typesPath)
+  try {
+    const typesFiles = await getRemoteContent(`${baseUrl}/types/types.json`)
+
+    for (const file of typesFiles) {
+      const typesPath = getTypePathInCache(project, file)
+      downloadFile(`${baseUrl}/types/${file}`, typesPath)
+    }
+  }
+  catch (e) {
+    log('remote project doesn\' generate types.json', 'red')
+
+    process.exit(0)
   }
 }
 

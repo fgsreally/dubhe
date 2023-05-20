@@ -5,13 +5,13 @@ import fs from 'fs'
 import { fileURLToPath, resolve as urlResolve } from 'url'
 import {
   DEFAULT_POLYFILL,
-  HMRModuleHandler,
   HMRTypesHandler,
   VIRTUAL_EMPTY,
   VIRTUAL_PREFIX,
   VIRTUAL_RE,
   getExposeFromBundle,
   getFormatDate,
+  getHmrModules,
   getRemoteContent,
   getTypes,
   getVirtualContent, log,
@@ -340,12 +340,12 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       server.middlewares.use((req, res, next) => {
         const url = (req as any).url || ''
         try {
-          const ret = HMRModuleHandler(url)
+          const modules = getHmrModules(url)
 
-          if (ret) {
+          if (modules) {
             HMRTypesHandler(url, config.remote)
             const time = Date.now()
-            const allUpdateModule = (ret as string[])
+            const allUpdateModule = (modules as string[])
               .map(item => reloadModule(item, time))
               .flat()
               .filter(i => i) as unknown

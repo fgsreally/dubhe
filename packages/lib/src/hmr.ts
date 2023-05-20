@@ -5,24 +5,23 @@ import { log, resolveURLQuery } from './utils'
 import { HMT_TYPES_TIMEOUT } from './common'
 import { updateTypesFile } from './dts'
 import type { SubConfig } from './types'
-export function HMRModuleHandler(url: string) {
+export function getHmrModules(url: string) {
   const ret = resolveURLQuery(url) as any
   if (ret)
     return ret.module.map((item: string) => `dubhe-${ret.project}/${item}`)
 }
 /** update d.ts  */
 export function HMRTypesHandler(url: string, remote: SubConfig['remote']) {
-  const { file, project, module, types } = resolveURLQuery(url) as any
+  const { file, project, types, dir } = resolveURLQuery(url) as any
 
   if (
     types
-      && (module as string[]).some(item => item.endsWith('.js'))
-      && !(file as string).endsWith('.js')
+    && !(file as string).endsWith('.js')
   ) {
     setTimeout(() => {
       log('update types file', 'blue')
       updateTypesFile(
-        urlResolve(remote[project].url, 'types/'),
+        urlResolve(remote[project].url, `${dir}/types/`),
         project,
         file.endsWith('.ts') ? file.replace(/\.ts$/, '.d.ts') : `${file}.d.ts`,
       )
@@ -37,16 +36,23 @@ export async function sendHMRInfo({
   types,
   file,
   module,
+  dir = '',
 }: {
   url: string
   types: boolean
   project: string
   file: string
   module: string[]
+  dir?: string
 }) {
-  return await axios.get(
+  try {
+    return await axios.get(
       `${url}?file=${file}&project=${project}&module=${JSON.stringify(
         module,
-      )}&types=${types}`,
-  )
+      )}&types=${types}&dir=${dir}`,
+    )
+  }
+  catch (e) {
+    log(`fail to send HMR info to ${url}`, 'grey')
+  }
 }

@@ -1,5 +1,15 @@
 # dubhe-pub
 
+## 2.0.4
+
+### Patch Changes
+
+- f01a3a0: emitFile will crash program in watch mode
+- 9d51108: support dts hmr in dev mode (now only in vite)
+- Updated dependencies [122db68]
+- Updated dependencies [9d51108]
+  - dubhe@2.0.4
+
 ## 2.0.3
 
 ### Patch Changes

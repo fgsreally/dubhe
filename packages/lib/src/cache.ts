@@ -31,6 +31,10 @@ export async function removeLocalType(project: string) {
   return fse.remove(resolve(TYPE_ROOT, project))
 }
 
+export async function removeWorkspaceType(project: string) {
+  return fse.remove(resolve(process.cwd(), '.dubhe/types', project))
+}
+
 export function getLocalPath(project: string,
   moduleName: string) {
   return resolve(CACHE_ROOT, project, moduleName)

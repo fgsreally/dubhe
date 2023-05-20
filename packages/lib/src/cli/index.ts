@@ -1,14 +1,15 @@
 import { resolve } from 'path'
 /* eslint-disable no-console */
+import { exec } from 'node:child_process'
 import cac from 'cac'
 import fse from 'fs-extra'
 import { findExports } from 'mlly'
 import fg from 'fast-glob'
-import { getPkgName, log, patchVersion } from '../utils'
+import { getPkgName, log, patchVersion, traverseDic } from '../utils'
 import pkgs from '../../package.json'
 import { CACHE_ROOT, TYPE_ROOT } from '../common'
 import { esmToSystemjs } from '../babel'
-import { getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, removeLocalCache, removeLocalType, updateLocalRecord } from '../cache'
+import { getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, removeLocalCache, removeLocalType, removeWorkspaceType, updateLocalRecord } from '../cache'
 import { linkTypes, updateTSconfig } from '../dts'
 import { analysePubDep, analyseSubDep, downloadFile, generateExports, getDubheList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist } from './utils'
 import { buildExternal } from './build'
@@ -118,23 +119,66 @@ cli
 cli
   .command('delete <project>', 'delete cache & types-cache from <project>')
   .alias('del')
+  .option('--no_types, -not', '[boolean] won\'t delete types ', {
+    default: false,
+  })
+  .option('--no_cache, -noc', '[boolean] won\'t delete cache ', {
+    default: false,
+  })
 
-  .action(async (project) => {
+  .action(async (project, options) => {
     const dubheList = await getDubheList()
     if (!(project in dubheList)) {
       log(`${project} doesn't exist`, 'yellow')
       return
     }
-    removeLocalCache(project)
-    log('remove cache')
-    removeLocalType(project)
-    log('remove types')
+    if (!options.not) {
+      removeLocalType(project)
+      removeWorkspaceType(project)
+
+      log('remove types')
+    }
+    if (!options.noc) {
+      removeLocalCache(project)
+
+      log('remove cache')
+    }
+  })
+
+cli.command('dts', 'use vue-dts to generate types declaration in watch mode')
+  // .option('--vue, -v [v]', '[boolean] use vue-tsc ')
+  .action(async () => {
+    const { outDir = '.dubhe' } = await getWorkSpaceConfig()
+    const outTypesDir = `${outDir}/types`
+    fse.removeSync(outTypesDir)
+    const tscProcess = exec(`npx vue-tsc --declaration --emitDeclarationOnly --outDir ${outTypesDir} --watch`)
+    tscProcess.stdout!.on('data', (data) => {
+      if (data.includes('Found 0 errors.')) {
+        traverseDic(outTypesDir, (params) => {
+          fse.outputJSONSync(
+            resolve(outTypesDir, 'types.json'),
+            params,
+          )
+        })
+        log('Generate types.json')
+      }
+      console.log(data)
+    })
+    tscProcess.on('error', (err) => {
+      console.error(err)
+    })
   })
 
 cli
   .command('install', 'install cache')
   .alias('i')
-  .option('--force', '[boolean] force to reinstall ', {
+  .option('--force', '[boolean] force to reinstall all files', {
+    default: false,
+  })
+  .option('--no_types, -not', '[boolean] won\'t update types', {
+    default: false,
+  })
+  .option('--no_cache, -noc', '[boolean] won\'t update cache ', {
     default: false,
   })
   .action(async (options) => {
@@ -148,13 +192,15 @@ cli
         })
         const isForceUpdate = options.force || !localConfig || !patchVersion(remoteConfig.version, localConfig.version)
 
-        log(`Install [${project}] cache`)
-        await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files.filter((file: string) => {
-          if (isForceUpdate)
-            return true
-          return !localConfig.files.includes(file)
-        })], project)
-        if (isForceUpdate) {
+        if (!options.noc) {
+          log(`Install [${project}] cache`)
+          await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files.filter((file: string) => {
+            if (isForceUpdate)
+              return true
+            return !localConfig.files.includes(file)
+          })], project)
+        }
+        if ((!options.not) && isForceUpdate) {
           log(`Install [${project}] types`)
 
           installProjectTypes(dubheList[project].url, project)

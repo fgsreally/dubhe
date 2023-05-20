@@ -119,27 +119,18 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         log('send HMR info')
 
         for (const home of config.HMR) {
-          setTimeout (async () => {
-            try {
-              Debug(`send HMR info to ${home.port} `)
-
-              await sendHMRInfo({
-                url: `${home.port}/${VIRTUAL_HMR_PREFIX}`,
-                types: config.types || false,
-                project: config.project as string,
-                module: updateList,
-                file: normalizePath(
-                  relative(
-                    resolve(root, entryFile, '../'),
-                    HMRconfig.changeFile,
-                  ),
-                ),
-              })
-            }
-            catch (e) {
-              log(`Fail to send HMR information---${home.port}`, 'red')
-            }
-          }, 1000)
+          sendHMRInfo({
+            url: `${home.port}/${VIRTUAL_HMR_PREFIX}`,
+            types: config.types || false,
+            project: config.project as string,
+            module: updateList,
+            file: normalizePath(
+              relative(
+                resolve(root, entryFile, '../'),
+                HMRconfig.changeFile,
+              ),
+            ),
+          })
         }
       }
     },

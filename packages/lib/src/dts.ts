@@ -57,7 +57,7 @@ export async function updateTypesFile(
     // log(`update types file --${p}`, "blue");
   }
   catch (e) {
-    log('update types file failed', 'red')
+    log('update types file failed', 'grey')
   }
 }
 export async function downloadTSFiles(fileSet: string, url: string, project: string) {

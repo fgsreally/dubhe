@@ -3,7 +3,7 @@
 /* eslint-disable no-async-promise-executor */
 import { resolve } from 'path'
 import { resolve as urlResolve } from 'url'
-import { DEFAULT_POLYFILL, HMRModuleHandler, HMRTypesHandler, VIRTUAL_RE, getFormatDate, getLocalPath, getProjectAndModule, getRemoteContent, getTypes, getVirtualContent, isLocalPath, log, patchVersion, removeHash, resolveModuleAlias, updateLocalRecord } from 'dubhe'
+import { DEFAULT_POLYFILL, HMRTypesHandler, VIRTUAL_RE, getFormatDate, getHmrModules, getLocalPath, getProjectAndModule, getRemoteContent, getTypes, getVirtualContent, isLocalPath, log, patchVersion, removeHash, resolveModuleAlias, updateLocalRecord } from 'dubhe'
 import { DefinePlugin } from 'webpack'
 import type { Compiler, ResolvePluginInstance } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
@@ -26,11 +26,11 @@ export class WebpackPlugin {
   middleware(req: any, res: any, next: any) {
     const url = req?.url || ''
     try {
-      const ret = HMRModuleHandler(url) as string[]
+      const modules = getHmrModules(url) as string[]
 
-      if (ret) {
+      if (modules) {
         HMRTypesHandler(url, this.config.remote)
-        ret.forEach(async (id) => {
+        modules.forEach(async (id) => {
           const [project, moduleName] = resolveModuleAlias(id, state.aliasMap)
           Debug(`refresh remote file --${project}/${moduleName}`)
 

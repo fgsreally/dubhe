@@ -12,14 +12,12 @@ import {
   DUBHE_PATH_SYMBOL,
   VIRTUAL_HMR_PREFIX,
   copySourceFile,
-  createEntryFile,
   getExposeFromBundle,
   getFormatDate,
   getRelatedPath,
   injectScriptToPub,
   isSourceFile,
   log,
-  removeEntryFile,
   sendHMRInfo,
 } from 'dubhe'
 import debug from 'debug'

@@ -84,7 +84,6 @@ export function resolveModuleAlias(
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, project, moduleName] = id.match(VIRTUAL_RE) || []
-
   if (!project)
     return []
   let baseName = moduleName

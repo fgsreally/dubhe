@@ -3,7 +3,8 @@ import { getDistFiles, isExist } from '../utils'
 describe('[vite] publish module', () => {
   it('core files output', async () => {
     const files = await getDistFiles('vite-pub/.dubhe/core')
-    expect(files.length).toBe(5)
+    // remove virtual entry
+    expect(files.length).toBe(4)
 
     expect(isExist('vite-pub/.dubhe/core/dubheList.json')).toBeTruthy()
   })

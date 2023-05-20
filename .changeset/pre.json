@@ -1,0 +1,16 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "pub-esbuild": "1.0.0",
+    "pub-vite": "0.0.0",
+    "sub-vite": "0.0.0",
+    "sub-vuecli": "0.0.0",
+    "sub-webpack": "1.0.0",
+    "dubhe": "2.0.1",
+    "dubhe-pub": "2.0.0",
+    "dubhe-sub": "2.0.1",
+    "dubhe-vite": "1.0.6"
+  },
+  "changesets": []
+}

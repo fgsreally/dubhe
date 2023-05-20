@@ -1,5 +1,13 @@
 # dubhe-sub
 
+## 2.0.5-beta.0
+
+### Patch Changes
+
+- caf16bf: patch a version to resolve unpublish pkg
+- Updated dependencies [caf16bf]
+  - dubhe@2.0.5-beta.0
+
 ## 2.0.4
 
 ### Patch Changes

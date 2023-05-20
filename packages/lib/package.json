@@ -1,6 +1,6 @@
 {
   "name": "dubhe",
-  "version": "2.0.2",
+  "version": "2.0.4",
   "description": "Provide cli and utility functions for others dubhe project",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

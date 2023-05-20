@@ -1,5 +1,12 @@
 # dubhe
 
+## 2.0.4
+
+### Patch Changes
+
+- 122db68: fix cli options (not/noc)
+- 9d51108: support dts hmr in dev mode (now only in vite)
+
 ## 2.0.2
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # dubhe-sub
 
+## 2.0.4
+
+### Patch Changes
+
+- 9d51108: support dts hmr in dev mode (now only in vite)
+- Updated dependencies [122db68]
+- Updated dependencies [9d51108]
+  - dubhe@2.0.4
+
 ## 2.0.2
 
 ### Patch Changes

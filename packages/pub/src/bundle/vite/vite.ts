@@ -203,7 +203,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         meta: config.meta || null,
         version: config.version || '0.0.0',
         timestamp: getFormatDate(),
-        //TODO to handle/filter all assets
+        // TODO to handle/filter all assets
         files: Object.keys(data).filter((item: string) => !item.endsWith('.css')),
         externals: [...externalSet],
         alias,

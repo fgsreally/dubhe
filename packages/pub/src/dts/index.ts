@@ -68,7 +68,7 @@ export const dtsPlugin = (remoteConf: PubConfig) => {
   async function outputDts() {
     Debug('buildEnd')
     const sourceDtsFiles = new Set<SourceFile>()
-
+    fse.removeSync(outputDir)
     const startTime = Date.now()
     const tsConfig: {
       extends?: string
@@ -177,6 +177,7 @@ export const dtsPlugin = (remoteConf: PubConfig) => {
     Debug('output dts')
 
     traverseDic(outputDir, (params) => {
+      params.push('types.json')
       fse.outputJSONSync(
         resolve(outputDir, 'types.json'),
         params,

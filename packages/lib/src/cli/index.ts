@@ -155,6 +155,7 @@ cli.command('dts', 'use vue-dts to generate types declaration in watch mode')
     tscProcess.stdout!.on('data', (data) => {
       if (data.includes('Found 0 errors.')) {
         traverseDic(outTypesDir, (params) => {
+          params.push('types.json')
           fse.outputJSONSync(
             resolve(outTypesDir, 'types.json'),
             params,

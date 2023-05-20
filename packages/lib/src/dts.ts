@@ -60,7 +60,7 @@ export async function updateTypesFile(
     log('update types file failed', 'grey')
   }
 }
-export async function downloadTSFiles(fileSet: string, url: string, project: string) {
+export async function downloadTSFiles(fileSet: string[], url: string, project: string) {
   for (const i of fileSet) {
     if (i.endsWith('.ts')) {
       const { data: code } = await axios.get(new URL(i, url).href)
@@ -97,7 +97,7 @@ export async function linkTypes(project: string, fileSet: string) {
     try {
       const dest = getTypePathInWorkspace(project, file)
       await fse.ensureDir(dirname(dest))
-      await fse.symlink(getTypePathInCache(project, file), dest, 'junction')
+      await fse.symlink(getTypePathInCache(project, file), dest, 'file')
     }
     catch (e) {
       log('fail to create symlink', 'red')

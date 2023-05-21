@@ -49,7 +49,10 @@ export function BundlePlugin(config: PubConfig): PluginOption {
   // metaData = config.meta || {};
   const entryFile = 'dubhe.ts'
   const outDir = config.outDir || '.dubhe'
-
+  if (config.app && ('index' in config.entry)) {
+    log('entry name should not be \'index\'', 'red')
+    process.exit(0)
+  }
   return {
     name: 'dubhe::bundle',
     apply: 'build',

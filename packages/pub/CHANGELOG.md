@@ -1,5 +1,11 @@
 # dubhe-pub
 
+## 2.0.5-beta.1
+
+### Patch Changes
+
+- 048fe5c: entry name should not include 'index' when use app mode in vite
+
 ## 2.0.5-beta.0
 
 ### Patch Changes

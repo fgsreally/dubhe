@@ -13,6 +13,7 @@
     "dubhe-vite": "1.0.6"
   },
   "changesets": [
-    "eleven-brooms-teach"
+    "eleven-brooms-teach",
+    "khaki-dots-burn"
   ]
 }

@@ -1,5 +1,14 @@
 # dubhe-sub
 
+## 2.0.5-beta.2
+
+### Patch Changes
+
+- 3e84520: support custom resolve for unplugin-auto-import(it seems sideeffect is not required in dubhe)
+- Updated dependencies [6cd2c6b]
+- Updated dependencies [3e84520]
+  - dubhe@2.0.5-beta.2
+
 ## 2.0.5-beta.0
 
 ### Patch Changes

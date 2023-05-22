@@ -234,7 +234,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             config.cache,
           )
           const dubheConfig: PubListType = JSON.parse(data)
-          console.log(dubheConfig.alias)
           if (mode === 'hot' && command === 'build') {
             for (const { name, url: aliasUrl } of dubheConfig.alias) {
               state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)

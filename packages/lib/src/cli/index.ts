@@ -12,6 +12,7 @@ import { CACHE_ROOT, TYPE_ROOT } from '../common'
 import { esmToSystemjs } from '../babel'
 import { getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, removeLocalCache, removeLocalType, removeWorkspaceType, updateLocalRecord } from '../cache'
 import { linkTypes, updateTSconfig } from '../dts'
+import { removeHash } from '../core'
 import { analysePubDep, analyseSubDep, downloadFile, generateExports, getDubheList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist } from './utils'
 import { buildExternal } from './build'
 const root = process.cwd()
@@ -257,23 +258,24 @@ cli.command('transform ', 'transform esm to systemjs')
         fse.copyFile(filePath, destPath)
       }
     })
-    log(`create systemjs files success to ${dest}`)
+    log(`create systemjs band  to ${dest}`)
   })
 
-cli.command('export', 'get remote module exports')
+cli.command('export', 'get remote module export methods')
   .option('--project, -p [p]', '[string] project name')
   .action(async (options) => {
     const { project } = options
     const pubList = await getLocalContent(project, 'dubheList.json')
     for (const i of pubList.alias) {
-      const text = await getLocalContent(project, `${i.url}.js`)
-      log(`dubhe-${project}/${i.name}:`)
-      log(`--${getLocalPath(project, `${i.url}.js`)}--`)
+      const url = removeHash(i.url)
+      const text = await getLocalContent(project, url)
+      log(`dubhe-${project}/${i.name}:  ${getLocalPath(project, url)}`)
+
       console.table(findExports(text).map(item => item.name || item.type))
     }
   })
 /**
- * experiment
+ * @experiment
  */
 cli
   .command(
@@ -296,7 +298,7 @@ cli
     for (const depname in deps) {
       const pkgName = getPkgName(depname)
       const exportsStr = `${generateExports([...deps[depname]])}\n`
-      log(`Create ${pkgName}.js`, 'grey')
+      log(`Create entry--${pkgName}.js`, 'grey')
       const filePath = resolve(root, 'dubhe-bundle', `${pkgName}.js`)
       files.push(filePath)
       await fse.outputFile(filePath, exportsStr, 'utf-8')
@@ -306,7 +308,7 @@ cli
     await buildExternal(option.outDir, files)
     log('Bundle finish')
     fse.remove(resolve(root, 'dubhe-bundle'))
-    log('Remove dir', 'grey')
+    log('Remove entry dir', 'grey')
   })
 
 cli

@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 /* eslint-disable no-console */
 import { exec } from 'node:child_process'
+import { createRequire } from 'module'
 import cac from 'cac'
 import fse from 'fs-extra'
 import { findExports } from 'mlly'
@@ -14,7 +15,7 @@ import { linkTypes, updateTSconfig } from '../dts'
 import { analysePubDep, analyseSubDep, downloadFile, generateExports, getDubheList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist } from './utils'
 import { buildExternal } from './build'
 const root = process.cwd()
-
+const require = createRequire(root)
 const cli = cac('dubhe')
 
 cli.command('root', 'show dubhe CACHE_ROOT/TYPE_ROOT path').action(() => {
@@ -33,6 +34,7 @@ cli
   .command('detect', 'contrast cache version & remote version')
   .alias('det')
   .action(async () => {
+    const { dependencies } = require(resolve(root, 'package.json'))
     const dubheList = await getDubheList()
     for (const project in dubheList) {
       const pubList = await getRemoteContent(`${dubheList[project].url}/core/dubheList.json`)
@@ -40,12 +42,19 @@ cli
       try {
         const localConfig = await getLocalContent(project, 'dubheList.json')
         if (!localConfig) {
-          log(`project:${project} cache doesn't exist`, 'yellow')
+          log(`[${project}] cache doesn't exist`, 'yellow')
           continue
         }
+
+        for (const i of pubList.externals) {
+          const depPkgName = getPkgName(i)
+          if (!(depPkgName in dependencies))
+            log(`[${project}] dependence--${depPkgName} doesn't exist in current repo`, 'yellow')
+        }
+
         if (!patchVersion(localConfig.version, pubList.version)) {
           log(
-            `[versions-diff] project:${project}  (local:${localConfig.version}|remote:${pubList.version})`,
+            `[${project}] version diff: (local:${localConfig.version}|remote:${pubList.version})`,
             'red',
           )
           continue

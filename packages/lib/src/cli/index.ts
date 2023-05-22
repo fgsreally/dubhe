@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 /* eslint-disable no-console */
 import { exec } from 'node:child_process'
+import { createRequire } from 'module'
 import cac from 'cac'
 import fse from 'fs-extra'
 import { findExports } from 'mlly'
@@ -11,10 +12,11 @@ import { CACHE_ROOT, TYPE_ROOT } from '../common'
 import { esmToSystemjs } from '../babel'
 import { getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, removeLocalCache, removeLocalType, removeWorkspaceType, updateLocalRecord } from '../cache'
 import { linkTypes, updateTSconfig } from '../dts'
+import { removeHash } from '../core'
 import { analysePubDep, analyseSubDep, downloadFile, generateExports, getDubheList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist } from './utils'
 import { buildExternal } from './build'
 const root = process.cwd()
-
+const require = createRequire(root)
 const cli = cac('dubhe')
 
 cli.command('root', 'show dubhe CACHE_ROOT/TYPE_ROOT path').action(() => {
@@ -33,6 +35,7 @@ cli
   .command('detect', 'contrast cache version & remote version')
   .alias('det')
   .action(async () => {
+    const { dependencies } = require(resolve(root, 'package.json'))
     const dubheList = await getDubheList()
     for (const project in dubheList) {
       const pubList = await getRemoteContent(`${dubheList[project].url}/core/dubheList.json`)
@@ -40,12 +43,19 @@ cli
       try {
         const localConfig = await getLocalContent(project, 'dubheList.json')
         if (!localConfig) {
-          log(`project:${project} cache doesn't exist`, 'yellow')
+          log(`[${project}] cache doesn't exist`, 'yellow')
           continue
         }
+
+        for (const i of pubList.externals) {
+          const depPkgName = getPkgName(i)
+          if (!(depPkgName in dependencies))
+            log(`[${project}] dependence--${depPkgName} doesn't exist in current repo`, 'yellow')
+        }
+
         if (!patchVersion(localConfig.version, pubList.version)) {
           log(
-            `[versions-diff] project:${project}  (local:${localConfig.version}|remote:${pubList.version})`,
+            `[${project}] version diff: (local:${localConfig.version}|remote:${pubList.version})`,
             'red',
           )
           continue
@@ -248,23 +258,24 @@ cli.command('transform ', 'transform esm to systemjs')
         fse.copyFile(filePath, destPath)
       }
     })
-    log(`create systemjs files success to ${dest}`)
+    log(`create systemjs band  to ${dest}`)
   })
 
-cli.command('export', 'get remote module exports')
+cli.command('export', 'get remote module export methods')
   .option('--project, -p [p]', '[string] project name')
   .action(async (options) => {
     const { project } = options
     const pubList = await getLocalContent(project, 'dubheList.json')
     for (const i of pubList.alias) {
-      const text = await getLocalContent(project, `${i.url}.js`)
-      log(`dubhe-${project}/${i.name}:`)
-      log(`--${getLocalPath(project, `${i.url}.js`)}--`)
+      const url = removeHash(i.url)
+      const text = await getLocalContent(project, url)
+      log(`dubhe-${project}/${i.name}:  ${getLocalPath(project, url)}`)
+
       console.table(findExports(text).map(item => item.name || item.type))
     }
   })
 /**
- * experiment
+ * @experiment
  */
 cli
   .command(
@@ -287,7 +298,7 @@ cli
     for (const depname in deps) {
       const pkgName = getPkgName(depname)
       const exportsStr = `${generateExports([...deps[depname]])}\n`
-      log(`Create ${pkgName}.js`, 'grey')
+      log(`Create entry--${pkgName}.js`, 'grey')
       const filePath = resolve(root, 'dubhe-bundle', `${pkgName}.js`)
       files.push(filePath)
       await fse.outputFile(filePath, exportsStr, 'utf-8')
@@ -297,7 +308,7 @@ cli
     await buildExternal(option.outDir, files)
     log('Bundle finish')
     fse.remove(resolve(root, 'dubhe-bundle'))
-    log('Remove dir', 'grey')
+    log('Remove entry dir', 'grey')
   })
 
 cli

@@ -8,16 +8,18 @@ export function kebabCase(key: string) {
   return result.split(' ').join('-').toLowerCase()
 }
 
-// from r-app-hello to !app/hello
 export function DubheResolver(config: SubConfig) {
-  // function getSideEffects(id: string) {
-  //   return `!${id.replace('-', '/')}.css`
-  // }
   function resolveDirectory(id: string) {
     return `dubhe-${id.replace('-', '/')}`
   }
 
-  function componentsResolver(name: string) {
+  async function componentsResolver(name: string) {
+    if (config.resolve) {
+      const ret = await config.resolve(name)
+      if (ret)
+        return ret
+    }
+
     if (name.match(/^\$[a-zA-Zd]+_[a-zA-Zd]+_[a-zA-Zd]+/)) {
       const [_, project, module, imports] = name.match(
         /^\$([a-zA-Zd]+)_([a-zA-Zd]+)_([a-zA-Zd]+)/,

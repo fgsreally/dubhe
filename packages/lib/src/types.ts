@@ -67,6 +67,14 @@ export interface SubConfig {
     systemjs?: string | boolean
     importMap?: string | boolean
   }
+  // work for unplugin-auto-import
+  resolve?: (name: string) =>
+  {
+    as?: string
+    name?: string
+    from: string
+  } | void
+
   meta?: any
   query?: string
 }

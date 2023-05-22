@@ -131,30 +131,3 @@ export async function installProjectTypes(baseUrl: string, project: string) {
   }
 }
 
-// export function updateTsConfig(project: string, fileMap: Record<string, string>) {
-//   let tsconfig
-//   const TS_CONFIG_PATH = resolve(
-//     process.cwd(),
-//     'tsconfig.dubhe.json',
-//   )
-//   try {
-//     tsconfig = fse.readJSONSync(TS_CONFIG_PATH)
-//   }
-//   catch (e) {
-//     tsconfig = {
-//       compilerOptions: {
-//         baseUrl: '.',
-//         composite: true,
-//         paths: {},
-//       },
-//     }
-//   }
-
-//   for (const i in fileMap) {
-//     const jsPath = normalizePath(`./${join('.dubhe/types', project, fileMap[i])}`).replace(/\.ts$/, '')
-//     // tsconfig.compilerOptions.paths[`!${project}/${i}.*`] = [jsPath]
-//     tsconfig.compilerOptions.paths[`dubhe-${project}/${i}`] = [jsPath]
-//   }
-//   fse.outputJSON(TS_CONFIG_PATH, tsconfig)
-// }
-

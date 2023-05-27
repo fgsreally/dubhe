@@ -67,13 +67,13 @@ export function BundlePlugin(config: PubConfig): PluginOption {
           lib: config.app
             ? undefined
             : {
-                entry: config.entry,
-                name: 'remoteEntry',
-                formats: ['es'],
-                fileName: () => {
-                  return 'remoteEntry.js'
-                },
+              entry: config.entry,
+              name: 'remoteEntry',
+              formats: ['es'],
+              fileName: () => {
+                return 'remoteEntry.js'
               },
+            },
           cssCodeSplit: true,
 
           rollupOptions: {
@@ -215,6 +215,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         sourceGraph: outputSourceGraph,
         importsGraph,
         bundleGraph,
+        chain:  config.subConfig?.remote|| {}
         // pkgVersionMap,
       }
 
@@ -227,6 +228,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         type: 'asset',
         name: 'dubheList',
         fileName: 'dubheList.json',
+
         source: JSON.stringify(metaData),
       })
       if (config.source && !isWatch) {

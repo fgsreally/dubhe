@@ -45,6 +45,7 @@ export interface PubConfig {
   project: string
   types?: boolean
   app?: boolean
+  subConfig?:SubConfig
   // vendor?: string[];
   HMR?: { port: string }[]
   dts?: dtsPluginOptions

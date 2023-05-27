@@ -376,7 +376,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       this.emitFile({
         type: 'asset',
         name: 'dubheList',
-        fileName: 'dubheList.json',
+        fileName: 'dubheList.sub.json',
         source: JSON.stringify(metaData),
       })
     },

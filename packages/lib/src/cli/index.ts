@@ -287,8 +287,8 @@ cli
   .option('--outDir, -o [o]', '[string] outDir for vite output', {
     default: 'dist',
   })
-  .option('--dubheList, -d [d]', '[string] dubheList.json path in sub', {
-    default: 'dist/dubheList.json',
+  .option('--dubheList, -d [d]', '[string] dubheList.sub.json path in sub', {
+    default: 'dist/dubheList.sub.json',
   })
   .action(async (option) => {
     const localConfig = await getWorkSpaceConfig()

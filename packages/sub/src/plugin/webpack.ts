@@ -113,8 +113,8 @@ export class WebpackPlugin {
               state.chains.push(item)
               state.aliasMap[project] = alias
               for (const { name, url: aliasUrl } of alias) {
-                state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
-                state.systemjsImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./systemjs/${aliasUrl}`)
+                state.esmImportMap[`dubhe-${project}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
+                state.systemjsImportMap[`dubhe-${project}/${name}`] = urlResolve(url, `./systemjs/${aliasUrl}`)
               }
             });
             (dependences as { project: string;from: string }[]).forEach((item) => {

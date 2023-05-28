@@ -235,6 +235,13 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             const { chains, dependences, externals } = JSON.parse(SubData)
             externals.forEach((item: string) => {
               state.externalSet.add(item)
+              const { systemjs, esm } = config.externals(item) || {}
+              if (systemjs || esm) {
+                if (esm)
+                  state.esmImportMap[item] = esm
+                if (systemjs)
+                  state.systemjsImportMap[item] = systemjs
+              }
             });
 
             (chains as typeof state['chains']).forEach((item) => {
@@ -249,8 +256,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
               state.chains.push(item)
               state.aliasMap[project] = alias
               for (const { name, url: aliasUrl } of alias) {
-                state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
-                state.systemjsImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./systemjs/${aliasUrl}`)
+                state.esmImportMap[`dubhe-${project}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
+                state.systemjsImportMap[`dubhe-${project}/${name}`] = urlResolve(url, `./systemjs/${aliasUrl}`)
               }
             });
             (dependences as { project: string;from: string }[]).forEach((item) => {
@@ -440,7 +447,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             type: 'importmap',
           },
           children: `{"imports":${JSON.stringify(state.esmImportMap)}}`,
-          injectTo: 'head',
+          injectTo: 'head-prepend',
         })
 
         if (config.systemjs) {
@@ -451,7 +458,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
               nomodule: true,
             },
             children: `{"imports":${JSON.stringify(state.systemjsImportMap)}}`,
-            injectTo: 'head',
+            injectTo: 'head-prepend',
           })
         }
       }

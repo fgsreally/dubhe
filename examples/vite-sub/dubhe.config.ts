@@ -1,5 +1,6 @@
-import type { SubConfig } from 'dubhe-sub'
-export default {
+import type { PubConfig, SubConfig } from 'dubhe-sub'
+export const subConfig = {
+  project: 'vitesub',
   remote: {
     viteout: {
       url: 'http://127.0.0.1:8080',
@@ -29,3 +30,19 @@ export default {
     importMap: true,
   },
 } as SubConfig
+
+export const pubConfig = {
+  project: 'vitesub',
+  entry: {
+    app: './src/App.vue',
+  },
+  types: true,
+  // limit: 1000,
+  externals: (id) => {
+    if (id.startsWith('element-plus') || id === 'vue')
+      return true
+  },
+  app: true,
+  outDir: process.env.HOTBUILD ? 'dist/hot' : 'dist/cold',
+  source: false,
+} as PubConfig

@@ -6,13 +6,17 @@
   "scripts": {
     "dev": "vite",
     "build": " vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "serve": "http-server .output --port=8080 --cors"
+
   },
   "dependencies": {
     "@vitejs/plugin-legacy": "^4.0.1",
     "dubhe": "workspace:^",
+    "dubhe-pub": "workspace:*",
     "dubhe-sub": "workspace:*",
     "element-plus": "^2.2.29",
+    "http-server": "^14.1.1",
     "rollup-plugin-visualizer": "^5.9.0",
     "unplugin-auto-import": "^0.14.2",
     "unplugin-vue-components": "^0.22.9",

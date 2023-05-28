@@ -48,7 +48,7 @@ let isWatch = false
 export function BundlePlugin(config: PubConfig): PluginOption {
   // metaData = config.meta || {};
   const entryFile = 'dubhe.ts'
-  const outDir = config.outDir || '.dubhe'
+  const outDir = config.outDir || 'dist'
   if (config.app && ('index' in config.entry)) {
     log('entry name should not be \'index\'', 'red')
     process.exit(0)
@@ -67,13 +67,13 @@ export function BundlePlugin(config: PubConfig): PluginOption {
           lib: config.app
             ? undefined
             : {
-              entry: config.entry,
-              name: 'remoteEntry',
-              formats: ['es'],
-              fileName: () => {
-                return 'remoteEntry.js'
+                entry: config.entry,
+                name: 'remoteEntry',
+                formats: ['es'],
+                fileName: () => {
+                  return 'remoteEntry.js'
+                },
               },
-            },
           cssCodeSplit: true,
 
           rollupOptions: {
@@ -215,7 +215,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         sourceGraph: outputSourceGraph,
         importsGraph,
         bundleGraph,
-        chain:  config.subConfig?.remote|| {}
+        chains: config.subConfig?.remote || {},
         // pkgVersionMap,
       }
 

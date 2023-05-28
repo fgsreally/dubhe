@@ -89,6 +89,34 @@ export class WebpackPlugin {
           const dubheConfig: PubListType = JSON.parse(data)
           state.pubListMap[i] = dubheConfig
           dubheConfig.externals.forEach(item => state.externalSet.add(item))
+          const { data: SubData } = await getVirtualContent(
+            `${this.config.remote[i].url}/core/dubheList.sub.json`,
+            i,
+            'dubheList.sub.json',
+            this.config.cache,
+          ).catch(() => ({ data: null }))
+          if (SubData) {
+            const { chains, dependences } = JSON.parse(SubData);
+            (chains as typeof state['chains']).forEach((item) => {
+              const {
+                project, url, alias,
+              } = item
+              if (project in this.config.remote)
+                return
+              this.config.remote[project] = {
+                url, mode: 'hot',
+              }
+              state.chains.push(item)
+              state.aliasMap[project] = alias
+              for (const { name, url: aliasUrl } of alias) {
+                state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
+                state.systemjsImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./systemjs/${aliasUrl}`)
+              }
+            });
+            (dependences as { project: string;from: string }[]).forEach((item) => {
+              state.dependences.push(item)
+            })
+          }
           // if (dubheConfig.config.importMap)
           //   isImportMap = true
           if (mode !== 'development') {
@@ -271,7 +299,14 @@ export class WebpackPlugin {
         version,
         timestamp: getFormatDate(),
         externals: [...state.externalSet],
+        chains: Object.entries(this.config.remote).map(([k, v]) => {
+          return { project: k, alias: state.aliasMap[k], from: this.config.project, ...v } as any
+        }).filter(item => item.mode === 'hot').concat(state.chains),
+        dependences: Object.entries(this.config.remote).filter(item => item[1].mode !== 'hot').map(([k]) => {
+          return { from: this.config.project, project: k }
+        }),
         meta,
+
         importsGraph: ret,
       } as unknown as SubListType
       Debug('generate dubheList.json')

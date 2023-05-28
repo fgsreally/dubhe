@@ -1,13 +1,14 @@
 import type { UserConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { Sub } from 'dubhe-sub/vite'
+import { Pub } from 'dubhe-pub/vite'
 import { DubheResolver } from 'dubhe-sub'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { visualizer } from 'rollup-plugin-visualizer'
 import Inspect from 'vite-plugin-inspect'
-import config from './dubhe.config'
+import { pubConfig, subConfig } from './dubhe.config'
 export default (): UserConfig => {
   return {
     optimizeDeps: {
@@ -26,12 +27,13 @@ export default (): UserConfig => {
       visualizer(),
       vue(),
       AutoImport({
-        resolvers: [ElementPlusResolver(), DubheResolver(config)],
+        resolvers: [ElementPlusResolver(), DubheResolver(subConfig)],
       }),
       Components({
-        resolvers: [ElementPlusResolver(), DubheResolver(config)],
+        resolvers: [ElementPlusResolver(), DubheResolver(subConfig)],
       }),
-      Sub(config),
+      Sub(subConfig),
+      Pub(pubConfig),
     ],
   }
 }

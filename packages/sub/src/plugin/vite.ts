@@ -233,8 +233,46 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             'dubheList.json',
             config.cache,
           )
+          const { data: SubData } = await getVirtualContent(
+            `${url}/core/dubheList.sub.json`,
+            i,
+            'dubheList.sub.json',
+            config.cache,
+          ).catch(() => ({ data: null }))
+          if (SubData) {
+            const { chains, dependences } = JSON.parse(SubData);
+            (chains as typeof state['chains']).forEach((item) => {
+              const {
+                project, url, alias,
+              } = item
+              if (project in config.remote)
+                return
+              config.remote[project] = {
+                url, mode: 'hot',
+              }
+              state.chains.push(item)
+              state.aliasMap[project] = alias
+              for (const { name, url: aliasUrl } of alias) {
+                state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
+                state.systemjsImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./systemjs/${aliasUrl}`)
+              }
+            });
+            (dependences as { project: string;from: string }[]).forEach((item) => {
+              state.dependences.push(item)
+            })
+          }
+
           const dubheConfig: PubListType = JSON.parse(data)
           if (mode === 'hot' && command === 'build') {
+            for (const i in dubheConfig.importsGraph) {
+              const { systemjs, esm } = externals(i) || {}
+              if (systemjs || esm) {
+                if (esm)
+                  state.esmImportMap[id] = esm
+                if (systemjs)
+                  state.systemjsImportMap[id] = systemjs
+              }
+            }
             for (const { name, url: aliasUrl } of dubheConfig.alias) {
               state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
               state.systemjsImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./systemjs/${aliasUrl}`)
@@ -287,7 +325,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         }
         catch (e) {
           Debug(`fail to get remote info --${i}`)
-
+          console.log(e)
           log(`can't find remote module [${i}] -- ${config.remote[i].url}`, 'red')
         }
       }
@@ -368,8 +406,15 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         version: config.version,
         timestamp: getFormatDate(),
         externals: [...state.externalSet],
+        project: config.project,
         meta: config.meta,
         importsGraph,
+        dependences: Object.entries(config.remote).filter(item => item[1].mode !== 'hot').map(([k]) => {
+          return { from: config.project, project: k }
+        }),
+        chains: Object.entries(config.remote).filter(item => item[1].mode === 'hot').map(([k, v]) => {
+          return { project: k, alias: state.aliasMap[k], from: config.project, url: v.url }
+        }).concat(state.chains),
       } as unknown as SubListType
       Debug('output dubheList.json')
 
@@ -386,7 +431,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       const tags = [] as HtmlTagDescriptor[]
 
       Debug('inject importmap and polyfill to html')
-
       if (config.injectHtml !== false) {
         tags.push({
           tag: 'script',

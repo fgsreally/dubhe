@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getDistFiles, getFileContent, getImportMap } from '../utils'
+import { getFileContent, getImportMap } from '../utils'
 describe('[vite] subscribe module', () => {
   it('dist files output [cold mode]', async () => {
     const html = await getFileContent('vite-sub/dist/cold/core/index.html')

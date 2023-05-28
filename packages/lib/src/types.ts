@@ -108,7 +108,7 @@ export interface SubListType {
     url: string
     alias: AliasType[]
   }[]
-  dependences:{project:string,from:string}[];
+  dependences: { project: string;from: string }[]
 
   project: string
 }

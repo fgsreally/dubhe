@@ -204,16 +204,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       }
     },
 
-    config(viteConfig) {
-      if (!viteConfig.define)
-        viteConfig.define = {}
-      for (const i in config.remote) {
-        const url = config.remote[i].url
-        viteConfig.define[`globalThis.__DP_${i}_`] = `"${url}/core"`
-      }
-    },
-    async configResolved(resolvedConfig) {
-      command = resolvedConfig.command
+    async config(_conf, opts) {
+      command = opts.command
       // let ext: externals = {}
 
       for (const i in config.remote) {
@@ -264,13 +256,13 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
           const dubheConfig: PubListType = JSON.parse(data)
           if (mode === 'hot' && command === 'build') {
-            for (const i in dubheConfig.importsGraph) {
+            for (const i of dubheConfig.externals) {
               const { systemjs, esm } = externals(i) || {}
               if (systemjs || esm) {
                 if (esm)
-                  state.esmImportMap[id] = esm
+                  state.esmImportMap[i] = esm
                 if (systemjs)
-                  state.systemjsImportMap[id] = systemjs
+                  state.systemjsImportMap[i] = systemjs
               }
             }
             for (const { name, url: aliasUrl } of dubheConfig.alias) {
@@ -329,9 +321,15 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           log(`can't find remote module [${i}] -- ${config.remote[i].url}`, 'red')
         }
       }
-
+      const define = {} as Record<string, string>
+      for (const i in config.remote) {
+        const url = config.remote[i].url
+        define[`globalThis.__DP_${i}_`] = `"${url}/core"`
+      }
       log('All externals')
       console.table([...state.externalSet])
+
+      return { define }
     },
 
     configureServer(_server) {

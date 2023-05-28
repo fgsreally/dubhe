@@ -89,6 +89,7 @@ export class WebpackPlugin {
           const dubheConfig: PubListType = JSON.parse(data)
           state.pubListMap[i] = dubheConfig
           dubheConfig.externals.forEach(item => state.externalSet.add(item))
+
           const { data: SubData } = await getVirtualContent(
             `${this.config.remote[i].url}/core/dubheList.sub.json`,
             i,
@@ -117,8 +118,7 @@ export class WebpackPlugin {
               state.dependences.push(item)
             })
           }
-          // if (dubheConfig.config.importMap)
-          //   isImportMap = true
+
           if (mode !== 'development') {
             for (const external of dubheConfig.externals) {
               const { esm, systemjs } = externals(external) || {}

@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": " vite build",
     "preview": "vite preview",
-    "serve": "http-server .output --port=8080 --cors"
+    "serve": "http-server . --port=8082 --cors"
 
   },
   "dependencies": {

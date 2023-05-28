@@ -244,15 +244,6 @@ export function BundlePlugin(config: PubConfig): PluginOption {
     },
 
     resolveId(id) {
-      // if (importer === 'dubhe') {
-      //   log(`Find entry file --${id}`)
-
-      //   const filePath = normalizePath(resolve(root, id))
-      //   if (!initEntryFiles.includes(filePath))
-      //     initEntryFiles.push(filePath)
-      // }
-      // if (importer)
-      //   resolveImport(resolve(importer, id))
       if (isExternal(id, config.externals)) {
         externalSet.add(id)
 

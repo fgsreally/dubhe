@@ -232,7 +232,11 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             config.cache,
           ).catch(() => ({ data: null }))
           if (SubData) {
-            const { chains, dependences } = JSON.parse(SubData);
+            const { chains, dependences, externals } = JSON.parse(SubData)
+            externals.forEach((item: string) => {
+              state.externalSet.add(item)
+            });
+
             (chains as typeof state['chains']).forEach((item) => {
               const {
                 project, url, alias,

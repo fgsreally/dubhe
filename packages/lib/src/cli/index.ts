@@ -292,7 +292,6 @@ cli
   })
   .action(async (option) => {
     const localConfig = await getWorkSpaceConfig()
-    console.log(join(option.dubheList, 'dubheList.sub.json'))
     const subDep = await analyseSubDep(join(option.dubheList, 'dubheList.sub.json'))
     const deps = await analysePubDep(localConfig, subDep)
     const files: string[] = []

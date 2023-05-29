@@ -7,6 +7,6 @@ describe('[vite] subscribe module', () => {
   })
   it('dist files output [hot mode]', async () => {
     const html = await getFileContent('vite-sub/dist/hot/core/index.html')
-    expect(Object.keys(getImportMap(html).imports).length).toBe(6)
+    expect(getImportMap(html)).toMatchSnapshot()
   })
 })

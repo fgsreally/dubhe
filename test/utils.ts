@@ -15,5 +15,5 @@ export function isExist(p: string) {
 
 export function getImportMap(html: string) {
   const [,importmap] = html.match(/<script type="importmap">([^\<]*)<\/script>/)!
-  return JSON.parse(importmap)
+  return Object.keys(JSON.parse(importmap).imports)
 }

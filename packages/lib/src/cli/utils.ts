@@ -71,11 +71,11 @@ export async function analysePubDep(dubheConfig: SubConfig, subList?: Record<str
 
           if (!ret[pkgName])
             ret[pkgName] = new Set()
-          if (pubList.importsGraph[dep].length === 0)
+          if (chain.importsGraph[dep].length === 0)
             ret[pkgName].add(`#side_effect--${dep}`)
 
           else
-            pubList.importsGraph[dep].forEach((item: string) => ret[pkgName].add(`${item}--${dep}`))
+            chain.importsGraph[dep].forEach((item: string) => ret[pkgName].add(`${item}--${dep}`))
         }
       }
     }
@@ -100,7 +100,6 @@ export async function analyseSubDep(subListPath: string) {
     return ret
   }
   catch (e) {
-    console.log(e)
     log('can\'t find dubheList.json', 'red')
   }
 }

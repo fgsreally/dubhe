@@ -5,4 +5,8 @@ import config from './dubhe.config'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue(), Sub(config)],
+  base: './',
+  build: {
+    outDir: process.env.HOTBUILD ? 'dist/hot' : 'dist/cold',
+  },
 })

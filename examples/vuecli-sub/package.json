@@ -4,11 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "hot": "cross-env HOTBUILD=true vue-cli-service build",
+    "cold": " vue-cli-service build",
+    "postcold": "dubhe bundle -o dist/cold -d dist/cold",
+    "posthot": "dubhe bundle -o dist/hot -d dist/hot",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "core-js": "^3.8.3",
+    "dubhe": "workspace:^",
+
     "dubhe-sub": "workspace:*",
     "element-plus": "^2.2.34",
     "unplugin-auto-import": "^0.11.5",

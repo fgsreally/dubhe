@@ -93,7 +93,7 @@ function reloadModule(id: string, time: number) {
 export const HomePlugin = (config: SubConfig): PluginOption => {
   if (config.cache)
     log('--Use Local Cache--')
-
+  const originRemote = Object.entries(config.remote)
   const { externals } = config
 
   function getExternal(id: string) {
@@ -105,7 +105,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         state.esmImportMap[id] = esm
       if (systemjs)
         state.systemjsImportMap[id] = systemjs
-
+      state.externalSet.add(id)
       return true
     }
     return false
@@ -327,8 +327,10 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         const url = config.remote[i].url
         define[`globalThis.__DP_${i}_`] = `"${url}/core"`
       }
-      log('All externals')
-      console.table([...state.externalSet])
+      if (command === 'build') {
+        log('All externals')
+        console.table([...state.externalSet])
+      }
 
       return { define }
     },
@@ -408,10 +410,10 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         project: config.project,
         meta: config.meta,
         importsGraph,
-        dependences: Object.entries(config.remote).filter(item => item[1].mode !== 'hot').map(([k]) => {
+        dependences: originRemote.filter(item => item[1].mode !== 'hot').map(([k]) => {
           return { from: config.project, project: k }
         }),
-        chains: Object.entries(config.remote).filter(item => item[1].mode === 'hot').map(([k, v]) => {
+        chains: originRemote.filter(item => item[1].mode === 'hot').map(([k, v]) => {
           return { project: k, alias: state.aliasMap[k], from: config.project, url: v.url, importsGraph: state.pubListMap[k].importsGraph }
         }).concat(state.chains),
       } as unknown as SubListType

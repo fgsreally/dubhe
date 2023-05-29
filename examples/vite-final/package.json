@@ -5,12 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "hot": "cross-env HOTBUILD=true vite build",
+    "cold": "vite build",
+    "postcold": "dubhe bundle -o dist/cold -d dist/cold",
+    "posthot": "dubhe bundle -o dist/hot -d dist/hot",
+    "serve": "http-server dist --port=8083 --cors",
     "preview": "vite preview"
   },
   "dependencies": {
+    "dubhe": "workspace:^",
     "dubhe-sub": "workspace:*",
     "element-plus": "^2.3.5",
+    "http-server": "^14.1.1",
     "vue": "^3.2.47"
   },
   "devDependencies": {

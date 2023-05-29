@@ -68,12 +68,18 @@ importers:
 
   examples/vite-final:
     dependencies:
+      dubhe:
+        specifier: workspace:^
+        version: link:../../packages/lib
       dubhe-sub:
         specifier: workspace:*
         version: link:../../packages/sub
       element-plus:
         specifier: ^2.3.5
         version: 2.3.5(vue@3.2.47)
+      http-server:
+        specifier: ^14.1.1
+        version: 14.1.1
       vue:
         specifier: ^3.2.47
         version: 3.2.47
@@ -182,6 +188,9 @@ importers:
       core-js:
         specifier: ^3.8.3
         version: registry.npmmirror.com/core-js@3.27.2
+      dubhe:
+        specifier: workspace:^
+        version: link:../../packages/lib
       dubhe-sub:
         specifier: workspace:*
         version: link:../../packages/sub

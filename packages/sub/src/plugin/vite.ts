@@ -152,7 +152,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
         const query = HMRMap.has(module) ? `?t=${HMRMap.get(module)}` : ''
 
-        Debug(`Find  remote file --${id + query}`)
+        Debug(`Find remote file --${id + query}`)
 
         return { id: id + query }
       }

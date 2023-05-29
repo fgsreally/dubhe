@@ -5,11 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "hot": "cross-env HOTBUILD=true vite build",
-    "cold": "vite build",
-    "postcold": "dubhe bundle -o dist/cold -d dist/cold",
-    "posthot": "dubhe bundle -o dist/hot -d dist/hot",
-    "serve": "http-server dist --port=8083 --cors",
+    "hot": "cross-env HOTBUILD=true vite build && dubhe bundle -o dist/hot -d dist/hot",
+    "cold": "vite build && dubhe bundle -o dist/cold -d dist/cold",
+  
+    "serve": "http-server . --port=8084 --cors",
     "preview": "vite preview"
   },
   "dependencies": {

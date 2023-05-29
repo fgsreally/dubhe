@@ -11,11 +11,19 @@ test.describe('import component from remote [prod]', () => {
     await isSymbolExist(page)
   })
   test('components exist in vite-final in hot mode', async ({ page }) => {
-    await page.goto(`${PROD_EXAMPLE.VITE_FINAL}hot/index.html`)
+    await page.goto(`${PROD_EXAMPLE.VITE_FINAL}dist/hot/index.html`)
     await isSymbolExist(page)
   })
   test('components exist in vite-final in cold mode', async ({ page }) => {
-    await page.goto(`${PROD_EXAMPLE.VITE_FINAL}cold/index.html`)
+    await page.goto(`${PROD_EXAMPLE.VITE_FINAL}dist/cold/index.html`)
+    await isSymbolExist(page)
+  })
+  test('components exist in vue-cli in hot mode', async ({ page }) => {
+    await page.goto(`${PROD_EXAMPLE.VUE_CLI}dist/hot/index.html`)
+    await isSymbolExist(page)
+  })
+  test('components exist in vue-cli in cold mode', async ({ page }) => {
+    await page.goto(`${PROD_EXAMPLE.VUE_CLI}dist/cold/index.html`)
     await isSymbolExist(page)
   })
 })

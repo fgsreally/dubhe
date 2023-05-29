@@ -43,7 +43,7 @@ async function start() {
   SubDev()
   await HotBundle()
   await ColdBundle()
-  await waitOn(createOpts([4100, 8082, 8083, 8084]))
+  await waitOn(createOpts([4100, 8082, 8083, 8085]))
   await FinalBuild()
   await $`npm run test:unit`
   await $`npm run test:e2e`

@@ -6,7 +6,6 @@
     "dev": "vue-cli-service serve",
     "hot": "cross-env HOTBUILD=true vue-cli-service build && node ../../packages/lib/dist/cli/index.js bundle -o dist/hot -d dist/hot",
     "cold": " vue-cli-service build",
-  
     "serve": "http-server . --port=8083 --cors",
     "lint": "vue-cli-service lint"
   },

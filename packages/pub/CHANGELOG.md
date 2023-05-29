@@ -1,5 +1,18 @@
 # dubhe-pub
 
+## 2.1.0-beta.3
+
+### Minor Changes
+
+- ec48efc: fix nest logic:support bundle command/public-path and so-on
+
+### Patch Changes
+
+- 392ffb9: support nest example,rename dubhelist.json to dubhelist.sub.json (in sub)
+- Updated dependencies [ec48efc]
+- Updated dependencies [392ffb9]
+  - dubhe@2.1.0-beta.3
+
 ## 2.0.5-beta.1
 
 ### Patch Changes

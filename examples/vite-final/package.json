@@ -7,7 +7,6 @@
     "dev": "vite",
     "hot": "cross-env HOTBUILD=true vite build && node ../../packages/lib/dist/cli/index.js bundle -o dist/hot -d dist/hot",
     "cold": "vite build && node ../../packages/lib/dist/cli/index.js bundle -o dist/cold -d dist/cold",
-  
     "serve": "http-server . --port=8085 --cors",
     "preview": "vite preview"
   },

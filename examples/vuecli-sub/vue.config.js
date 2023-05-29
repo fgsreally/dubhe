@@ -10,6 +10,7 @@ const config=require('./dubhe.config.cjs')
 
 const app = new Sub(config);
 module.exports = defineConfig({
+  publicPath:'./',
   parallel:!process.env.CI,
   transpileDependencies: true,
   outputDir: process.env.HOTBUILD ? "dist/hot" : "dist/cold",

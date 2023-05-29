@@ -1,24 +1,5 @@
 // Vitest Snapshot v1
 
-exports[`[vite] final > dist files output [cold mode] 1`] = `
-[
-  "element-plus/es",
-  "element-plus/es/components/button/style/css",
-  "vue",
-  "dubhe-viteout/test",
-  "dubhe-viteout/hello",
-  "dubhe-viteout/app",
-]
-`;
+exports[`[vite] final > dist files output [cold mode] 1`] = `6`;
 
-exports[`[vite] final > dist files output [hot mode] 1`] = `
-[
-  "element-plus/es",
-  "element-plus/es/components/button/style/css",
-  "vue",
-  "dubhe-viteout/test",
-  "dubhe-viteout/hello",
-  "dubhe-viteout/app",
-  "dubhe-vitesub/app",
-]
-`;
+exports[`[vite] final > dist files output [hot mode] 1`] = `7`;

@@ -417,7 +417,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           return { project: k, alias: state.aliasMap[k], from: config.project, url: v.url, importsGraph: state.pubListMap[k].importsGraph }
         }).concat(state.chains),
       } as unknown as SubListType
-      Debug('output dubheList.json')
+      Debug('output dubheList.sub.json')
 
       this.emitFile({
         type: 'asset',

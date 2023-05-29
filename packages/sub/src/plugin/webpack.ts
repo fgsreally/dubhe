@@ -81,7 +81,8 @@ export class WebpackPlugin {
         if (esm)
           state.esmImportMap[id] = esm
         if (systemjs)
-          state.systemjsImportMap[id] = systemjs
+          state.systemjsImportMap[id] = systemjs;
+        (compiler as any).options.externals.push(id)
         state.externalSet.add(id)
         return true
       }
@@ -106,7 +107,6 @@ export class WebpackPlugin {
           )
           const dubheConfig: PubListType = JSON.parse(data)
           state.pubListMap[i] = dubheConfig
-          dubheConfig.externals.forEach(item => state.externalSet.add(item))
 
           const { data: SubData } = await getVirtualContent(
             `${url}/core/dubheList.sub.json`,
@@ -139,10 +139,11 @@ export class WebpackPlugin {
               state.dependences.push(item)
             })
           }
+          this.dp.definitions[`globalThis.__DP_${i}_`] = `"${url}/core"`
           if (command !== 'development') {
-            dubheConfig.externals.forEach(getExternal)
             if (mode === 'hot') {
               state.publicPath[i] = url
+              dubheConfig.externals.forEach(getExternal)
 
               for (const item of dubheConfig.alias) {
                 (compiler as any).options.externals.push(`dubhe-${i}/${item.name}`)
@@ -369,7 +370,6 @@ export class WebpackPlugin {
                 )
                 Debug(`get remote entry --${project}/${moduleName}`)
                 const { url } = remote[project]
-                this.dp.definitions[`globalThis.__DP_${project}_`] = `"${url}/core"`
                 const { data } = await getVirtualContent(
                   `${url}/core/${moduleName}`,
                   project,

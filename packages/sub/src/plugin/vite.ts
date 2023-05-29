@@ -43,9 +43,6 @@ const _dirname
     : dirname(fileURLToPath(import.meta.url))
 
 const HMRMap: Map<string, number> = new Map()
-// const state.aliasMap: { [key: string]: AliasType[] } = {}
-// const state.systemjsImportMap = {} as Record<string, string>
-// const state.esmImportMap = {} as Record<string, string>
 
 function reloadModule(id: string, time: number) {
   const { moduleGraph } = server
@@ -99,6 +96,21 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
   const { externals } = config
 
+  function getExternal(id: string) {
+    if (state.externalSet.has(id))
+      return true
+    const { systemjs, esm } = externals(id) || {}
+    if (systemjs || esm) {
+      if (esm)
+        state.esmImportMap[id] = esm
+      if (systemjs)
+        state.systemjsImportMap[id] = systemjs
+
+      return true
+    }
+    return false
+  }
+
   const graph = new Graph(Object.keys(config.remote), [])
   config.cache && updateLocalRecord(config.remote)
   const projectSet = new Set<string>()
@@ -110,13 +122,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
     async resolveId(id, i) {
       // for dep like vue
       if (command === 'build') {
-        const { systemjs, esm } = externals(id) || {}
-        Debug(`find external --${id}`)
-        if (systemjs || esm) {
-          if (esm)
-            state.esmImportMap[id] = esm
-          if (systemjs)
-            state.systemjsImportMap[id] = systemjs
+        if (getExternal(id)) {
+          Debug(`find external --${id}`)
           return { id, external: true }
         }
       }
@@ -233,16 +240,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           ).catch(() => ({ data: null }))
           if (SubData) {
             const { chains, dependences, externals } = JSON.parse(SubData)
-            externals.forEach((item: string) => {
-              state.externalSet.add(item)
-              const { systemjs, esm } = config.externals(item) || {}
-              if (systemjs || esm) {
-                if (esm)
-                  state.esmImportMap[item] = esm
-                if (systemjs)
-                  state.systemjsImportMap[item] = systemjs
-              }
-            });
+            externals.forEach(getExternal);
 
             (chains as typeof state['chains']).forEach((item) => {
               const {
@@ -266,16 +264,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           }
 
           const dubheConfig: PubListType = JSON.parse(data)
-          if (mode === 'hot' && command === 'build') {
-            for (const i of dubheConfig.externals) {
-              const { systemjs, esm } = externals(i) || {}
-              if (systemjs || esm) {
-                if (esm)
-                  state.esmImportMap[i] = esm
-                if (systemjs)
-                  state.systemjsImportMap[i] = systemjs
-              }
-            }
+          if (mode === 'hot') {
+            dubheConfig.externals.forEach(getExternal)
             for (const { name, url: aliasUrl } of dubheConfig.alias) {
               state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
               state.systemjsImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./systemjs/${aliasUrl}`)
@@ -283,7 +273,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           }
 
           state.pubListMap[i] = dubheConfig
-          dubheConfig.externals.forEach(item => state.externalSet.add(item))
 
           if (config.types) {
             Debug(`get remote dts --${i}`)
@@ -309,7 +298,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
               catch (e) {
                 log(`--Project [${i}] Use Offline Mode--`)
               }
-              // const localInfo: PubListType = remoteInfo
             }
             else {
               log(`--Project [${i}] Create Local Cache--`)
@@ -328,7 +316,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         }
         catch (e) {
           Debug(`fail to get remote info --${i}`)
-          console.log(e)
           log(`can't find remote module [${i}] -- ${config.remote[i].url}`, 'red')
         }
       }
@@ -422,7 +409,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           return { from: config.project, project: k }
         }),
         chains: Object.entries(config.remote).filter(item => item[1].mode === 'hot').map(([k, v]) => {
-          return { project: k, alias: state.aliasMap[k], from: config.project, url: v.url }
+          return { project: k, alias: state.aliasMap[k], from: config.project, url: v.url, importsGraph: state.pubListMap[k].importsGraph }
         }).concat(state.chains),
       } as unknown as SubListType
       Debug('output dubheList.json')

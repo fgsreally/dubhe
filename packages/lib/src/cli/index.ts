@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { join, resolve } from 'path'
 /* eslint-disable no-console */
 import { exec } from 'node:child_process'
 import { createRequire } from 'module'
@@ -288,11 +288,12 @@ cli
     default: 'dist',
   })
   .option('--dubheList, -d [d]', '[string] dubheList.sub.json path in sub', {
-    default: 'dist/dubheList.sub.json',
+    default: 'dist',
   })
   .action(async (option) => {
     const localConfig = await getWorkSpaceConfig()
-    const subDep = await analyseSubDep(option.dubheList)
+    console.log(join(option.dubheList, 'dubheList.sub.json'))
+    const subDep = await analyseSubDep(join(option.dubheList, 'dubheList.sub.json'))
     const deps = await analysePubDep(localConfig, subDep)
     const files: string[] = []
     for (const depname in deps) {

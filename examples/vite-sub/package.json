@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": " vite build",
+    "hot": "cross-env HOTBUILD=true vite build",
+    "cold": " vite build",
+    "postcold": "dubhe bundle -o dist/cold/core -d dist/cold/core",
+    "posthot": "dubhe bundle -o dist/hot/core -d dist/hot/core",
     "preview": "vite preview",
     "serve": "http-server . --port=8082 --cors"
-
   },
   "dependencies": {
     "@vitejs/plugin-legacy": "^4.0.1",

@@ -215,7 +215,6 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         sourceGraph: outputSourceGraph,
         importsGraph,
         bundleGraph,
-        chains: config.subConfig?.remote || {},
         // pkgVersionMap,
       }
 

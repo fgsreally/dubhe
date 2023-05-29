@@ -107,6 +107,8 @@ export interface SubListType {
     project: string
     url: string
     alias: AliasType[]
+    importsGraph: { [key: string]: string[] }
+
   }[]
   dependences: { project: string;from: string }[]
 

@@ -1,5 +1,5 @@
-import type { PubConfig, SubConfig } from 'dubhe-sub'
-export const subConfig = {
+import type { SubConfig } from 'dubhe-sub'
+export default {
   project: 'vitesub',
   remote: {
     viteout: {
@@ -9,14 +9,13 @@ export const subConfig = {
 
   },
   externals: (id) => {
-    if (process.env.TEST) {
-      if (id === 'vue' || id.includes('element-plus')) {
-        return {
-          esm: `dubhe:${id}`, // only work for test
-          systemjs: `dubhe:${id}`, // only work for test
-        }
+    if (id === 'vue') {
+      return {
+        esm: './vue.js', // only work for test
       }
     }
+    if (id.includes('element-plus'))
+      return { esm: './element-plus.js' }
   },
   injectHtml: true,
   systemjs: true,
@@ -28,18 +27,3 @@ export const subConfig = {
   },
 } as SubConfig
 
-export const pubConfig = {
-  project: 'vitesub',
-  entry: {
-    app: './src/App.vue',
-  },
-  types: true,
-  // limit: 1000,
-  externals: (id) => {
-    if (id.startsWith('element-plus') || id === 'vue')
-      return true
-  },
-  app: true,
-  outDir: process.env.HOTBUILD ? 'dist/hot' : 'dist/cold',
-  source: false,
-} as PubConfig

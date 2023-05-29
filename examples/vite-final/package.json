@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "hot": "cross-env HOTBUILD=true vite build && dubhe bundle -o dist/hot -d dist/hot",
-    "cold": "vite build && dubhe bundle -o dist/cold -d dist/cold",
+    "hot": "cross-env HOTBUILD=true vite build && npx dubhe bundle -o dist/hot -d dist/hot",
+    "cold": "vite build && npx dubhe bundle -o dist/cold -d dist/cold",
   
     "serve": "http-server . --port=8085 --cors",
     "preview": "vite preview"

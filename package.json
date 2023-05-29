@@ -19,7 +19,7 @@
     "example:pub": "pnpm --filter=pub-* run pub ",
     "example:sub": "pnpm --filter=sub-* run dev",
     "example:cold": "pnpm --filter sub-vuecli --filter sub-vite run cold",
-    "example:hot": "pnpm --filter sub-vite run hot"
+    "example:hot": "pnpm --filter sub-vuecli --filter sub-vite run hot"
   },
   "keywords": [],
   "author": "",

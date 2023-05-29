@@ -5,35 +5,12 @@ const path = require("path");
 const AutoImport = require("unplugin-auto-import/webpack");
 const Components = require("unplugin-vue-components/webpack");
 const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
+const config=require('./dubhe.config.cjs')
 
-const config = {
-  remote: {
-    viteout: {
-      url: "http://127.0.0.1:8080",
-      mode: process.env.HOTBUILD ? 'hot' : 'cold',
-    }, // remote static server
-  },
-  externals: (id) => {
- 
-    if (process.env.TEST) {
-      if (id === "vue" || id.includes("element-plus"))
-        return {
-          esm: `dubhe:${id}`,
-          systemjs: `dubhe:${id}`,
-        };
-    }
-  },
-  systemjs: true,
-  cache: !process.env.CI,
-  types: true,
-  injectHtml: {
-    importMap: true,
-    systemjs: true,
-  },
-};
 
 const app = new Sub(config);
 module.exports = defineConfig({
+  publicPath:'./',
   parallel:!process.env.CI,
   transpileDependencies: true,
   outputDir: process.env.HOTBUILD ? "dist/hot" : "dist/cold",

@@ -42,7 +42,7 @@ export function CSSPlugin(): ProPlugin {
 }
 
 export function BundlePlugin(config: PubConfig): ProPlugin {
-  const outdir = config.outDir || '.dubhe'
+  const outdir = config.outDir || 'dist'
   return {
     name: 'dubhe::bundle',
     async setup(build) {

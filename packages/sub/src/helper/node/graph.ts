@@ -35,6 +35,8 @@ export class Graph {
 
   addModule(id: string, importer: string) {
     const project = id.match(VIRTUAL_RE)?.[1] as string
+    if (!this.moduleMap[project])
+      this.moduleMap[project] = new Set()
     this.moduleMap[project].add(id)
 
     if (!this.moduleMap[id])

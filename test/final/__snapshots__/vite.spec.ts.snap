@@ -1,0 +1,5 @@
+// Vitest Snapshot v1
+
+exports[`[vite] final > dist files output [cold mode] 1`] = `6`;
+
+exports[`[vite] final > dist files output [hot mode] 1`] = `7`;

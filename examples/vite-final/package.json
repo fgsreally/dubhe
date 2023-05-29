@@ -1,0 +1,27 @@
+{
+  "name": "final-vite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "hot": "cross-env HOTBUILD=true vite build && node ../../packages/lib/dist/cli/index.js bundle -o dist/hot -d dist/hot",
+    "cold": "vite build && node ../../packages/lib/dist/cli/index.js bundle -o dist/cold -d dist/cold",
+  
+    "serve": "http-server . --port=8085 --cors",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "dubhe": "workspace:^",
+    "dubhe-sub": "workspace:*",
+    "element-plus": "^2.3.5",
+    "http-server": "^14.1.1",
+    "vue": "^3.2.47"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.1.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.2",
+    "vue-tsc": "^1.4.2"
+  }
+}

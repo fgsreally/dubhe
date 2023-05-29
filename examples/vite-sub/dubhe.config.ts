@@ -1,24 +1,21 @@
 import type { SubConfig } from 'dubhe-sub'
 export default {
+  project: 'vitesub',
   remote: {
     viteout: {
       url: 'http://127.0.0.1:8080',
       mode: process.env.HOTBUILD ? 'hot' : 'cold',
     }, // remote static server
-    // esbuildpub: {
-    //   url: 'http://127.0.0.1:8081',
-    //   mode: process.env.HOTBUILD ? 'hot' : 'cold',
-    // },
+
   },
   externals: (id) => {
-    if (process.env.TEST) {
-      if (id === 'vue' || id.includes('element-plus')) {
-        return {
-          esm: `dubhe:${id}`, // only work for test
-          systemjs: `dubhe:${id}`, // only work for test
-        }
+    if (id === 'vue') {
+      return {
+        esm: './vue.js', // only work for test
       }
     }
+    if (id.includes('element-plus'))
+      return { esm: './element-plus.js' }
   },
   injectHtml: true,
   systemjs: true,
@@ -29,3 +26,4 @@ export default {
     importMap: true,
   },
 } as SubConfig
+

@@ -6,7 +6,7 @@ import { INJECT_STYLE_SCRIPT } from './style'
 const cssCodeMap: Map<string, string> = new Map()
 const cssIDMap: Map<string, string> = new Map()
 const cssIDset: Set<string> = new Set()
-export const virtualCssHelper = 'virtual:dubhe-injectstyle'
+export const virtualCssHelper = 'virtual:injectstyle'
 export function CSS(): PluginOption {
   return {
     name: 'dubhe::css',

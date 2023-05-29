@@ -4,7 +4,9 @@ import { CSS } from '../plugin'
 export async function buildExternal(outDir: string, files: string[]) {
   const config = defineConfig({
     plugins: [CSS() as any],
-
+    define: {
+      'process.env': process.env,
+    },
     build: {
       emptyOutDir: false,
       outDir,

@@ -59,6 +59,7 @@ export interface SubConfig {
     url: string
     mode?: 'hot' | 'cold'
   }>
+  project: string
   cache?: boolean
   types?: boolean
   systemjs?: boolean
@@ -101,6 +102,17 @@ export interface SubListType {
   timestamp: number
   meta?: any
   version?: string
+  chains: {
+    from: string
+    project: string
+    url: string
+    alias: AliasType[]
+    importsGraph: { [key: string]: string[] }
+
+  }[]
+  dependences: { project: string;from: string }[]
+
+  project: string
 }
 
 export type ModulePathMap = { [key in string]: string }

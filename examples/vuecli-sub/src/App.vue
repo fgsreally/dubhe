@@ -1,7 +1,7 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
   <el-button>111</el-button>
-  <viteout-app msg="remote app component from vite"/>
+  <viteout-app msg="remote app component from viteout"/>
   <!-- <viteout-hello msg="remote hello component from vite"/> -->
 
 </template>

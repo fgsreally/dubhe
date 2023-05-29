@@ -100,7 +100,7 @@ export function analyseImport(code: string) {
   const ret = {} as Record<string, Set<string>>
   const ast = parseSync(code)
 
-  traverse(ast, {
+  traverse(ast as any, {
 
     ImportDeclaration(path) {
       const { node } = path

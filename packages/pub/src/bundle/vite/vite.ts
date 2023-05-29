@@ -48,7 +48,7 @@ let isWatch = false
 export function BundlePlugin(config: PubConfig): PluginOption {
   // metaData = config.meta || {};
   const entryFile = 'dubhe.ts'
-  const outDir = config.outDir || '.dubhe'
+  const outDir = config.outDir || 'dist'
   if (config.app && ('index' in config.entry)) {
     log('entry name should not be \'index\'', 'red')
     process.exit(0)
@@ -227,6 +227,7 @@ export function BundlePlugin(config: PubConfig): PluginOption {
         type: 'asset',
         name: 'dubheList',
         fileName: 'dubheList.json',
+
         source: JSON.stringify(metaData),
       })
       if (config.source && !isWatch) {
@@ -242,15 +243,6 @@ export function BundlePlugin(config: PubConfig): PluginOption {
     },
 
     resolveId(id) {
-      // if (importer === 'dubhe') {
-      //   log(`Find entry file --${id}`)
-
-      //   const filePath = normalizePath(resolve(root, id))
-      //   if (!initEntryFiles.includes(filePath))
-      //     initEntryFiles.push(filePath)
-      // }
-      // if (importer)
-      //   resolveImport(resolve(importer, id))
       if (isExternal(id, config.externals)) {
         externalSet.add(id)
 

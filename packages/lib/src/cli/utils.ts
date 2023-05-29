@@ -5,7 +5,7 @@ import axios from 'axios'
 import fse from 'fs-extra'
 import { loadConfig } from 'unconfig'
 import { getLocalPath, getLocalRecord, getRemoteContent, getTypePathInCache } from '../cache'
-import type { SubConfig } from '../types'
+import type { PubListType, SubConfig, SubListType } from '../types'
 import { getPkgName, log } from '../utils'
 import { removeHash } from '../core'
 
@@ -26,11 +26,10 @@ export function generateExports(imports: string[]) {
 export async function getWorkSpaceConfig() {
   const { config } = await loadConfig({
     sources: [
-      // load from `my.config.xx`
       {
         files: 'dubhe.config',
-        // default extensions
         extensions: ['ts', 'mts', 'cts', 'js', 'mjs', 'cjs', 'json'],
+
       },
 
     ],
@@ -44,12 +43,16 @@ export async function getDubheList() {
   const workspaceConfig = await getWorkSpaceConfig()
   return Object.assign(await getLocalRecord(), workspaceConfig.remote)
 }
+
 export async function analysePubDep(dubheConfig: SubConfig, subList?: Record<string, Set<string>>) {
   const ret: Record<string, Set<string>> = subList || {}
   for (const project in dubheConfig.remote) {
-    const pubList = await getRemoteContent(`${dubheConfig.remote[project].url}/core/dubheList.json`)
+    const { url } = dubheConfig.remote[project]
+    const pubList: PubListType = await getRemoteContent(`${url}/core/dubheList.json`)
+    const subList: SubListType = await getRemoteContent(`${url}/core/dubheList.sub.json`).catch(() => null)
     if (!pubList)
       continue
+
     for (const dep in pubList.importsGraph) {
       const pkgName = getPkgName(dep)
 
@@ -60,6 +63,21 @@ export async function analysePubDep(dubheConfig: SubConfig, subList?: Record<str
 
       else
         pubList.importsGraph[dep].forEach((item: string) => ret[pkgName].add(`${item}--${dep}`))
+    }
+    if (subList) {
+      for (const chain of subList.chains) {
+        for (const dep in chain.importsGraph) {
+          const pkgName = getPkgName(dep)
+
+          if (!ret[pkgName])
+            ret[pkgName] = new Set()
+          if (chain.importsGraph[dep].length === 0)
+            ret[pkgName].add(`#side_effect--${dep}`)
+
+          else
+            chain.importsGraph[dep].forEach((item: string) => ret[pkgName].add(`${item}--${dep}`))
+        }
+      }
     }
   }
   return ret

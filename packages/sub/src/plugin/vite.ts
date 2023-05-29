@@ -43,9 +43,6 @@ const _dirname
     : dirname(fileURLToPath(import.meta.url))
 
 const HMRMap: Map<string, number> = new Map()
-// const state.aliasMap: { [key: string]: AliasType[] } = {}
-// const state.systemjsImportMap = {} as Record<string, string>
-// const state.esmImportMap = {} as Record<string, string>
 
 function reloadModule(id: string, time: number) {
   const { moduleGraph } = server
@@ -96,8 +93,23 @@ function reloadModule(id: string, time: number) {
 export const HomePlugin = (config: SubConfig): PluginOption => {
   if (config.cache)
     log('--Use Local Cache--')
-
+  const originRemote = Object.entries(config.remote)
   const { externals } = config
+
+  function getExternal(id: string) {
+    if (state.externalSet.has(id))
+      return true
+    const { systemjs, esm } = externals(id) || {}
+    if (systemjs || esm) {
+      if (esm)
+        state.esmImportMap[id] = esm
+      if (systemjs)
+        state.systemjsImportMap[id] = systemjs
+      state.externalSet.add(id)
+      return true
+    }
+    return false
+  }
 
   const graph = new Graph(Object.keys(config.remote), [])
   config.cache && updateLocalRecord(config.remote)
@@ -110,13 +122,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
     async resolveId(id, i) {
       // for dep like vue
       if (command === 'build') {
-        const { systemjs, esm } = externals(id) || {}
-        Debug(`find external --${id}`)
-        if (systemjs || esm) {
-          if (esm)
-            state.esmImportMap[id] = esm
-          if (systemjs)
-            state.systemjsImportMap[id] = systemjs
+        if (getExternal(id)) {
+          Debug(`find external --${id}`)
           return { id, external: true }
         }
       }
@@ -145,7 +152,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
         const query = HMRMap.has(module) ? `?t=${HMRMap.get(module)}` : ''
 
-        Debug(`Find  remote file --${id + query}`)
+        Debug(`Find remote file --${id + query}`)
 
         return { id: id + query }
       }
@@ -204,16 +211,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
       }
     },
 
-    config(viteConfig) {
-      if (!viteConfig.define)
-        viteConfig.define = {}
-      for (const i in config.remote) {
-        const url = config.remote[i].url
-        viteConfig.define[`globalThis.__DP_${i}_`] = `"${url}/core"`
-      }
-    },
-    async configResolved(resolvedConfig) {
-      command = resolvedConfig.command
+    async config(_conf, opts) {
+      command = opts.command
       // let ext: externals = {}
 
       for (const i in config.remote) {
@@ -233,8 +232,43 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
             'dubheList.json',
             config.cache,
           )
+          const { data: SubData } = await getVirtualContent(
+            `${url}/core/dubheList.sub.json`,
+            i,
+            'dubheList.sub.json',
+            config.cache,
+          ).catch(() => ({ data: null }))
+          if (SubData) {
+            const { chains, dependences, externals } = JSON.parse(SubData)
+            externals.forEach(getExternal);
+
+            (chains as typeof state['chains']).forEach((item) => {
+              const {
+                project, url, alias,
+              } = item
+              if (project in config.remote)
+                return
+              config.remote[project] = {
+                url, mode: 'hot',
+              }
+              state.chains.push(item)
+              state.publicPath[project] = url
+              state.aliasMap[project] = alias
+              for (const { name, url: aliasUrl } of alias) {
+                state.esmImportMap[`dubhe-${project}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
+                state.systemjsImportMap[`dubhe-${project}/${name}`] = urlResolve(url, `./systemjs/${aliasUrl}`)
+              }
+            });
+            (dependences as { project: string;from: string }[]).forEach((item) => {
+              state.dependences.push(item)
+            })
+          }
+
           const dubheConfig: PubListType = JSON.parse(data)
-          if (mode === 'hot' && command === 'build') {
+          if (mode === 'hot') {
+            state.publicPath[i] = url
+
+            dubheConfig.externals.forEach(getExternal)
             for (const { name, url: aliasUrl } of dubheConfig.alias) {
               state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
               state.systemjsImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./systemjs/${aliasUrl}`)
@@ -242,7 +276,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           }
 
           state.pubListMap[i] = dubheConfig
-          dubheConfig.externals.forEach(item => state.externalSet.add(item))
 
           if (config.types) {
             Debug(`get remote dts --${i}`)
@@ -268,7 +301,6 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
               catch (e) {
                 log(`--Project [${i}] Use Offline Mode--`)
               }
-              // const localInfo: PubListType = remoteInfo
             }
             else {
               log(`--Project [${i}] Create Local Cache--`)
@@ -287,13 +319,20 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         }
         catch (e) {
           Debug(`fail to get remote info --${i}`)
-
           log(`can't find remote module [${i}] -- ${config.remote[i].url}`, 'red')
         }
       }
+      const define = {} as Record<string, string>
+      for (const i in config.remote) {
+        const url = config.remote[i].url
+        define[`globalThis.__DP_${i}_`] = `"${url}/core"`
+      }
+      if (command === 'build') {
+        log('All externals')
+        console.table([...state.externalSet])
+      }
 
-      log('All externals')
-      console.table([...state.externalSet])
+      return { define }
     },
 
     configureServer(_server) {
@@ -368,15 +407,22 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         version: config.version,
         timestamp: getFormatDate(),
         externals: [...state.externalSet],
+        project: config.project,
         meta: config.meta,
         importsGraph,
+        dependences: originRemote.filter(item => item[1].mode !== 'hot').map(([k]) => {
+          return { from: config.project, project: k }
+        }),
+        chains: originRemote.filter(item => item[1].mode === 'hot').map(([k, v]) => {
+          return { project: k, alias: state.aliasMap[k], from: config.project, url: v.url, importsGraph: state.pubListMap[k].importsGraph }
+        }).concat(state.chains),
       } as unknown as SubListType
-      Debug('output dubheList.json')
+      Debug('output dubheList.sub.json')
 
       this.emitFile({
         type: 'asset',
         name: 'dubheList',
-        fileName: 'dubheList.json',
+        fileName: 'dubheList.sub.json',
         source: JSON.stringify(metaData),
       })
     },
@@ -385,16 +431,26 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         return
       const tags = [] as HtmlTagDescriptor[]
 
-      Debug('inject importmap and polyfill to html')
-
       if (config.injectHtml !== false) {
+        Debug('inject publicpath for hot mode project')
+
+        tags.push({
+          tag: 'script',
+          children: Object.entries(state.publicPath).map(([k, v]) => {
+            return `globalThis.__DP_${k}_="${v}/core"`
+          }).join(';'),
+          injectTo: 'head-prepend',
+        })
+
+        Debug('inject importmap and polyfill to html')
+
         tags.push({
           tag: 'script',
           attrs: {
             type: 'importmap',
           },
           children: `{"imports":${JSON.stringify(state.esmImportMap)}}`,
-          injectTo: 'head',
+          injectTo: 'head-prepend',
         })
 
         if (config.systemjs) {
@@ -405,7 +461,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
               nomodule: true,
             },
             children: `{"imports":${JSON.stringify(state.systemjsImportMap)}}`,
-            injectTo: 'head',
+            injectTo: 'head-prepend',
           })
         }
       }

@@ -5,8 +5,8 @@ import fg from 'fast-glob'
 export async function getFileContent(p: string) {
   return fs.promises.readFile(resolve(process.cwd(), 'examples', p), 'utf-8')
 }
-export async function getDistFiles(p: string) {
-  return fg(['**/*.js', '!/**/*.js.map'], { cwd: resolve(process.cwd(), 'examples', p) })
+export async function getDistFiles(p: string, files = ['**/*.js', '!/**/*.js.map']) {
+  return fg(files, { cwd: resolve(process.cwd(), 'examples', p) })
 }
 
 export function isExist(p: string) {
@@ -15,5 +15,5 @@ export function isExist(p: string) {
 
 export function getImportMap(html: string) {
   const [,importmap] = html.match(/<script type="importmap">([^\<]*)<\/script>/)!
-  return JSON.parse(importmap)
+  return Object.keys(JSON.parse(importmap).imports)
 }

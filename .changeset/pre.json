@@ -10,12 +10,15 @@
     "dubhe": "2.0.1",
     "dubhe-pub": "2.0.0",
     "dubhe-sub": "2.0.1",
-    "dubhe-vite": "1.0.6"
+    "dubhe-vite": "1.0.6",
+    "final-vite": "0.0.0"
   },
   "changesets": [
     "eleven-brooms-teach",
     "good-bobcats-design",
+    "hungry-hornets-tie",
     "khaki-dots-burn",
+    "light-tables-rush",
     "wild-files-move"
   ]
 }

@@ -252,6 +252,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
                 url, mode: 'hot',
               }
               state.chains.push(item)
+              state.publicPath[project] = url
               state.aliasMap[project] = alias
               for (const { name, url: aliasUrl } of alias) {
                 state.esmImportMap[`dubhe-${project}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
@@ -265,6 +266,8 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
 
           const dubheConfig: PubListType = JSON.parse(data)
           if (mode === 'hot') {
+            state.publicPath[i] = url
+
             dubheConfig.externals.forEach(getExternal)
             for (const { name, url: aliasUrl } of dubheConfig.alias) {
               state.esmImportMap[`dubhe-${i}/${name}`] = urlResolve(url, `./core/${aliasUrl}`)
@@ -426,8 +429,19 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         return
       const tags = [] as HtmlTagDescriptor[]
 
-      Debug('inject importmap and polyfill to html')
       if (config.injectHtml !== false) {
+        Debug('inject publicpath for hot mode project')
+
+        tags.push({
+          tag: 'script',
+          children: Object.entries(state.publicPath).map(([k, v]) => {
+            return `globalThis.__DP_${k}_="${v}/core"`
+          }).join(';'),
+          injectTo: 'head-prepend',
+        })
+
+        Debug('inject importmap and polyfill to html')
+
         tags.push({
           tag: 'script',
           attrs: {

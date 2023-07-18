@@ -1,4 +1,5 @@
-## 与`unplugin-auto-import`/`unplugin-vue-components`的集成
+# 自动引入
+## `unplugin-auto-import`/`unplugin-vue-components`
 
 以 vite 为例
 
@@ -22,7 +23,7 @@ export default defineConfig({
 就可以在项目中随心所欲了
 
 
-### js
+### in js
 
 使用前
 ```ts
@@ -31,11 +32,11 @@ testFromViteRemote()
 ```
 使用后
 ```ts
-$viteout_test_testFromViteRemote()
+$viteout_test_testFromViteRemote()// $项目名_模块名_函数名
 ```
 
 
-### vue
+### in vue
 使用前
 ```vue
 <script setup lang="ts">
@@ -52,6 +53,7 @@ import ViteoutApp from 'dubhe-viteout/app'
 ```vue
 <template>
   <viteout-app msg="remote app component from viteout" />
+  <!-- 项目名-模块名 -->
 </template>
 
 ```

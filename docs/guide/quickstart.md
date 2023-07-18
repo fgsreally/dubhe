@@ -22,8 +22,8 @@ export default {
   types: true, // 是否产生dts
   externals: (name) => {
     if (name === 'vue')
-      return true// 此时共有依赖为vue
-  }, // 放到cdn的依赖
+      return true// 此时共有依赖为vue，后续放到cdn的依赖
+  },
   HMR: [
     {
       port: 'http://localhost:4100', // 生产端的port，生产端watch模式打包时，使消费端正常热更新，如果不需要热更新，可不填
@@ -58,8 +58,9 @@ build({
 
 :::warning 提醒
 顺带一提，`dubhe`没有在生产端支持`webpcak`的计划，建议使用`esbuild`代替，
-可以看看[unplugin]()社区有无同时支持`esbuild`，`webpack`的插件
 :::
+
+然后使用`watch`模式打包，并在打包目录处打开静态服务器（`http-server`/`serve`/`live-server`都行，记得打开跨域）
 
 ## 消费端
 
@@ -71,14 +72,15 @@ export default {
   remote: {
     viteout: {
       // 远程项目名
-      url: 'http://127.0.0.1:5173',
+      url: 'http://127.0.0.1:5173', // 静态服务url
       mode: 'hot', // 模式
     },
   },
   cache: true, // 使用缓存
-  types: true, // 安装类型
+  types: true, // 安装类型，要使用管理员权限
 } as SubConfig
 ```
+然后启动服务，
 
 ### vite
 

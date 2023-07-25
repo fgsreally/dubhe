@@ -156,12 +156,13 @@ cli
   })
 
 cli.command('dts', 'use vue-dts to generate types declaration in watch mode')
-  // .option('--vue, -v [v]', '[boolean] use vue-tsc ')
-  .action(async () => {
+  .option('--vue, -v [v]', '[boolean] use vue-tsc ')
+  .action(async (options) => {
+    const { vue } = options
     const { outDir = '.dubhe' } = await getWorkSpaceConfig()
     const outTypesDir = `${outDir}/types`
     fse.removeSync(outTypesDir)
-    const tscProcess = exec(`npx vue-tsc --declaration --emitDeclarationOnly --outDir ${outTypesDir} --watch`)
+    const tscProcess = exec(`npx ${vue ? 'vue-tsc' : 'tsc'} --declaration --emitDeclarationOnly --outDir ${outTypesDir} --watch`)
     tscProcess.stdout!.on('data', (data) => {
       if (data.includes('Found 0 errors.')) {
         traverseDic(outTypesDir, (params) => {
@@ -261,8 +262,7 @@ cli.command('transform ', 'transform esm to systemjs')
     log(`create systemjs band  to ${dest}`)
   })
 
-cli.command('export', 'get remote module export methods')
-  .option('--project, -p [p]', '[string] project name')
+cli.command('export <project>', 'get exported methods from remote project')
   .action(async (options) => {
     const { project } = options
     const pubList = await getLocalContent(project, 'dubheList.json')

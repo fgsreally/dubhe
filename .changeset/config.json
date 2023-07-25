@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["sub-*","pub-*","dubhe-vite","final-*"]
+  "ignore": ["sub-*","pub-*","final-*"]
 }

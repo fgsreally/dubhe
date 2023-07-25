@@ -63,7 +63,7 @@ export class WebpackPlugin {
   // use local-cache in production with parallel
   apply(compiler: Compiler) {
     for (const plugin of compiler.options.plugins) {
-      if (plugin.constructor.name === 'HtmlWebpackPlugin')
+      if (plugin && plugin.constructor.name === 'HtmlWebpackPlugin')
         htmlPlugin = plugin.constructor as any
     }
 

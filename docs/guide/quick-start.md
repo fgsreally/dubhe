@@ -1,7 +1,7 @@
 # 快速开始
 
 `dubhe` 存在至少一个生产端和一个消费端，
-
+> 以一个`vue`项目为例
 ## 生产端
 
 需要安装`dubhe-pub`，并将配置写入`dubhe.config.ts/js`
@@ -22,8 +22,8 @@ export default {
   types: true, // 是否产生dts
   externals: (name) => {
     if (name === 'vue')
-      return true// 此时共有依赖为vue
-  }, // 放到cdn的依赖
+      return true// 此时共有依赖为vue，后续放到cdn的依赖
+  },
   HMR: [
     {
       port: 'http://localhost:4100', // 生产端的port，生产端watch模式打包时，使消费端正常热更新，如果不需要热更新，可不填
@@ -44,7 +44,9 @@ export default defineConfig({
 
 ### esbuild
 
-暂时需要依赖`esbuild-plugin-merge`,来提供`watch`模式和`transform`钩子，但这在最新的`esbuild@0.17`上不起效，需要安装`@0.16`或以前的版本
+暂时需要依赖`esbuild-plugin-merge`,来提供`watch`模式和`transform`钩子，
+
+> 这在最新的`esbuild@0.17`及以上不起效，需要安装`@0.16`或以前的版本，我会想法修复它
 
 ```ts
 import { build } from 'esbuild'
@@ -57,9 +59,10 @@ build({
 ```
 
 :::warning 提醒
-顺带一提，`dubhe`没有在生产端支持`webpcak`的计划，建议使用`esbuild`代替，
-可以看看[unplugin]()社区有无同时支持`esbuild`，`webpack`的插件
+顺带一提，`dubhe`没有在生产端支持`webpcak`的计划，建议使用`vite`代替，原因[详见](../question/index.md)
 :::
+
+然后使用`watch`模式打包，并在打包目录处打开静态服务器（`http-server`/`serve`/`live-server`都行，记得打开跨域）
 
 ## 消费端
 
@@ -71,14 +74,15 @@ export default {
   remote: {
     viteout: {
       // 远程项目名
-      url: 'http://127.0.0.1:5173',
+      url: 'http://127.0.0.1:5173', // 静态服务url
       mode: 'hot', // 模式
     },
   },
   cache: true, // 使用缓存
-  types: true, // 安装类型
+  types: true, // 安装类型，要使用管理员权限
 } as SubConfig
 ```
+然后启动服务，
 
 ### vite
 

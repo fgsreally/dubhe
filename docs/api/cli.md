@@ -1,5 +1,7 @@
-## 命令行工具
-
+# 命令行工具
+:::warning
+请将消费端配置（以下命令主要在消费端中使用）写到工作目录下的`dubhe.config.ts/js/mjs`
+:::
 1.  比较本地缓存和远程模块的版本
 ```shell 
  dubhe detect 
@@ -64,5 +66,5 @@
 > 本质就是开发时，使用`watch`模式产生类型文件，然后再同步到消费端
 > 我不知道是不是我电脑or配置的原因，`watch`模式在持续一段时间后一定会莫名报错，暂时无法处理，故为实验性
 ```shell 
- dubhe export <project>
+ dubhe dts <project>
 ```

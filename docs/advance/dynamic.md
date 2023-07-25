@@ -1,4 +1,4 @@
-# 动态更改
+# 应用分发
 
 由于模块联邦的一些问题，项目间依赖复用反而不是一个主流的用法了，一个另辟蹊径的做法是：生产端只负责依赖生产，分发依赖，本身不再是一个独立运行的项目，更像是个组件库，从而消费端实现及时更新 or 回滚。
 
@@ -15,7 +15,7 @@
 ```ts
 // 在消费端打包时
 export default {
-  injectHtml: false,
+  injectHtml: false, // 不再注入importmap的信息，由后续操作添加
 }
 ```
 
@@ -48,6 +48,7 @@ export default {
 
 ```html
 <script>
+  // 动态添加importmap
   var request = new XMLHttpRequest();
   request.open("GET", url, false);//获得meta
   request.send(null);

@@ -1,35 +1,28 @@
 import { defineConfig } from 'vitepress'
-const ogDescription = '基于编译，剑走偏锋的微前端方案'
-// const ogImage = 'https://wujie-micro.github.io/doc/wujie.png'
-// const ogTitle = '无界'
-// const ogUrl = 'https://wujie-micro.github.io/doc/'
-const base = process.env.NODE_ENV === 'production' ? '/doc/' : ''
+const ogDescription = '极致体验的模块共用方案'
+
+const base = process.env.NODE_ENV === 'production' ? '/dubhe/' : ''
 
 export default defineConfig({
   title: '天枢',
   description: ogDescription,
   base,
   head: [
-    ['link', { rel: 'icon', href: `${base}/favicon.ico` }],
-    // ["meta", { property: "og:type", content: "website" }],
-    // ["meta", { property: "og:title", content: ogTitle }],
-    // ["meta", { property: "og:image", content: ogImage }],
-    // ["meta", { property: "og:url", content: ogUrl }],
+    ['link', { rel: 'icon', href: `${base}favicon.ico` }],
+
   ],
 
-  vue: {
-    reactivityTransform: true,
-  },
+  // vue: {
+
   lastUpdated: true,
   themeConfig: {
-    logo: '/wujie.svg',
+    logo: '/dubhe.png',
     editLink: {
-      pattern: 'https://github.com/Tencent/wujie/tree/master/docs/:path',
+      pattern: 'https://github.com/fgsreally/dubhe/tree/master/docs/:path',
       text: '编辑本页',
     },
     lastUpdatedText: '最近更新时间',
-    socialLinks: [{ icon: 'github', link: 'https://github.com/Tencent/wujie' }],
-
+    socialLinks: [{ icon: 'github', link: 'https://github.com/fgsreally/dubhe' }],
 
     footer: {
       message: 'Released the MIT License.',
@@ -39,34 +32,11 @@ export default defineConfig({
       { text: '指南', link: '/guide/', activeMatch: '/guide/' },
       {
         text: 'API',
-        link: '/api/main',
+        link: '/api/cli.md',
         activeMatch: '/api/',
       },
       { text: '常见问题', link: '/question/', activeMatch: '/question/' },
-      { text: '框架封装', link: '/pack/', activeMatch: '/pack/' },
-    //   {
-    //     text: `v${version}`,
-    //     items: [
-    //       {
-    //         text: '更新日志',
-    //         link: 'https://github.com/Tencent/wujie/blob/master/CHANGELOG.md',
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     text: '示例',
-    //     items: [
-    //       {
-    //         text: 'Vue主应用',
-    //         link: 'https://wujie-micro.github.io/demo-main-vue/home',
-    //       },
-    //       {
-    //         text: 'React主应用',
-    //         link: 'https://wujie-micro.github.io/demo-main-react/',
-    //       },
-    //     ],
-    //   },
-    //   { text: '在线体验无界', link: '/wujie/', activeMatch: '/wujie/' },
+
     ],
 
     sidebar: {
@@ -80,17 +50,13 @@ export default defineConfig({
               link: '/guide/',
             },
             {
-              text: '快速上手',
-              link: '/guide/quickstart',
+              text: '用前须知',
+              link: '/guide/must-known',
             },
             {
-              text: '默认配置',
-              link: '/guide/default',
+              text: '快速上手',
+              link: '/guide/quick-start',
             },
-            // {
-            //   text: "定制Demo",
-            //   link: "/guide/demo",
-            // },
           ],
         },
 
@@ -98,129 +64,86 @@ export default defineConfig({
           text: '基础',
           collapsible: true,
           items: [
-            // {
-            //   text: '主应用',
-            //   link: '/guide/main',
-            // },
-            // {
-            //   text: '子应用',
-            //   link: '/guide/sub',
-            // },
+
             {
               text: '原理',
               link: '/base/core',
             },
             {
               text: '自动引入',
-              link: '/base/auto-import',
-            },
-            {
-              text: '垫片',
-              link: '/guide/vue',
-            },
-
-            {
-              text: '用前须知',
-              link: '/base/mustknown',
+              link: '/guide/auto-import',
             },
 
           ],
         },
+
         {
-          text: '进阶',
-          collapsible: true,
-          items: [
-            {
-              text: '难点',
-              link: '/advance',
-            },
-            {
-              text: '核心设计',
-              link: '/guide/idea/core',
-            },
-            {
-              text: '对比',
-              link: '/guide/idea/compare',
-            },
-            {
-              text: '歧义性行为',
-              link: '/guide/idea/action',
-            },
-          ],
-        },
-        {
-          text: '改造',
+          text: '高级',
           collapsible: false,
           items: [
             {
-              text: '改造须知',
-              link: '/guide/reform/index',
+              text: '嵌套使用',
+              link: '/advance/nest',
             },
             {
-              text: '沙箱改造',
-              link: '/guide/reform/proxy',
+              text: 'vite独有',
+              link: '/advance/vite',
             },
+            {
+              text: '垫片兼容',
+              link: '/advance/polyfill',
+            },
+            {
+              text: '模块共用',
+              link: '/advance/share',
+            },
+            {
+              text: '应用分发',
+              link: '/advance/dynamic',
+            },
+          ],
+        },
+        {
+          text: '一点想法',
+          collapsible: false,
+          items: [
+            {
+              text: '为什么不使用模块联邦',
+              link: '/why/federation',
+            },
+            {
+              text: '什么是微模块',
+              link: '/why/micro',
+            },
+
           ],
         },
       ],
       '/api/': [
         {
-          text: '主应用',
+          text: 'api',
           collapsible: true,
           items: [
             {
-              text: 'Merak',
-              link: '/api/main',
+              text: '命令行工具',
+              link: '/api/cli',
             },
 
             {
-              text: '生命周期',
-              link: '/api/lifecycle',
+              text: '生产端',
+              link: '/api/pub',
             },
 
             {
-              text: 'vue',
-              link: '/api/vue',
+              text: '消费端',
+              link: '/api/sub',
             },
           ],
         },
-        {
-          text: '子应用',
-          collapsible: true,
-          items: [
-            {
-              text: 'helper',
-              link: '/api/helper',
-            },
-            {
-              text: 'vite',
-              link: '/api/vite',
-            },
-            {
-              text: 'webpack',
-              link: '/api/webpack',
-            },
 
-          ],
-        },
       ],
       '/question': [],
-      '/pack/': [
-        {
-          text: '框架封装',
-          collapsible: true,
-          items: [
-            {
-              text: 'Vue组件封装',
-              link: '/pack/',
-            },
-            {
-              text: 'React组件封装',
-              link: '/pack/react',
-            },
-          ],
-        },
-      ],
+
     },
   },
 })

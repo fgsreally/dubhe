@@ -1,7 +1,7 @@
 # 快速开始
 
 `dubhe` 存在至少一个生产端和一个消费端，
-
+> 以一个`vue`项目为例
 ## 生产端
 
 需要安装`dubhe-pub`，并将配置写入`dubhe.config.ts/js`
@@ -44,7 +44,9 @@ export default defineConfig({
 
 ### esbuild
 
-暂时需要依赖`esbuild-plugin-merge`,来提供`watch`模式和`transform`钩子，但这在最新的`esbuild@0.17`上不起效，需要安装`@0.16`或以前的版本
+暂时需要依赖`esbuild-plugin-merge`,来提供`watch`模式和`transform`钩子，
+
+> 这在最新的`esbuild@0.17`及以上不起效，需要安装`@0.16`或以前的版本，我会想法修复它
 
 ```ts
 import { build } from 'esbuild'
@@ -57,7 +59,7 @@ build({
 ```
 
 :::warning 提醒
-顺带一提，`dubhe`没有在生产端支持`webpcak`的计划，建议使用`esbuild`代替，
+顺带一提，`dubhe`没有在生产端支持`webpcak`的计划，建议使用`vite`代替，原因[详见](../question/index.md)
 :::
 
 然后使用`watch`模式打包，并在打包目录处打开静态服务器（`http-server`/`serve`/`live-server`都行，记得打开跨域）

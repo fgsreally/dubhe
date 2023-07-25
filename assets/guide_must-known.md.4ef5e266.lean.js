@@ -1,0 +1,1 @@
+import{_ as e,o,c as t,a as d}from"./app.c7558d4a.js";const u=JSON.parse('{"title":"用前须知","description":"","frontmatter":{},"headers":[],"relativePath":"guide/must-known.md","lastUpdated":1690294878000}'),c={name:"guide/must-known.md"},a=d("",3),i=[a];function s(p,n,r,_,l,m){return o(),t("div",null,i)}const f=e(c,[["render",s]]);export{u as __pageData,f as default};

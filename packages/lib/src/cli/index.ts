@@ -243,7 +243,7 @@ cli.command('link', 'link cache to workspace')
     if (options.mode === 'cache') {
       for (const project in dubheList) {
         const { files } = await getLocalContent(project, 'dubheList.json')
-        linkCache(project, files)
+        linkCache(project, files.map((file: string) => removeHash(file)))
         log(`Link [${project}] `)
       }
     }

@@ -1,7 +1,8 @@
-import { resolve } from 'path'
+import { dirname, resolve } from 'path'
 import fse from 'fs-extra'
 import axios from 'axios'
 import { CACHE_ROOT, TYPE_ROOT } from './common'
+import { log } from './utils'
 // update global config
 export async function updateLocalRecord(config: Record<string, { mode?: 'hot' | 'cold'; url: string }>) {
   const records = await getLocalRecord()
@@ -39,6 +40,7 @@ export function getLocalPath(project: string,
   moduleName: string) {
   return resolve(CACHE_ROOT, project, moduleName)
 }
+
 export function isLocalPath(path: string) {
   return path.startsWith(CACHE_ROOT)
 }
@@ -63,6 +65,24 @@ export function getTypePathInCache(project: string, file: string) {
   return resolve(TYPE_ROOT, project, file)
 }
 
+export function getPathInWorkspace(project: string, file: string) {
+  return resolve(process.cwd(), '.dubhe', 'core', project, file)
+}
+
 export function getTypePathInWorkspace(project: string, file: string) {
   return resolve(process.cwd(), '.dubhe', 'types', project, file)
+}
+
+// create link from types-cache to workspace
+export async function linkCache(project: string, fileSet: string[]) {
+  for (const file of fileSet) {
+    try {
+      const dest = getPathInWorkspace(project, file)
+      await fse.ensureDir(dirname(dest))
+      await fse.symlink(getLocalPath(project, file), dest, 'file')
+    }
+    catch (e) {
+      log('fail to create symlink', 'red')
+    }
+  }
 }

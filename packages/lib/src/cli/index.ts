@@ -10,7 +10,7 @@ import { getPkgName, log, patchVersion, traverseDic } from '../utils'
 import pkgs from '../../package.json'
 import { CACHE_ROOT, TYPE_ROOT } from '../common'
 import { esmToSystemjs } from '../babel'
-import { getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, removeLocalCache, removeLocalType, removeWorkspaceType, updateLocalRecord } from '../cache'
+import { getLocalContent, getLocalPath, getLocalRecord, getRemoteContent, getTypePathInCache, linkCache, removeLocalCache, removeLocalType, removeWorkspaceType, updateLocalRecord } from '../cache'
 import { linkTypes, updateTSconfig } from '../dts'
 import { removeHash } from '../core'
 import { analysePubDep, analyseSubDep, downloadFile, generateExports, getDubheList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist } from './utils'
@@ -73,7 +73,7 @@ cli
 
 cli
   .command('import <project/entry>', 'import source code from <project/entry>(like viteout/test)')
-  .option('--path, -p [p]', '[string] dir path ', {
+  .option('--path, -p [path]', '[string] dir path ', {
     default: '.dubhe-source',
   })
   .action(async (projectEntry, option) => {
@@ -227,19 +227,32 @@ cli
       }
     }
   })
-cli.command('link', 'link types cache to workspace').action(async () => {
-  const { remote: dubheList } = await getWorkSpaceConfig()
-  for (const project in dubheList) {
-    const typsFiles = await fse.readJSON(getTypePathInCache(project, 'types.json'))
-    linkTypes(project, typsFiles)
-    log(`Link [${project}] success`)
-  }
-})
+cli.command('link', 'link cache to workspace')
+  .option('--mode [mode]', '[string] link type or cache', {
+    default: 'type',
+  })
+  .action(async (options) => {
+    const { remote: dubheList } = await getWorkSpaceConfig()
+    if (options.mode === 'type') {
+      for (const project in dubheList) {
+        const typsFiles = await fse.readJSON(getTypePathInCache(project, 'types.json'))
+        linkTypes(project, typsFiles)
+        log(`Link [${project}] `)
+      }
+    }
+    if (options.mode === 'cache') {
+      for (const project in dubheList) {
+        const { files } = await getLocalContent(project, 'dubheList.json')
+        linkCache(project, files)
+        log(`Link [${project}] `)
+      }
+    }
+  })
 cli.command('transform ', 'transform esm to systemjs')
-  .option('--dir', '[string] esm files dir ', {
+  .option('--dir <dir>', '[string] esm files dir ', {
     default: 'core',
   })
-  .option('--to', '[string] systemjs files output dir', {
+  .option('--to <to>', '[string] systemjs files output dir', {
     default: 'systemjs',
   })
   .action(async (options) => {
@@ -284,10 +297,10 @@ cli
   )
   .alias('b')
 
-  .option('--outDir, -o [o]', '[string] outDir for vite output', {
+  .option('--outDir, -o [outDir]', '[string] outDir for vite output', {
     default: 'dist',
   })
-  .option('--dubheList, -d [d]', '[string] dubheList.sub.json path in sub', {
+  .option('--dubheList, -d [dubheList]', '[string] dubheList.sub.json path in sub', {
     default: 'dist',
   })
   .action(async (option) => {

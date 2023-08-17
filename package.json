@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "packageManager": "pnpm@7.21.0",
-
   "scripts": {
     "dev": "turbo run dev --filter dubhe-* --filter dubhe",
     "build": "turbo run build --filter dubhe-* --filter dubhe",
@@ -14,7 +13,7 @@
     "test:unit": "vitest --run",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",  
+    "docs:preview": "vitepress preview docs",
     "example:serve": "pnpm -r --parallel run serve ",
     "example:pub": "pnpm --filter=pub-* run pub ",
     "example:sub": "pnpm --filter=sub-* run dev",
@@ -34,7 +33,7 @@
     "puppeteer": "^19.7.3",
     "turbo": "^1.6.3",
     "vitepress": "1.0.0-alpha.49",
-    "vitest": "^0.25.6",
+    "vitest": "^0.34.2",
     "wait-on": "^7.0.1",
     "zx": "^7.2.1"
   }

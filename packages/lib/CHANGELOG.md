@@ -1,5 +1,11 @@
 # dubhe
 
+## 2.1.0-beta.5
+
+### Patch Changes
+
+- c4874b9: fix cac options and support link cache
+
 ## 2.1.0-beta.4
 
 ### Patch Changes

@@ -95,7 +95,11 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
     log('--Use Local Cache--')
   const originRemote = Object.entries(config.remote)
   const { externals } = config
-
+  const injectOpts = {
+    importmap: 'inline',
+    systemjs: 'inline',
+    ...(config.injectOpts || {}),
+  }
   function getExternal(id: string) {
     if (state.externalSet.has(id))
       return true
@@ -425,25 +429,41 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
         fileName: 'dubheList.sub.json',
         source: JSON.stringify(metaData),
       })
+      if (injectOpts.importmap === 'link') {
+        this.emitFile({
+          type: 'asset',
+          name: 'importmap',
+          fileName: 'importmap.importmap',
+          source: JSON.stringify(state.esmImportMap),
+        })
+      }
+      if (injectOpts.systemjs === 'link') {
+        this.emitFile({
+          type: 'asset',
+          name: 'systemjs-importmap',
+          fileName: 'systemjs-importmap.json',
+          source: JSON.stringify(state.systemjsImportMap),
+        })
+      }
     },
     transformIndexHtml(html: string) {
       if (command !== 'build')
         return
       const tags = [] as HtmlTagDescriptor[]
 
-      if (config.injectHtml !== false) {
-        Debug('inject publicpath for hot mode project')
+      Debug('inject publicpath for hot mode project')
+      // work for asset like img
+      tags.push({
+        tag: 'script',
+        children: Object.entries(state.publicPath).map(([k, v]) => {
+          return `globalThis.__DP_${k}_="${v}/core"`
+        }).join(';'),
+        injectTo: 'head-prepend',
+      })
 
-        tags.push({
-          tag: 'script',
-          children: Object.entries(state.publicPath).map(([k, v]) => {
-            return `globalThis.__DP_${k}_="${v}/core"`
-          }).join(';'),
-          injectTo: 'head-prepend',
-        })
+      Debug('inject importmap and polyfill to html')
 
-        Debug('inject importmap and polyfill to html')
-
+      if (injectOpts.importmap === 'inline') {
         tags.push({
           tag: 'script',
           attrs: {
@@ -452,18 +472,39 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           children: `{"imports":${JSON.stringify(state.esmImportMap)}}`,
           injectTo: 'head-prepend',
         })
+      }
+      if (injectOpts.importmap === 'link') {
+        tags.push({
+          tag: 'script',
+          attrs: {
+            type: 'importmap',
+            src: './importmap.importmap',
+          },
+          injectTo: 'head-prepend',
+        })
+      }
 
-        if (config.systemjs) {
-          tags.push({
-            tag: 'script',
-            attrs: {
-              type: 'systemjs-importmap',
-              nomodule: true,
-            },
-            children: `{"imports":${JSON.stringify(state.systemjsImportMap)}}`,
-            injectTo: 'head-prepend',
-          })
-        }
+      if (injectOpts.systemjs === 'inline') {
+        tags.push({
+          tag: 'script',
+          attrs: {
+            type: 'systemjs-importmap',
+            nomodule: true,
+          },
+          children: `{"imports":${JSON.stringify(state.systemjsImportMap)}}`,
+          injectTo: 'head-prepend',
+        })
+      }
+      if (injectOpts.systemjs === 'link') {
+        tags.push({
+          tag: 'script',
+          attrs: {
+            type: 'systemjs-importmap',
+            nomodule: true,
+            src: './systemjs-importmap.json',
+          },
+          injectTo: 'head-prepend',
+        })
       }
 
       if (config.polyfill) {

@@ -62,8 +62,11 @@ export interface SubConfig {
   project: string
   cache?: boolean
   types?: boolean
-  systemjs?: boolean
-  injectHtml?: boolean
+
+  injectOpts?: {
+    systemjs?: 'inline' | 'link' | false
+    importMap?: 'inline' | 'link' | false
+  }
   polyfill?: {
     systemjs?: string | boolean
     importMap?: string | boolean

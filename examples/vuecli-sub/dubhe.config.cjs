@@ -15,11 +15,7 @@ module.exports= {
       if (id.includes('element-plus'))
         return { esm: './element-plus.js' }
     },
-    systemjs: true,
     cache: !process.env.CI,
     types: true,
-    injectHtml: {
-      importMap: true,
-      systemjs: true,
-    },
+
   };

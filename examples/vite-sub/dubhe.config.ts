@@ -12,13 +12,13 @@ export default {
     if (id === 'vue') {
       return {
         esm: './vue.js', // only work for test
-        systemjs: './systemjs/vue.js',
+        // systemjs: '../systemjs/vue.js',
       }
     }
     if (id.includes('element-plus')) {
       return {
         esm: './element-plus.js',
-        systemjs: './systemjs/element-plus.js',
+        // systemjs: '../systemjs/element-plus.js',
 
       }
     }

@@ -434,7 +434,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           type: 'asset',
           name: 'importmap',
           fileName: 'importmap.importmap',
-          source: JSON.stringify(state.esmImportMap),
+          source: `{"imports":${JSON.stringify(state.esmImportMap)}}`,
         })
       }
       if (injectOpts.systemjs === 'link') {
@@ -442,7 +442,7 @@ export const HomePlugin = (config: SubConfig): PluginOption => {
           type: 'asset',
           name: 'systemjs-importmap',
           fileName: 'systemjs-importmap.json',
-          source: JSON.stringify(state.systemjsImportMap),
+          source: `{"imports":${JSON.stringify(state.systemjsImportMap)}}`,
         })
       }
     },

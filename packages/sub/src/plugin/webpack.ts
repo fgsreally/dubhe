@@ -370,14 +370,14 @@ export class WebpackPlugin {
 
       if (injectOpts.importmap === 'link') {
         compilation.assets['importmap.json'] = {
-          source: () => JSON.stringify(state.esmImportMap),
-          size: () => JSON.stringify(state.esmImportMap).length,
+          source: () => `{"imports":${JSON.stringify(state.esmImportMap)}}`,
+          size: () => `{"imports":${JSON.stringify(state.esmImportMap)}}`.length,
         } as any
       }
       if (injectOpts.systemjs === 'link') {
         compilation.assets['systemjs-importmap.json'] = {
-          source: () => JSON.stringify(state.systemjsImportMap),
-          size: () => JSON.stringify(state.systemjsImportMap).length,
+          source: () => `{"imports":${JSON.stringify(state.systemjsImportMap)}}`,
+          size: () => `{"imports":${JSON.stringify(state.systemjsImportMap)}}`.length,
         } as any
       }
       callback()

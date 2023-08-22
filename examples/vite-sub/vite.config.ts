@@ -8,7 +8,7 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { visualizer } from 'rollup-plugin-visualizer'
 import Inspect from 'vite-plugin-inspect'
-import Legacy from '@vitejs/plugin-legacy'
+// import Legacy from '@vitejs/plugin-legacy'
 import config from './dubhe.config'
 export const pubConfig = {
   project: 'vitesub',
@@ -39,7 +39,7 @@ export default (): UserConfig => {
     },
     plugins: [
       Inspect(),
-      Legacy(),
+      // Legacy(),
       visualizer(),
       vue(),
       AutoImport({

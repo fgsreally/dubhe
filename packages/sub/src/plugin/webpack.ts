@@ -424,7 +424,6 @@ export class WebpackPlugin {
                   cache,
                   cache,
                 ).catch(() => ({} as any))
-
                 const modulePath = getLocalPath(project, removeHash(moduleName))
                 request.request = modulePath
                 if (useVirtualModule) {
@@ -450,9 +449,6 @@ export class WebpackPlugin {
                 const [, project, moduleName] = getProjectAndModule(id) as any
                 Debug(`get remote file --${project}/${moduleName} --${id}`)
 
-                const modulePath = getLocalPath(project, removeHash(moduleName))
-                request.request = modulePath
-
                 const { url } = this.config.remote[project]
                 const { data } = await getVirtualContent(
                   `${url}/core/${moduleName}`,
@@ -462,7 +458,6 @@ export class WebpackPlugin {
                   cache,
                 )
                 Debug(`get sourcemap --${project}/${moduleName}`)
-
                 const { data: map } = await getVirtualContent(
                   `${url}.map`,
                   project,
@@ -471,9 +466,11 @@ export class WebpackPlugin {
                   cache,
                 ).catch(() => ({} as any))
 
+                const modulePath = getLocalPath(project, removeHash(moduleName))
+                request.request = modulePath
                 if (useVirtualModule) {
-                  this.vfs.writeModule(id, data)
-                  map && this.vfs.writeModule(`${id}.map`, map)
+                  this.vfs.writeModule(modulePath, data)
+                  map && this.vfs.writeModule(`${modulePath}.map`, map)
                 }
               }
 

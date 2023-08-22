@@ -1,5 +1,11 @@
 # dubhe
 
+## 2.1.0-beta.6
+
+### Minor Changes
+
+- 2c01fb9: replace sub options: systemjs injectHtml with injectOpts
+
 ## 2.1.0-beta.5
 
 ### Patch Changes

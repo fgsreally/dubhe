@@ -101,11 +101,12 @@ export function patchVersion(version1: string, version2: string) {
 export const debugLog = debug('dubhe')
 
 export function getFormatDate() {
-  const date = new Date()
-  const year = date.getFullYear()
-  const month = date.getMonth()
-  const day = date.getDate()
-  return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`
+  // const date = new Date()
+  // const year = date.getFullYear()
+  // const month = date.getMonth()
+  // const day = date.getDate()
+  // return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`
+  return new Date().toLocaleString()
 }
 
 export function getPkgName(str: string) {

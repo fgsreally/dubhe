@@ -14,6 +14,7 @@
     "final-vite": "0.0.0"
   },
   "changesets": [
+    "beige-penguins-float",
     "eleven-brooms-teach",
     "funny-eggs-walk",
     "good-bobcats-design",

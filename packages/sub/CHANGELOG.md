@@ -1,5 +1,12 @@
 # dubhe-sub
 
+## 2.1.0-beta.7
+
+### Patch Changes
+
+- Updated dependencies [c3c84d6]
+  - dubhe@2.1.0-beta.7
+
 ## 2.1.0-beta.6
 
 ### Minor Changes

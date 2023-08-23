@@ -24,11 +24,11 @@ cli.command('root', 'show dubhe CACHE_ROOT/TYPE_ROOT path').action(() => {
   log(`TYPE_ROOT:${TYPE_ROOT}`)
 })
 
-cli.command('clear', 'clear dubhe cache & types/cache').action(() => {
+cli.command('clear', 'clear dubhe cache & dts').action(() => {
   fse.remove(CACHE_ROOT)
   log('remove cache')
   fse.remove(TYPE_ROOT)
-  log('remove types cache')
+  log('remove dts')
 })
 
 cli
@@ -72,16 +72,16 @@ cli
   })
 
 cli
-  .command('import <project/entry>', 'import source code from <project/entry>(like viteout/test)')
+  .command('import <module>', 'import source code from <project/entry>(like viteout/test)')
   .option('--path, -p [path]', '[string] dir path ', {
     default: '.dubhe-source',
   })
-  .action(async (projectEntry, option) => {
-    if (!projectEntry)
+  .action(async (module, option) => {
+    if (!module)
       return
     const dubheList = await getDubheList()
 
-    const [project, id] = projectEntry.split('/')
+    const [project, id] = module.split('/')
 
     if (!(project in dubheList)) {
       log(`Project:${project} does't exist in local records`, 'red')
@@ -96,7 +96,7 @@ cli
         return
       }
 
-      log(`Import [${projectEntry}] source code`)
+      log(`Import [${module}] source code`)
       if (pubList.from === 'esbuild' && !pubList.sourceGraph[file].includes(file))
         pubList.sourceGraph[file].push(file)
       for (const i of pubList.sourceGraph[file]) {
@@ -127,13 +127,9 @@ cli
   })
 
 cli
-  .command('delete <project>', 'delete cache & types-cache from <project>')
-  .alias('del')
-  .option('--no_types, -not', '[boolean] won\'t delete types ', {
-    default: false,
-  })
-  .option('--no_cache, -noc', '[boolean] won\'t delete cache ', {
-    default: false,
+  .command('delete <project> ', '<project>')
+  .option('--mode [mode]', '[string] delete cache/dts/all from ', {
+    default: 'all',
   })
 
   .action(async (project, options) => {
@@ -142,21 +138,21 @@ cli
       log(`${project} doesn't exist`, 'yellow')
       return
     }
-    if (!options.not) {
+    if (['dts', 'all'].includes(options.mode)) {
       removeLocalType(project)
       removeWorkspaceType(project)
 
-      log('remove types')
+      log('remove dts')
     }
-    if (!options.noc) {
+    if (['cache', 'all'].includes(options.mode)) {
       removeLocalCache(project)
 
       log('remove cache')
     }
   })
 
-cli.command('dts', 'use vue-dts to generate types declaration in watch mode')
-  .option('--vue, -v [v]', '[boolean] use vue-tsc ')
+cli.command('dts', 'use vue-dts to generate dts declaration in watch mode')
+  .option('--vue, -v [vue]', '[boolean] use vue-tsc ')
   .action(async (options) => {
     const { vue } = options
     const { outDir = '.dubhe' } = await getWorkSpaceConfig()
@@ -187,12 +183,10 @@ cli
   .option('--force', '[boolean] force to reinstall all files', {
     default: false,
   })
-  .option('--no_types, -not', '[boolean] won\'t update types', {
-    default: false,
+  .option('--mode [mode]', '[string] install cahce/dts/all', {
+    default: 'all',
   })
-  .option('--no_cache, -noc', '[boolean] won\'t update cache ', {
-    default: false,
-  })
+
   .action(async (options) => {
     const { remote: dubheList } = await getWorkSpaceConfig()
 
@@ -202,24 +196,27 @@ cli
         const localConfig = await getLocalContent(project, 'dubheList.json').catch(() => {
           return {}
         })
-        const isForceUpdate = options.force || !localConfig || !patchVersion(remoteConfig.version, localConfig.version)
+        const isNeedUpdate = options.force || !localConfig || !patchVersion(remoteConfig.version, localConfig.version)
+        if (isNeedUpdate) {
+          if (['all', 'cache'].includes(options.mode)) {
+            log(`Install [${project}] cache`)
+            await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files.filter((file: string) => {
+              if (isNeedUpdate)
+                return true
+              return !localConfig.files.includes(file)
+            })], project)
+          }
+          if ((['all', 'dts'].includes(options.mode))) {
+            log(`Install [${project}] dts`)
 
-        if (!options.noc) {
-          log(`Install [${project}] cache`)
-          await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files.filter((file: string) => {
-            if (isForceUpdate)
-              return true
-            return !localConfig.files.includes(file)
-          })], project)
+            installProjectTypes(dubheList[project].url, project)
+            updateLocalRecord(dubheList)
+            updateTSconfig(project, remoteConfig.entryFileMap)
+          }
         }
-        if ((!options.not) && isForceUpdate) {
-          log(`Install [${project}] types`)
-
-          installProjectTypes(dubheList[project].url, project)
-          updateLocalRecord(dubheList)
+        else {
+          log('No need to update')
         }
-
-        updateTSconfig(project, remoteConfig.entryFileMap)
       }
       catch (e) {
         log(`Install [${project}] cache fail`, 'red')
@@ -228,19 +225,19 @@ cli
     }
   })
 cli.command('link', 'link cache to workspace')
-  .option('--mode [mode]', '[string] link type or cache', {
-    default: 'type',
+  .option('--mode [mode]', '[string] link dts/cache/all', {
+    default: 'dts',
   })
   .action(async (options) => {
     const { remote: dubheList } = await getWorkSpaceConfig()
-    if (options.mode === 'type') {
+    if (['all', 'dts'].includes(options.mode)) {
       for (const project in dubheList) {
         const typsFiles = await fse.readJSON(getTypePathInCache(project, 'types.json'))
         linkTypes(project, typsFiles)
         log(`Link [${project}] `)
       }
     }
-    if (options.mode === 'cache') {
+    if (['all', 'cache'].includes(options.mode)) {
       for (const project in dubheList) {
         const { files } = await getLocalContent(project, 'dubheList.json')
         linkCache(project, files.map((file: string) => removeHash(file)))
@@ -272,7 +269,7 @@ cli.command('transform ', 'transform esm to systemjs')
         fse.copyFile(filePath, destPath)
       }
     })
-    log(`create systemjs band  to ${dest}`)
+    log(`create systemjs files to ${dest}`)
   })
 
 cli.command('export <project>', 'get exported methods from remote project')

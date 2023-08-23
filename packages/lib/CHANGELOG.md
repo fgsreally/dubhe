@@ -1,5 +1,11 @@
 # dubhe
 
+## 2.1.0-beta.7
+
+### Minor Changes
+
+- c3c84d6: fix cli command , it's breaking change
+
 ## 2.1.0-beta.6
 
 ### Minor Changes

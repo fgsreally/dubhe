@@ -1,5 +1,11 @@
 # dubhe
 
+## 2.1.0-beta.8
+
+### Patch Changes
+
+- 426efc6: install command is not up to version which just a symbol in pub
+
 ## 2.1.0-beta.7
 
 ### Minor Changes

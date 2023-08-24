@@ -192,31 +192,32 @@ cli
 
     for (const project in dubheList) {
       try {
-        const remoteConfig = await getRemoteContent(`${dubheList[project].url}/core/dubheList.json`)
+        const remoteConfig = await getRemoteContent(`${dubheList[project].url}/core/dubheList.json`).catch(() => null)
         const localConfig = await getLocalContent(project, 'dubheList.json').catch(() => {
-          return {}
+          return null
         })
-        const isNeedUpdate = options.force || !localConfig || !patchVersion(remoteConfig.version, localConfig.version)
-        if (isNeedUpdate) {
-          if (['all', 'cache'].includes(options.mode)) {
+        if (['all', 'cache'].includes(options.mode)) {
+          if (remoteConfig) {
             log(`Install [${project}] cache`)
+
             await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files.filter((file: string) => {
-              if (isNeedUpdate)
+              if (options.force || !localConfig)
                 return true
               return !localConfig.files.includes(file)
             })], project)
           }
-          if ((['all', 'dts'].includes(options.mode))) {
-            log(`Install [${project}] dts`)
-
-            installProjectTypes(dubheList[project].url, project)
-            updateLocalRecord(dubheList)
-            updateTSconfig(project, remoteConfig.entryFileMap)
+          else {
+            log('can\'t get remote dubheList.json', 'yellow')
           }
         }
-        else {
-          log('No need to update')
+        if ((['all', 'dts'].includes(options.mode))) { // can get dts without core/dubheList.json
+          log(`Install [${project}] dts`)
+
+          installProjectTypes(dubheList[project].url, project)
+          updateLocalRecord(dubheList)
+          remoteConfig && updateTSconfig(project, remoteConfig.entryFileMap)
         }
+        log('install finish', 'grey')
       }
       catch (e) {
         log(`Install [${project}] cache fail`, 'red')

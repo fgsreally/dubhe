@@ -1,5 +1,63 @@
 # dubhe-pub
 
+## 2.1.0-beta.4
+
+### Patch Changes
+
+- Updated dependencies [426efc6]
+  - dubhe@2.1.0-beta.8
+
+## 2.1.0-beta.3
+
+### Minor Changes
+
+- ec48efc: fix nest logic:support bundle command/public-path and so-on
+
+### Patch Changes
+
+- 392ffb9: support nest example,rename dubhelist.json to dubhelist.sub.json (in sub)
+- Updated dependencies [ec48efc]
+- Updated dependencies [392ffb9]
+  - dubhe@2.1.0-beta.3
+
+## 2.0.5-beta.1
+
+### Patch Changes
+
+- 048fe5c: entry name should not include 'index' when use app mode in vite
+
+## 2.0.5-beta.0
+
+### Patch Changes
+
+- caf16bf: patch a version to resolve unpublish pkg
+- Updated dependencies [caf16bf]
+  - dubhe@2.0.5-beta.0
+
+## 2.0.4
+
+### Patch Changes
+
+- f01a3a0: emitFile will crash program in watch mode
+- 9d51108: support dts hmr in dev mode (now only in vite)
+- Updated dependencies [122db68]
+- Updated dependencies [9d51108]
+  - dubhe@2.0.4
+
+## 2.0.3
+
+### Patch Changes
+
+- 7710964: fix types option in vite
+
+## 2.0.2
+
+### Patch Changes
+
+- 2b5408f: remove repeated .js suffix in html importmap when using hot mode in vite
+- Updated dependencies [2b5408f]
+  - dubhe@2.0.2
+
 ## 2.0.0
 
 ### Major Changes

@@ -1,5 +1,5 @@
 import { relative, resolve } from 'path'
-import { normalizePath } from 'vite'
+import { normalizePath } from 'dubhe'
 import type { PluginOption } from 'vite'
 import fse from 'fs-extra'
 // import contentHash from 'content-hash'

@@ -1,9 +1,9 @@
-import { dirname, extname, isAbsolute, join, normalize, relative, resolve, sep } from 'path'
+import { dirname, extname, isAbsolute, join, normalize, relative, resolve, sep,posix } from 'path'
 
 import { existsSync, lstatSync, readdirSync, rmdirSync } from 'fs'
 import type { Color } from 'colors'
 import colors from 'colors'
-import { normalizePath } from 'vite'
+import os from 'os'
 
 import fse from 'fs-extra'
 import cv from 'compare-versions'
@@ -28,6 +28,17 @@ import {
 // export function getHMRFilePath(i: ModuleNode) {
 //   return `/${normalizePath(relative(process.cwd(), i?.file || ''))}`
 // }
+const windowsSlashRE = /\\/g
+
+export function slash(p: string): string {
+  return p.replace(windowsSlashRE, '/')
+}
+export const isWindows = os.platform() === 'win32'
+
+
+export function normalizePath(id: string): string {
+  return posix.normalize(isWindows ? slash(id) : id)
+}
 
 export function resolveURLQuery(url: string) {
   if (!url.startsWith(`/${VIRTUAL_HMR_PREFIX}`))
@@ -101,11 +112,12 @@ export function patchVersion(version1: string, version2: string) {
 export const debugLog = debug('dubhe')
 
 export function getFormatDate() {
-  const date = new Date()
-  const year = date.getFullYear()
-  const month = date.getMonth()
-  const day = date.getDate()
-  return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`
+  // const date = new Date()
+  // const year = date.getFullYear()
+  // const month = date.getMonth()
+  // const day = date.getDate()
+  // return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`
+  return new Date().toLocaleString()
 }
 
 export function getPkgName(str: string) {

@@ -2,7 +2,7 @@ import { dirname, join, resolve } from 'path'
 // eslint-disable-next-line n/no-deprecated-api
 import { resolve as urlResolve } from 'url'
 
-import { normalizePath } from 'vite'
+import { normalizePath } from './utils'
 import axios from 'axios'
 import fse from 'fs-extra'
 import { log } from './utils'
@@ -104,3 +104,4 @@ export async function linkTypes(project: string, fileSet: string) {
     }
   }
 }
+

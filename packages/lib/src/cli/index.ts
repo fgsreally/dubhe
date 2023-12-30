@@ -10,7 +10,7 @@ import { getPkgName, log, patchVersion, traverseDic } from '../utils'
 import pkgs from '../../package.json'
 import { CACHE_ROOT, TYPE_ROOT } from '../common'
 import { esmToSystemjs } from '../babel'
-import { getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, removeLocalCache, removeLocalType, removeWorkspaceType, updateLocalRecord } from '../cache'
+import { getLocalContent, getLocalPath, getRemoteContent, getTypePathInCache, linkCache, removeLocalCache, removeLocalType, removeWorkspaceType, updateLocalRecord } from '../cache'
 import { linkTypes, updateTSconfig } from '../dts'
 import { removeHash } from '../core'
 import { analysePubDep, analyseSubDep, downloadFile, generateExports, getDubheList, getWorkSpaceConfig, installProjectCache, installProjectTypes, isExist } from './utils'
@@ -24,11 +24,11 @@ cli.command('root', 'show dubhe CACHE_ROOT/TYPE_ROOT path').action(() => {
   log(`TYPE_ROOT:${TYPE_ROOT}`)
 })
 
-cli.command('clear', 'clear dubhe cache & types/cache').action(() => {
+cli.command('clear', 'clear dubhe cache & dts').action(() => {
   fse.remove(CACHE_ROOT)
   log('remove cache')
   fse.remove(TYPE_ROOT)
-  log('remove types cache')
+  log('remove dts')
 })
 
 cli
@@ -72,16 +72,16 @@ cli
   })
 
 cli
-  .command('import <project/entry>', 'import source code from <project/entry>(like viteout/test)')
-  .option('--path, -p [p]', '[string] dir path ', {
+  .command('import <module>', 'import source code from <project/entry>(like viteout/test)')
+  .option('--path, -p [path]', '[string] dir path ', {
     default: '.dubhe-source',
   })
-  .action(async (projectEntry, option) => {
-    if (!projectEntry)
+  .action(async (module, option) => {
+    if (!module)
       return
     const dubheList = await getDubheList()
 
-    const [project, id] = projectEntry.split('/')
+    const [project, id] = module.split('/')
 
     if (!(project in dubheList)) {
       log(`Project:${project} does't exist in local records`, 'red')
@@ -96,7 +96,7 @@ cli
         return
       }
 
-      log(`Import [${projectEntry}] source code`)
+      log(`Import [${module}] source code`)
       if (pubList.from === 'esbuild' && !pubList.sourceGraph[file].includes(file))
         pubList.sourceGraph[file].push(file)
       for (const i of pubList.sourceGraph[file]) {
@@ -127,13 +127,9 @@ cli
   })
 
 cli
-  .command('delete <project>', 'delete cache & types-cache from <project>')
-  .alias('del')
-  .option('--no_types, -not', '[boolean] won\'t delete types ', {
-    default: false,
-  })
-  .option('--no_cache, -noc', '[boolean] won\'t delete cache ', {
-    default: false,
+  .command('delete <project> ', '<project>')
+  .option('--mode [mode]', '[string] delete cache/dts/all from ', {
+    default: 'all',
   })
 
   .action(async (project, options) => {
@@ -142,21 +138,21 @@ cli
       log(`${project} doesn't exist`, 'yellow')
       return
     }
-    if (!options.not) {
+    if (['dts', 'all'].includes(options.mode)) {
       removeLocalType(project)
       removeWorkspaceType(project)
 
-      log('remove types')
+      log('remove dts')
     }
-    if (!options.noc) {
+    if (['cache', 'all'].includes(options.mode)) {
       removeLocalCache(project)
 
       log('remove cache')
     }
   })
 
-cli.command('dts', 'use vue-dts to generate types declaration in watch mode')
-  .option('--vue, -v [v]', '[boolean] use vue-tsc ')
+cli.command('dts', 'use vue-dts to generate dts declaration in watch mode')
+  .option('--vue, -v [vue]', '[boolean] use vue-tsc ')
   .action(async (options) => {
     const { vue } = options
     const { outDir = '.dubhe' } = await getWorkSpaceConfig()
@@ -187,39 +183,41 @@ cli
   .option('--force', '[boolean] force to reinstall all files', {
     default: false,
   })
-  .option('--no_types, -not', '[boolean] won\'t update types', {
-    default: false,
+  .option('--mode [mode]', '[string] install cahce/dts/all', {
+    default: 'all',
   })
-  .option('--no_cache, -noc', '[boolean] won\'t update cache ', {
-    default: false,
-  })
+
   .action(async (options) => {
     const { remote: dubheList } = await getWorkSpaceConfig()
 
     for (const project in dubheList) {
       try {
-        const remoteConfig = await getRemoteContent(`${dubheList[project].url}/core/dubheList.json`)
+        const remoteConfig = await getRemoteContent(`${dubheList[project].url}/core/dubheList.json`).catch(() => null)
         const localConfig = await getLocalContent(project, 'dubheList.json').catch(() => {
-          return {}
+          return null
         })
-        const isForceUpdate = options.force || !localConfig || !patchVersion(remoteConfig.version, localConfig.version)
+        if (['all', 'cache'].includes(options.mode)) {
+          if (remoteConfig) {
+            log(`Install [${project}] cache`)
 
-        if (!options.noc) {
-          log(`Install [${project}] cache`)
-          await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files.filter((file: string) => {
-            if (isForceUpdate)
-              return true
-            return !localConfig.files.includes(file)
-          })], project)
+            await installProjectCache(dubheList[project].url, ['dubheList.json', ...remoteConfig.files.filter((file: string) => {
+              if (options.force || !localConfig)
+                return true
+              return !localConfig.files.includes(file)
+            })], project)
+          }
+          else {
+            log('can\'t get remote dubheList.json', 'yellow')
+          }
         }
-        if ((!options.not) && isForceUpdate) {
-          log(`Install [${project}] types`)
+        if ((['all', 'dts'].includes(options.mode))) { // can get dts without core/dubheList.json
+          log(`Install [${project}] dts`)
 
           installProjectTypes(dubheList[project].url, project)
           updateLocalRecord(dubheList)
+          remoteConfig && updateTSconfig(project, remoteConfig.entryFileMap)
         }
-
-        updateTSconfig(project, remoteConfig.entryFileMap)
+        log('install finish', 'grey')
       }
       catch (e) {
         log(`Install [${project}] cache fail`, 'red')
@@ -227,19 +225,32 @@ cli
       }
     }
   })
-cli.command('link', 'link types cache to workspace').action(async () => {
-  const { remote: dubheList } = await getWorkSpaceConfig()
-  for (const project in dubheList) {
-    const typsFiles = await fse.readJSON(getTypePathInCache(project, 'types.json'))
-    linkTypes(project, typsFiles)
-    log(`Link [${project}] success`)
-  }
-})
+cli.command('link', 'link cache to workspace')
+  .option('--mode [mode]', '[string] link dts/cache/all', {
+    default: 'dts',
+  })
+  .action(async (options) => {
+    const { remote: dubheList } = await getWorkSpaceConfig()
+    if (['all', 'dts'].includes(options.mode)) {
+      for (const project in dubheList) {
+        const typsFiles = await fse.readJSON(getTypePathInCache(project, 'types.json'))
+        linkTypes(project, typsFiles)
+        log(`Link [${project}] `)
+      }
+    }
+    if (['all', 'cache'].includes(options.mode)) {
+      for (const project in dubheList) {
+        const { files } = await getLocalContent(project, 'dubheList.json')
+        linkCache(project, files.map((file: string) => removeHash(file)))
+        log(`Link [${project}] `)
+      }
+    }
+  })
 cli.command('transform ', 'transform esm to systemjs')
-  .option('--dir', '[string] esm files dir ', {
+  .option('--dir <dir>', '[string] esm files dir ', {
     default: 'core',
   })
-  .option('--to', '[string] systemjs files output dir', {
+  .option('--to <to>', '[string] systemjs files output dir', {
     default: 'systemjs',
   })
   .action(async (options) => {
@@ -259,7 +270,7 @@ cli.command('transform ', 'transform esm to systemjs')
         fse.copyFile(filePath, destPath)
       }
     })
-    log(`create systemjs band  to ${dest}`)
+    log(`create systemjs files to ${dest}`)
   })
 
 cli.command('export <project>', 'get exported methods from remote project')
@@ -284,10 +295,10 @@ cli
   )
   .alias('b')
 
-  .option('--outDir, -o [o]', '[string] outDir for vite output', {
+  .option('--outDir, -o [outDir]', '[string] outDir for vite output', {
     default: 'dist',
   })
-  .option('--dubheList, -d [d]', '[string] dubheList.sub.json path in sub', {
+  .option('--dubheList, -d [dubheList]', '[string] dubheList.sub.json path in sub', {
     default: 'dist',
   })
   .action(async (option) => {

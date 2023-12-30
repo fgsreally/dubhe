@@ -1,6 +1,6 @@
 import { dirname, isAbsolute, relative } from 'path'
 import type { Project } from 'ts-morph'
-import { normalizePath } from 'vite'
+import { normalizePath } from 'dubhe'
 import type { Alias } from 'vite'
 import { isRegExp } from 'dubhe'
 import { compileVueCode } from './compile'

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { relative, resolve } from 'path'
 import type { PluginOption } from 'vite'
-import { normalizePath } from 'vite'
+import { normalizePath } from 'dubhe'
 import type { PubConfig } from 'dubhe'
 import type { ResolvedId } from 'rollup'
 import debug from 'debug'

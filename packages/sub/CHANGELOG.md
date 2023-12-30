@@ -1,5 +1,93 @@
 # dubhe-sub
 
+## 2.1.0-beta.8
+
+### Patch Changes
+
+- Updated dependencies [426efc6]
+  - dubhe@2.1.0-beta.8
+
+## 2.1.0-beta.7
+
+### Patch Changes
+
+- Updated dependencies [c3c84d6]
+  - dubhe@2.1.0-beta.7
+
+## 2.1.0-beta.6
+
+### Minor Changes
+
+- 3cdc7ba: test injectOpts link
+- 2c01fb9: replace sub options: systemjs injectHtml with injectOpts
+
+### Patch Changes
+
+- 2c01fb9: now webpack can handle hash correctly
+- Updated dependencies [2c01fb9]
+  - dubhe@2.1.0-beta.6
+
+## 2.1.0-beta.5
+
+### Patch Changes
+
+- Updated dependencies [c4874b9]
+  - dubhe@2.1.0-beta.5
+
+## 2.1.0-beta.4
+
+### Patch Changes
+
+- Updated dependencies [6c2ca88]
+  - dubhe@2.1.0-beta.4
+
+## 2.1.0-beta.3
+
+### Minor Changes
+
+- ec48efc: fix nest logic:support bundle command/public-path and so-on
+
+### Patch Changes
+
+- 392ffb9: support nest example,rename dubhelist.json to dubhelist.sub.json (in sub)
+- Updated dependencies [ec48efc]
+- Updated dependencies [392ffb9]
+  - dubhe@2.1.0-beta.3
+
+## 2.0.5-beta.2
+
+### Patch Changes
+
+- 3e84520: support custom resolve for unplugin-auto-import(it seems sideeffect is not required in dubhe)
+- Updated dependencies [6cd2c6b]
+- Updated dependencies [3e84520]
+  - dubhe@2.0.5-beta.2
+
+## 2.0.5-beta.0
+
+### Patch Changes
+
+- caf16bf: patch a version to resolve unpublish pkg
+- Updated dependencies [caf16bf]
+  - dubhe@2.0.5-beta.0
+
+## 2.0.4
+
+### Patch Changes
+
+- 9d51108: support dts hmr in dev mode (now only in vite)
+- Updated dependencies [122db68]
+- Updated dependencies [9d51108]
+  - dubhe@2.0.4
+
+## 2.0.2
+
+### Patch Changes
+
+- 2b5408f: remove repeated .js suffix in html importmap when using hot mode in vite
+- Updated dependencies [2b5408f]
+  - dubhe@2.0.2
+
 ## 2.0.1
 
 ### Patch Changes

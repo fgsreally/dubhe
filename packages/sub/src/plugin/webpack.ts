@@ -62,13 +62,18 @@ export class WebpackPlugin {
   // use virtual-module in development
   // use local-cache in production with parallel
   apply(compiler: Compiler) {
+    const injectOpts = {
+      importmap: 'inline',
+      systemjs: 'inline',
+      ...(this.config.injectOpts || {}),
+    }
     for (const plugin of compiler.options.plugins) {
       if (plugin && plugin.constructor.name === 'HtmlWebpackPlugin')
         htmlPlugin = plugin.constructor as any
     }
 
     const { mode: command, devServer } = compiler.options
-    const { injectHtml, externals, polyfill, version, meta, remote, cache, project } = this.config
+    const { externals, polyfill, version, meta, remote, cache, project } = this.config
     cache && updateLocalRecord(remote)
 
     const originRemote = Object.entries(remote)
@@ -264,16 +269,28 @@ export class WebpackPlugin {
                 })
               }
             }
-            if (injectHtml !== false) {
-              if (this.config.systemjs) {
-                tags.unshift({
-                  tagName: 'script',
-                  voidTag: false,
-                  meta: { plugin: 'dubhe::subscribe' },
-                  attributes: { type: 'systemjs-importmap' },
-                  innerHTML: `{"imports":${JSON.stringify(state.systemjsImportMap)}}`,
-                })
-              }
+            if (injectOpts.systemjs === 'inline') {
+              tags.unshift({
+                tagName: 'script',
+                voidTag: false,
+                meta: { plugin: 'dubhe::subscribe' },
+                attributes: { type: 'systemjs-importmap' },
+                innerHTML: `{"imports":${JSON.stringify(state.systemjsImportMap)}}`,
+              })
+            }
+            if (injectOpts.systemjs === 'link') {
+              tags.unshift({
+                tagName: 'script',
+                voidTag: false,
+                meta: { plugin: 'dubhe::subscribe' },
+                attributes: {
+                  type: 'systemjs-importmap',
+                  nomodule: true,
+                  src: './assets/systemjs-importmap.json',
+                },
+              })
+            }
+            if (injectOpts.importmap === 'inline') {
               tags.unshift({
                 tagName: 'script',
                 voidTag: false,
@@ -281,16 +298,24 @@ export class WebpackPlugin {
                 attributes: { type: 'importmap' },
                 innerHTML: `{"imports":${JSON.stringify(state.esmImportMap)}}`,
               })
+            }
+            if (injectOpts.importmap === 'link') {
               tags.unshift({
                 tagName: 'script',
                 voidTag: false,
                 meta: { plugin: 'dubhe::subscribe' },
-                attributes: { },
-                innerHTML: Object.entries(state.publicPath).map(([k, v]) => {
-                  return `globalThis.__DP_${k}_="${v}/core"`
-                }).join(';'),
+                attributes: { type: 'importmap', src: './assets/importmap.json' },
               })
             }
+            tags.unshift({
+              tagName: 'script',
+              voidTag: false,
+              meta: { plugin: 'dubhe::subscribe' },
+              attributes: { },
+              innerHTML: Object.entries(state.publicPath).map(([k, v]) => {
+                return `globalThis.__DP_${k}_="${v}/core"`
+              }).join(';'),
+            })
 
             return data
           },
@@ -343,6 +368,18 @@ export class WebpackPlugin {
         size: () => content.length,
       } as any
 
+      if (injectOpts.importmap === 'link') {
+        compilation.assets['importmap.json'] = {
+          source: () => `{"imports":${JSON.stringify(state.esmImportMap)}}`,
+          size: () => `{"imports":${JSON.stringify(state.esmImportMap)}}`.length,
+        } as any
+      }
+      if (injectOpts.systemjs === 'link') {
+        compilation.assets['systemjs-importmap.json'] = {
+          source: () => `{"imports":${JSON.stringify(state.systemjsImportMap)}}`,
+          size: () => `{"imports":${JSON.stringify(state.systemjsImportMap)}}`.length,
+        } as any
+      }
       callback()
     })
     compiler.hooks.environment.tap('dubhe::subscibe', async () => {
@@ -369,6 +406,7 @@ export class WebpackPlugin {
                   state.aliasMap,
                 )
                 Debug(`get remote entry --${project}/${moduleName}`)
+
                 const { url } = remote[project]
                 const { data } = await getVirtualContent(
                   `${url}/core/${moduleName}`,
@@ -386,8 +424,7 @@ export class WebpackPlugin {
                   cache,
                   cache,
                 ).catch(() => ({} as any))
-
-                const modulePath = getLocalPath(project, moduleName)
+                const modulePath = getLocalPath(project, removeHash(moduleName))
                 request.request = modulePath
                 if (useVirtualModule) {
                   this.vfs.writeModule(modulePath, data)
@@ -421,7 +458,6 @@ export class WebpackPlugin {
                   cache,
                 )
                 Debug(`get sourcemap --${project}/${moduleName}`)
-
                 const { data: map } = await getVirtualContent(
                   `${url}.map`,
                   project,
@@ -430,9 +466,11 @@ export class WebpackPlugin {
                   cache,
                 ).catch(() => ({} as any))
 
+                const modulePath = getLocalPath(project, removeHash(moduleName))
+                request.request = modulePath
                 if (useVirtualModule) {
-                  this.vfs.writeModule(id, data)
-                  map && this.vfs.writeModule(`${id}.map`, map)
+                  this.vfs.writeModule(modulePath, data)
+                  map && this.vfs.writeModule(`${modulePath}.map`, map)
                 }
               }
 

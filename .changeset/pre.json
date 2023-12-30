@@ -10,7 +10,22 @@
     "dubhe": "2.0.1",
     "dubhe-pub": "2.0.0",
     "dubhe-sub": "2.0.1",
-    "dubhe-vite": "1.0.6"
+    "dubhe-vite": "1.0.6",
+    "final-vite": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "beige-penguins-float",
+    "eleven-brooms-teach",
+    "empty-shoes-wave",
+    "funny-eggs-walk",
+    "good-bobcats-design",
+    "happy-keys-complain",
+    "hungry-hornets-tie",
+    "khaki-dots-burn",
+    "light-tables-rush",
+    "plenty-geckos-end",
+    "small-scissors-do",
+    "spotty-eels-enjoy",
+    "wild-files-move"
+  ]
 }

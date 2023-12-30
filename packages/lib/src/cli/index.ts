@@ -298,6 +298,9 @@ cli
   .option('--outDir, -o [outDir]', '[string] outDir for vite output', {
     default: 'dist',
   })
+  .option('--configFile, -c [configFile]', '[string] vite configFile', {
+    default: false,
+  })
   .option('--dubheList, -d [dubheList]', '[string] dubheList.sub.json path in sub', {
     default: 'dist',
   })
@@ -316,7 +319,7 @@ cli
     }
 
     log('Bundle start')
-    await buildExternal(option.outDir, files)
+    await buildExternal(option.outDir, files, option.configFile)
     log('Bundle finish')
     fse.remove(resolve(root, 'dubhe-bundle'))
     log('Remove entry dir', 'grey')

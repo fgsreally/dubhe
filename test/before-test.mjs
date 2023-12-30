@@ -1,53 +1,61 @@
 #!/usr/bin/env zx
-import { $ } from 'zx'
-import waitOn from 'wait-on'
+import { $ } from "zx";
+import waitOn from "wait-on";
 
-const createOpts = ports => ({
-  resources: ports.map(port => `http-get://localhost:${port}`),
+const createOpts = (ports) => ({
+  resources: ports.map((port) => `http-get://localhost:${port}`),
   log: true,
   // vite project need to accept headers
   headers: {
-    accept: '*/*',
+    accept: "*/*",
   },
   validateStatus(status) {
-    return status >= 200 && status < 300 // default if not provided
+    return status >= 200 && status < 300; // default if not provided
   },
-})
+});
 
 function HotBundle() {
-  return $`npm run example:hot`
+  return $`npm run example:hot`;
 }
 
 function ColdBundle() {
-  return $`npm run example:cold`
+  return $`npm run example:cold`;
 }
 
 async function PubBundle() {
-  await $`npm run example:pub`
+  await $`npm run example:pub`;
 }
 function Serve() {
-  $`npm run example:serve`
+  $`npm run example:serve`;
 }
 
 function SubDev() {
-  $`pnpm --filter=sub-vite run dev`
+  $`pnpm --filter=sub-vite run dev`;
 }
 async function FinalBuild() {
-  await $`pnpm --filter final-vite run hot`
-  await $`pnpm --filter final-vite run cold`
+  await $`pnpm --filter final-vite run hot`;
+  await $`pnpm --filter final-vite run cold`;
 }
-async function start() {
-  await PubBundle()
-  Serve()
-  await waitOn(createOpts([8080, 8081]))
-  SubDev()
-  await HotBundle()
-  await ColdBundle()
-  await waitOn(createOpts([4100, 8082, 8083, 8085]))
-  await FinalBuild()
-  await $`npm run test:unit`
-  await $`npm run test:e2e`
-  process.exit(0)
+export function stop(timeout) {
+  return new Promise((resolve) => setTimeout(() => resolve(), timeout));
 }
 
-start()
+async function start() {
+  await PubBundle();
+  Serve();
+  await waitOn(createOpts([8080, 8081]));
+  SubDev();
+  await HotBundle();
+  await ColdBundle();
+  await waitOn(createOpts([4100, 8082, 8083, 8085]));
+  await FinalBuild();
+
+  await stop(10000);
+
+  await $`npm run test:unit`;
+  await $`npm run test:e2e`;
+  
+  process.exit(0);
+}
+
+start();

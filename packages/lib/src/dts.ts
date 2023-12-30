@@ -2,10 +2,9 @@ import { dirname, join, resolve } from 'path'
 // eslint-disable-next-line n/no-deprecated-api
 import { resolve as urlResolve } from 'url'
 
-import { normalizePath } from 'vite'
 import axios from 'axios'
 import fse from 'fs-extra'
-import { log } from './utils'
+import { log, normalizePath } from './utils'
 import {
   TS_CONFIG_PATH,
   TYPE_ROOT,

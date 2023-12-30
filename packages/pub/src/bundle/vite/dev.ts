@@ -1,12 +1,11 @@
 import fs from 'fs'
 import { relative, resolve } from 'path'
 import type { PluginOption } from 'vite'
-import { normalizePath } from 'vite'
+import { VIRTUAL_HMR_PREFIX, log, normalizePath, sendHMRInfo } from 'dubhe'
 import type { PubConfig } from 'dubhe'
 import type { ResolvedId } from 'rollup'
 import debug from 'debug'
 import sirv from 'sirv'
-import { VIRTUAL_HMR_PREFIX, log, sendHMRInfo } from 'dubhe'
 import { isExternal } from './vite'
 const Debug = debug('dubhe:pub')
 const root = process.cwd()

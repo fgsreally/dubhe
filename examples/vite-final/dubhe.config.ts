@@ -23,7 +23,7 @@ export default {
   },
   injectHtml: true,
   systemjs: true,
-  cache: !process.env.CI,
+  cache: !process.env.TEST,
   types: true,
   info: false,
   polyfill: {

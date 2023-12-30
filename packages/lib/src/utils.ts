@@ -1,9 +1,9 @@
-import { dirname, extname, isAbsolute, join, normalize, relative, resolve, sep } from 'path'
+import { dirname, extname, isAbsolute, join, normalize, relative, resolve, sep,posix } from 'path'
 
 import { existsSync, lstatSync, readdirSync, rmdirSync } from 'fs'
 import type { Color } from 'colors'
 import colors from 'colors'
-import { normalizePath } from 'vite'
+import os from 'os'
 
 import fse from 'fs-extra'
 import cv from 'compare-versions'
@@ -28,6 +28,17 @@ import {
 // export function getHMRFilePath(i: ModuleNode) {
 //   return `/${normalizePath(relative(process.cwd(), i?.file || ''))}`
 // }
+const windowsSlashRE = /\\/g
+
+export function slash(p: string): string {
+  return p.replace(windowsSlashRE, '/')
+}
+export const isWindows = os.platform() === 'win32'
+
+
+export function normalizePath(id: string): string {
+  return posix.normalize(isWindows ? slash(id) : id)
+}
 
 export function resolveURLQuery(url: string) {
   if (!url.startsWith(`/${VIRTUAL_HMR_PREFIX}`))

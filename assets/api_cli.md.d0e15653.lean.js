@@ -1,0 +1,1 @@
+import{_ as s,o as l,c as a,a as e}from"./app.b9f18b82.js";const D=JSON.parse('{"title":"命令行工具","description":"","frontmatter":{},"headers":[],"relativePath":"api/cli.md","lastUpdated":1703935588000}'),n={name:"api/cli.md"},o=e("",28),p=[o];function t(c,i,r,d,y,B){return l(),a("div",null,p)}const u=s(n,[["render",t]]);export{D as __pageData,u as default};

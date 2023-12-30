@@ -1,9 +1,9 @@
-import { dirname, extname, isAbsolute, join, normalize, relative, resolve, sep,posix } from 'path'
+import { dirname, extname, isAbsolute, join, normalize, posix, relative, resolve, sep } from 'path'
 
 import { existsSync, lstatSync, readdirSync, rmdirSync } from 'fs'
+import os from 'os'
 import type { Color } from 'colors'
 import colors from 'colors'
-import os from 'os'
 
 import fse from 'fs-extra'
 import cv from 'compare-versions'
@@ -34,7 +34,6 @@ export function slash(p: string): string {
   return p.replace(windowsSlashRE, '/')
 }
 export const isWindows = os.platform() === 'win32'
-
 
 export function normalizePath(id: string): string {
   return posix.normalize(isWindows ? slash(id) : id)

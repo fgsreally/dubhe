@@ -8,5 +8,5 @@ export const tsup: Options = {
   clean: true,
   shims: false,
   sourcemap: true,
-  external:Object.keys(pkg.devDependencies)
+  external: Object.keys(pkg.devDependencies),
 }

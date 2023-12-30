@@ -1,13 +1,4 @@
 import { relative, resolve } from 'path'
-import { normalizePath } from 'dubhe'
-import type { PluginOption } from 'vite'
-import fse from 'fs-extra'
-// import contentHash from 'content-hash'
-import type {
-  OutputChunk,
-} from 'rollup'
-
-import type { PubConfig } from 'dubhe'
 import {
   DUBHE_PATH_SYMBOL,
   VIRTUAL_HMR_PREFIX,
@@ -18,8 +9,17 @@ import {
   injectScriptToPub,
   isSourceFile,
   log,
+  normalizePath,
   sendHMRInfo,
 } from 'dubhe'
+import type { PluginOption } from 'vite'
+import fse from 'fs-extra'
+// import contentHash from 'content-hash'
+import type {
+  OutputChunk,
+} from 'rollup'
+
+import type { PubConfig } from 'dubhe'
 import debug from 'debug'
 interface HMRInfo {
   changeFile: string

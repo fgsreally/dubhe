@@ -7,5 +7,5 @@ export const tsup: Options = {
   splitting: false,
   clean: true,
   shims: false,
-external:['vite']
+  external: ['vite'],
 }

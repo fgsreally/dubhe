@@ -1,5 +1,17 @@
 # dubhe
 
+## 2.1.0-beta.9
+
+### Minor Changes
+
+- da0fb82: update vite/rollup version
+
+### Patch Changes
+
+- bb78f41: replace normalizePath from vite
+- 75acd73: build command support configFile
+- ac9a18a: all bundler(vite/esbuild/webpack) should be external (put those in devdependence)
+
 ## 2.1.0-beta.8
 
 ### Patch Changes

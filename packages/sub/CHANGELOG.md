@@ -1,5 +1,20 @@
 # dubhe-sub
 
+## 2.1.0-beta.9
+
+### Minor Changes
+
+- da0fb82: update vite/rollup version
+
+### Patch Changes
+
+- ac9a18a: all bundler(vite/esbuild/webpack) should be external (put those in devdependence)
+- Updated dependencies [bb78f41]
+- Updated dependencies [75acd73]
+- Updated dependencies [da0fb82]
+- Updated dependencies [ac9a18a]
+  - dubhe@2.1.0-beta.9
+
 ## 2.1.0-beta.8
 
 ### Patch Changes

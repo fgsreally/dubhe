@@ -1,6 +1,6 @@
 {
   "name": "dubhe-sub",
-  "version": "2.1.0-beta.7",
+  "version": "2.1.0-beta.8",
   "description": "Micro module subscription side",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

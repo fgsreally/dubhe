@@ -27,7 +27,7 @@ export default {
   //   importmap: 'link',
   //   systemjs: 'link',
   // },
-  cache: !process.env.CI,
+  cache: !process.env.TEST,
   types: true,
   info: false,
   polyfill: {

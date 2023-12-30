@@ -89,14 +89,14 @@ importers:
         version: 3.2.47
     devDependencies:
       '@vitejs/plugin-vue':
-        specifier: ^4.1.0
-        version: 4.2.3(vite@4.3.9)(vue@3.2.47)
+        specifier: ^5.0.1
+        version: 5.0.1(vite@5.0.10)(vue@3.2.47)
       typescript:
         specifier: ^5.0.2
         version: 5.0.4
       vite:
-        specifier: ^4.3.2
-        version: 4.3.9
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@17.0.45)
       vue-tsc:
         specifier: ^1.4.2
         version: 1.6.5(typescript@5.0.4)
@@ -175,8 +175,8 @@ importers:
         version: registry.npmmirror.com/vue@3.2.47
     devDependencies:
       '@vitejs/plugin-vue':
-        specifier: ^4.0.0
-        version: registry.npmmirror.com/@vitejs/plugin-vue@4.0.0(vite@5.0.10)(vue@3.2.47)
+        specifier: ^5.0.1
+        version: 5.0.1(vite@5.0.10)(vue@3.2.47)
       typescript:
         specifier: ^4.9.3
         version: registry.npmmirror.com/typescript@4.9.5
@@ -342,8 +342,8 @@ importers:
         specifier: ^9.0.13
         version: registry.npmmirror.com/@types/fs-extra@9.0.13
       rollup:
-        specifier: 2.78.1
-        version: 2.78.1
+        specifier: ^4.0.0
+        version: 4.9.2
       tsup:
         specifier: ^6.1.2
         version: registry.npmmirror.com/tsup@6.6.0(typescript@4.9.5)
@@ -406,8 +406,8 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6
       rollup:
-        specifier: 2.78.1
-        version: registry.npmmirror.com/rollup@2.78.1
+        specifier: ^4.0.0
+        version: 4.9.2
       tsup:
         specifier: ^6.1.2
         version: registry.npmmirror.com/tsup@6.6.0(typescript@4.9.5)
@@ -452,8 +452,8 @@ importers:
         specifier: ^5.5.0
         version: registry.npmmirror.com/html-webpack-plugin@5.5.0(webpack@5.75.0)
       rollup:
-        specifier: 2.78.1
-        version: registry.npmmirror.com/rollup@2.78.1
+        specifier: ^4.0.0
+        version: 4.9.2
       sigma:
         specifier: ^2.4.0
         version: registry.npmmirror.com/sigma@2.4.0(graphology-types@0.24.7)
@@ -465,7 +465,7 @@ importers:
         version: registry.npmmirror.com/typescript@4.9.5
       unplugin-vue-components:
         specifier: ^0.22.9
-        version: registry.npmmirror.com/unplugin-vue-components@0.22.12(rollup@2.78.1)(vue@3.4.1)
+        version: registry.npmmirror.com/unplugin-vue-components@0.22.12(rollup@4.9.2)(vue@3.4.1)
       vite:
         specifier: ^5.0.0
         version: 5.0.10(@types/node@17.0.45)
@@ -2630,17 +2630,6 @@ packages:
     dev: true
     optional: true
 
-  /@vitejs/plugin-vue@4.2.3(vite@4.3.9)(vue@3.2.47):
-    resolution: {integrity: sha512-R6JDUfiZbJA9cMiguQ7jxALsgiprjBeHL5ikpXfJCH62pPHtI+JdJ5xWj6Ev73yXSlYl86+blXn1kZHQ7uElxw==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    peerDependencies:
-      vite: ^4.0.0
-      vue: ^3.2.25
-    dependencies:
-      vite: 4.3.9
-      vue: 3.2.47
-    dev: true
-
   /@vitejs/plugin-vue@4.2.3(vite@4.5.1)(vue@3.2.47):
     resolution: {integrity: sha512-R6JDUfiZbJA9cMiguQ7jxALsgiprjBeHL5ikpXfJCH62pPHtI+JdJ5xWj6Ev73yXSlYl86+blXn1kZHQ7uElxw==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -2650,6 +2639,17 @@ packages:
     dependencies:
       vite: 4.5.1(@types/node@18.15.11)
       vue: 3.2.47
+    dev: true
+
+  /@vitejs/plugin-vue@5.0.1(vite@5.0.10)(vue@3.2.47):
+    resolution: {integrity: sha512-lwvZX5tDhJpRJEKsjoUSWgaD26Lk9X4aDYGAPpr/Q6cLTT3PC8LPu2dsnYEweAZiNgHsbyKL2Svc/CDrFOsbtw==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    peerDependencies:
+      vite: ^5.0.0
+      vue: ^3.2.25
+    dependencies:
+      vite: 5.0.10(terser@5.26.0)
+      vue: registry.npmmirror.com/vue@3.2.47
     dev: true
 
   /@vitest/expect@0.34.2:
@@ -4139,36 +4139,6 @@ packages:
       '@esbuild/win32-ia32': 0.17.19
       '@esbuild/win32-x64': 0.17.19
 
-  /esbuild@0.17.6:
-    resolution: {integrity: sha512-TKFRp9TxrJDdRWfSsSERKEovm6v30iHnrjlcGhLBOtReE28Yp1VSBRfO3GTaOFMoxsNerx4TjrhzSuma9ha83Q==}
-    engines: {node: '>=12'}
-    hasBin: true
-    requiresBuild: true
-    optionalDependencies:
-      '@esbuild/android-arm': 0.17.6
-      '@esbuild/android-arm64': 0.17.6
-      '@esbuild/android-x64': 0.17.6
-      '@esbuild/darwin-arm64': 0.17.6
-      '@esbuild/darwin-x64': 0.17.6
-      '@esbuild/freebsd-arm64': 0.17.6
-      '@esbuild/freebsd-x64': 0.17.6
-      '@esbuild/linux-arm': 0.17.6
-      '@esbuild/linux-arm64': 0.17.6
-      '@esbuild/linux-ia32': 0.17.6
-      '@esbuild/linux-loong64': 0.17.6
-      '@esbuild/linux-mips64el': 0.17.6
-      '@esbuild/linux-ppc64': 0.17.6
-      '@esbuild/linux-riscv64': 0.17.6
-      '@esbuild/linux-s390x': 0.17.6
-      '@esbuild/linux-x64': 0.17.6
-      '@esbuild/netbsd-x64': 0.17.6
-      '@esbuild/openbsd-x64': 0.17.6
-      '@esbuild/sunos-x64': 0.17.6
-      '@esbuild/win32-arm64': 0.17.6
-      '@esbuild/win32-ia32': 0.17.6
-      '@esbuild/win32-x64': 0.17.6
-    dev: true
-
   /esbuild@0.18.20:
     resolution: {integrity: sha512-ceqxoedUrcayh7Y7ZX6NdbbDzGROiyVBgC4PriJThBKSVPWnnFHZAkfI1lJT8QFkOwH4qOS2SJkS4wvpGl8BpA==}
     engines: {node: '>=12'}
@@ -5604,30 +5574,6 @@ packages:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
-  /rollup@2.78.1:
-    resolution: {integrity: sha512-VeeCgtGi4P+o9hIg+xz4qQpRl6R401LWEXBmxYKOV4zlF82lyhgh2hTZnheFUbANE8l2A41F458iwj2vEYaXJg==}
-    engines: {node: '>=10.0.0'}
-    hasBin: true
-    optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
-
-  /rollup@3.14.0:
-    resolution: {integrity: sha512-o23sdgCLcLSe3zIplT9nQ1+r97okuaiR+vmAPZPTDYB7/f3tgWIYNyiQveMsZwshBT0is4eGax/HH83Q7CG+/Q==}
-    engines: {node: '>=14.18.0', npm: '>=8.0.0'}
-    hasBin: true
-    optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
-
-  /rollup@3.23.0:
-    resolution: {integrity: sha512-h31UlwEi7FHihLe1zbk+3Q7z1k/84rb9BSwmBSr/XjOCEaBJ2YyedQDuM0t/kfOS0IxM+vk1/zI9XxYj9V+NJQ==}
-    engines: {node: '>=14.18.0', npm: '>=8.0.0'}
-    hasBin: true
-    optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
-
   /rollup@3.29.4:
     resolution: {integrity: sha512-oWzmBZwvYrU0iJHtDmhsm662rC15FRXmcjCk1xD771dFDx5jJ02ufAQQTn0etB2emNk4J9EZg/yWKpsn9BWGRw==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
@@ -6218,38 +6164,6 @@ packages:
       - terser
     dev: true
 
-  /vite@4.3.9:
-    resolution: {integrity: sha512-qsTNZjO9NoJNW7KnOrgYwczm0WctJ8m/yqYAMAK9Lxt4SoySUfS5S8ia9K7JHpa3KEeMfyF8LoJ3c5NeBJy6pg==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      esbuild: 0.17.6
-      postcss: 8.4.23
-      rollup: 3.23.0
-    optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
-
   /vite@4.5.1(@types/node@18.15.11):
     resolution: {integrity: sha512-AXXFaAJ8yebyqzoNB9fu2pHoo/nWX+xZlaRwoeYUxEqBO+Zj4msE5G+BhGBll9lYEKv9Hfks52PAF2X7qDYXQA==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -6469,7 +6383,7 @@ packages:
       '@vue/composition-api':
         optional: true
     dependencies:
-      vue: 3.2.47
+      vue: registry.npmmirror.com/vue@3.2.47
 
   /vue-hot-reload-api@2.3.4:
     resolution: {integrity: sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==}
@@ -8526,7 +8440,7 @@ packages:
     version: 1.0.0-next.21
     dev: false
 
-  registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@2.78.1):
+  registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@4.9.2):
     resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@rollup/pluginutils/-/pluginutils-5.0.2.tgz}
     id: registry.npmmirror.com/@rollup/pluginutils/5.0.2
     name: '@rollup/pluginutils'
@@ -8541,7 +8455,7 @@ packages:
       '@types/estree': registry.npmmirror.com/@types/estree@1.0.0
       estree-walker: 2.0.2
       picomatch: 2.3.1
-      rollup: registry.npmmirror.com/rollup@2.78.1
+      rollup: 4.9.2
 
   registry.npmmirror.com/@soda/friendly-errors-webpack-plugin@1.8.1(webpack@5.75.0):
     resolution: {integrity: sha512-h2ooWqP8XuFqTXT+NyAFbrArzfQA7R6HTezADrvD9Re8fxMLTPPniLdqVTdDaO0eIoLaAwKT+d6w+5GeTk7Vbg==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@soda/friendly-errors-webpack-plugin/-/friendly-errors-webpack-plugin-1.8.1.tgz}
@@ -15578,15 +15492,6 @@ packages:
       yargs: registry.npmmirror.com/yargs@17.6.2
     dev: false
 
-  registry.npmmirror.com/rollup@2.78.1:
-    resolution: {integrity: sha512-VeeCgtGi4P+o9hIg+xz4qQpRl6R401LWEXBmxYKOV4zlF82lyhgh2hTZnheFUbANE8l2A41F458iwj2vEYaXJg==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/rollup/-/rollup-2.78.1.tgz}
-    name: rollup
-    version: 2.78.1
-    engines: {node: '>=10.0.0'}
-    hasBin: true
-    optionalDependencies:
-      fsevents: 2.3.3
-
   registry.npmmirror.com/safe-regex-test@1.0.0:
     resolution: {integrity: sha512-JBUUzyOgEwXQY1NuPtvcj/qcBDbDmEvWufhlnXZIm75DEHp+afM1r1ujJpJsV/gSM4t59tpDyPi1sd6ZaPFfsA==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/safe-regex-test/-/safe-regex-test-1.0.0.tgz}
     name: safe-regex-test
@@ -16410,7 +16315,7 @@ packages:
       joycon: registry.npmmirror.com/joycon@3.1.1
       postcss-load-config: registry.npmmirror.com/postcss-load-config@3.1.4
       resolve-from: registry.npmmirror.com/resolve-from@5.0.0
-      rollup: 3.14.0
+      rollup: 3.29.4
       source-map: registry.npmmirror.com/source-map@0.8.0-beta.0
       sucrase: registry.npmmirror.com/sucrase@3.29.0
       tree-kill: registry.npmmirror.com/tree-kill@1.2.2
@@ -16609,7 +16514,7 @@ packages:
     name: unimport
     version: 1.3.0
     dependencies:
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@2.78.1)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@4.9.2)
       escape-string-regexp: 5.0.0
       fast-glob: 3.2.12
       local-pkg: 0.4.3
@@ -16629,7 +16534,7 @@ packages:
     name: unimport
     version: 2.2.4
     dependencies:
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@2.78.1)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@4.9.2)
       escape-string-regexp: 5.0.0
       fast-glob: 3.2.12
       local-pkg: 0.4.3
@@ -16686,7 +16591,7 @@ packages:
         optional: true
     dependencies:
       '@antfu/utils': registry.npmmirror.com/@antfu/utils@0.7.2
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@2.78.1)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@4.9.2)
       local-pkg: registry.npmmirror.com/local-pkg@0.4.3
       magic-string: registry.npmmirror.com/magic-string@0.26.7
       unimport: registry.npmmirror.com/unimport@1.3.0
@@ -16708,7 +16613,7 @@ packages:
     dependencies:
       '@antfu/utils': registry.npmmirror.com/@antfu/utils@0.7.2
       '@nuxt/kit': registry.npmmirror.com/@nuxt/kit@3.2.0
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@2.78.1)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@4.9.2)
       local-pkg: registry.npmmirror.com/local-pkg@0.4.3
       magic-string: registry.npmmirror.com/magic-string@0.27.0
       unimport: registry.npmmirror.com/unimport@2.2.4
@@ -16718,7 +16623,7 @@ packages:
       - supports-color
     dev: false
 
-  registry.npmmirror.com/unplugin-vue-components@0.22.12(rollup@2.78.1)(vue@3.4.1):
+  registry.npmmirror.com/unplugin-vue-components@0.22.12(rollup@4.9.2)(vue@3.4.1):
     resolution: {integrity: sha512-FxyzsuBvMCYPIk+8cgscGBQ345tvwVu+qY5IhE++eorkyvA4Z1TiD/HCiim+Kbqozl10i4K+z+NCa2WO2jexRA==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/unplugin-vue-components/-/unplugin-vue-components-0.22.12.tgz}
     id: registry.npmmirror.com/unplugin-vue-components/0.22.12
     name: unplugin-vue-components
@@ -16732,7 +16637,7 @@ packages:
         optional: true
     dependencies:
       '@antfu/utils': registry.npmmirror.com/@antfu/utils@0.7.2
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@2.78.1)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@4.9.2)
       chokidar: registry.npmmirror.com/chokidar@3.5.3
       debug: registry.npmmirror.com/debug@4.3.4
       fast-glob: registry.npmmirror.com/fast-glob@3.2.12
@@ -16761,7 +16666,7 @@ packages:
         optional: true
     dependencies:
       '@antfu/utils': registry.npmmirror.com/@antfu/utils@0.7.2
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@2.78.1)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@4.9.2)
       chokidar: registry.npmmirror.com/chokidar@3.5.3
       debug: registry.npmmirror.com/debug@4.3.4
       fast-glob: registry.npmmirror.com/fast-glob@3.2.12
@@ -16883,7 +16788,7 @@ packages:
       vite: ^3.1.0 || ^4.0.0
     dependencies:
       '@antfu/utils': registry.npmmirror.com/@antfu/utils@0.7.2
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@2.78.1)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.2(rollup@4.9.2)
       debug: registry.npmmirror.com/debug@4.3.4
       fs-extra: registry.npmmirror.com/fs-extra@11.1.0
       kolorist: registry.npmmirror.com/kolorist@1.7.0

@@ -70,7 +70,7 @@
     "@types/node": "^17.0.40",
     "esbuild": "^0.16.9",
     "esbuild-plugin-merge": "^1.0.6",
-    "rollup": "2.78.1",
+    "rollup": "^4.0.0",
     "tsup": "^6.1.2"
   }
 }

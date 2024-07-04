@@ -3,7 +3,7 @@ export default {
   project: 'vitesub',
   remote: {
     viteout: {
-      url: 'http://127.0.0.1:8080',
+      url: 'http://localhost:8080',
       mode: process.env.HOTBUILD ? 'hot' : 'cold',
     }, // remote static server
 

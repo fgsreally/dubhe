@@ -588,6 +588,7 @@ export function DevPlugin(config: SubConfig, projectSet: Set<string>): PluginOpt
           log(`${project} use Dev Mode`)
         }
         catch (e) {
+          console.log(e.message)
           Debug(`fail to get dev info --${project}`)
         }
       }

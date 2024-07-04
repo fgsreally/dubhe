@@ -1,8 +1,10 @@
 import { dirname, resolve } from 'path'
 import fse from 'fs-extra'
 import axios from 'axios'
+import envPaths from 'env-paths'
 import { CACHE_ROOT, TYPE_ROOT } from './common'
 import { log } from './utils'
+
 // update global config
 export async function updateLocalRecord(config: Record<string, { mode?: 'hot' | 'cold'; url: string }>) {
   const records = await getLocalRecord()
@@ -84,5 +86,24 @@ export async function linkCache(project: string, fileSet: string[]) {
     catch (e) {
       log('fail to create symlink', 'red')
     }
+  }
+}
+
+export class Cache {
+  root = envPaths('dubhe').data
+  async linkWorkdirToCache(project: string) {
+    if (fse.existsSync('.dubhe')) {
+      await fse.ensureDir(dirname(this.root))
+      await fse.symlink('.dubhe', resolve(this.root, project), 'dir')
+      return true
+    }
+  }
+
+  async linkCacheToWorkdir(project: string) {
+    await fse.symlink(resolve(this.root, project), '.dubhe', 'dir')
+  }
+
+  has(project: string) {
+    return fse.existsSync(resolve(this.root, project))
   }
 }

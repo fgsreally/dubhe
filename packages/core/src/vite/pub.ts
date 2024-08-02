@@ -30,15 +30,15 @@ function getExposeFromBundle(bundle: OutputBundle) {
   return importsGraph as unknown as Record<string, string[]>
 }
 
-export function Pub({ entries, dir = '.dubhe-pub', version }: {
+export function Pub({ entries, dir, version }: {
   entries: Record<string, string>
-  dir?: string
+  dir: string
   version?: string
 }): PluginOption {
   return {
     name: 'dubhe-pub',
     enforce: 'pre',
-    config(config, env) {
+    config() {
       return {
         build: {
           lib: {
@@ -62,8 +62,9 @@ export function Pub({ entries, dir = '.dubhe-pub', version }: {
 
         // alias.forEach(item => item.url = this.getFileName(item.url))
         const importsGraph = getExposeFromBundle(data)
-        const zip = new JSZip()
 
+        // generate zip
+        const zip = new JSZip()
         function traverseDirectory(directoryPath: string) {
           const files = fs.readdirSync(directoryPath)
           files.forEach((file) => {
@@ -76,9 +77,12 @@ export function Pub({ entries, dir = '.dubhe-pub', version }: {
           })
         }
         traverseDirectory(dir)
+
         const exports = {} as Record<string, {
           types: string
         }>
+        // detect dts
+
         for (const key in entries) {
           if (fs.existsSync(join(dir, `${key}.d.ts`)))
             exports[`./${key}`] = { types: `./${key}.d.ts` }

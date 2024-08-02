@@ -3,14 +3,13 @@ import type { Plugin } from 'vite'
 
 export function InjectStyle(): Plugin {
   return {
-    name: 'vite-plugin-style-inject',
+    name: 'vite-plugin-inject-style',
     apply: 'build', // 应用模式
     enforce: 'post', // 作用阶段
     generateBundle(_, bundle) {
       // 遍历bundle
       for (const key in bundle) {
         const chunk = bundle[key] // 拿到文件名对应的值
-        // 判断+提取+移除
         if (chunk.type === 'asset' && chunk.fileName.includes('.css') && chunk.source.length > 0) {
           const jsChunk = bundle[key.replace(/\.css$/, '.js')] as OutputChunk
           const initialCode = jsChunk.code // 保存原有代码

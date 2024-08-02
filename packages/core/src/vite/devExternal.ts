@@ -6,7 +6,7 @@ export interface ExternalOpts {
   optimize?: boolean
 }
 
-export function External(externals: string[]) {
+export function DevExternal(externals: string[]) {
   const resolvedExternals = new Set<string>()
   const filter = createFilter(externals)
 
@@ -31,12 +31,11 @@ export function External(externals: string[]) {
     },
   }
 
-  let isDev: boolean
   return <PluginOption>{
-    name: 'vite-plugin-externalize',
+    name: 'vite-plugin-dev-external',
     enforce: 'pre',
-    config: (_, { command }): UserConfig | undefined => {
-      isDev = command === 'serve'
+    apply: 'serve',
+    config: (): UserConfig | undefined => {
       return {
         optimizeDeps: {
           //   include: optimize ? importmap : undefined,
@@ -50,30 +49,23 @@ export function External(externals: string[]) {
 
     resolveId: (id) => {
       if (resolvedExternals.has(id))
-        return { id, external: true }
+        return id
 
       if (filter(id)) {
         resolvedExternals.add(id)
-        return { id, external: true }
+        return id
       }
 
       return null
     },
 
     load: (id) => {
-      if (!isDev)
-        return
-
       if (resolvedExternals.has(id))
         return { code: 'export default {};' }
-
-      return null
     },
     transform: {
       order: 'post',
       handler: (code: string) => {
-        if (!isDev)
-          return
         if (resolvedExternals.size === 0)
           return code
 

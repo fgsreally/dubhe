@@ -11,7 +11,7 @@ export function DevExternal(externals: string[]) {
   const filter = createFilter(externals)
 
   const esbuildPlugin: Plugin = {
-    name: 'External',
+    name: 'vite-plugin-dev-external',
     setup(build) {
       build.onResolve({ filter: /.*/ }, (args) => {
         if (args.importer && filter(args.path)) {

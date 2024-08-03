@@ -14,7 +14,7 @@ import { getExposeFromBundle } from '../core'
 import { sendHMRInfo } from '../hmr'
 import { copySourceFile, isSourceFile } from '../pub'
 import { injectScriptToPub } from '../style'
-import type { PubConfig } from '../types'
+import type { PubOptions } from '../types'
 import { getFormatDate, getRelatedPath } from '../utils'
 interface HMRInfo {
   changeFile: string
@@ -40,7 +40,7 @@ export function isExternal(id: string, handler: (param: string) => any) {
 
 let isWatch = false
 
-export function BundlePlugin(config: PubConfig): PluginOption {
+export function BundlePlugin(config: PubOptions): PluginOption {
   // metaData = config.meta || {};
 
   const core = new Dubhe()

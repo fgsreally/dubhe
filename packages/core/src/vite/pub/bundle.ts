@@ -36,7 +36,7 @@ export function PubBundle(options: PubOptions) {
 
     generateBundle: {
       order: 'post',
-      async handler() {
+      async handler(_, data) {
         if (!fs.existsSync(dir))
           fs.mkdirSync(dir)
 
@@ -49,6 +49,11 @@ export function PubBundle(options: PubOptions) {
 
           source: await zipDubheDir(dir, pkgJson),
         })
+        const entriesMap = {} as Record<string, string>
+        for (const key in data) {
+          if (data[key].type === 'chunk' && entries[data[key].name])
+            entriesMap[key] = data[key].fileName
+        }
 
         this.emitFile({
           type: 'asset',
@@ -60,7 +65,7 @@ export function PubBundle(options: PubOptions) {
             version,
             timestamp: new Date().toLocaleString(),
             dependences: [...depSet],
-            entries: Object.keys(entries),
+            entries: entriesMap,
           } as PubProdConfig),
         })
       },

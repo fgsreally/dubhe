@@ -1,9 +1,9 @@
 import { join, relative } from 'path'
 import fs from 'fs'
 import JSZip from 'jszip'
-import { log } from '../../utils'
-import type { PubOptions } from './types'
-
+import { minimatch } from 'minimatch'
+import { log } from '../utils'
+import type { PubOptions } from './pub/types'
 export function zipDubheDir(dir: string, pkgJson: object) {
   const zip = new JSZip()
   function traverseDirectory(directoryPath: string) {
@@ -33,10 +33,21 @@ export function createDubhePkgJson({ dir, entries, name }: PubOptions) {
   }
   for (const key in entries) {
     if (fs.existsSync(join(dir, `${key}.d.ts`)))
-      exports[`./${key}`] = { types: `./${key}.d.ts` }
+      pkgJson.exports[`./${key}`] = { types: `./${key}.d.ts` }
 
     else
       log(`can't find entry "${key}" declartion file`, 'yellow')
   }
   return pkgJson
+}
+
+export function createFilter(globs: string[]) {
+  return (id: string) => {
+    for (const glob of globs) {
+      if (minimatch(id, glob))
+        return true
+    }
+
+    return false
+  }
 }

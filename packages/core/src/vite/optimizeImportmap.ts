@@ -20,7 +20,7 @@ export function OptimizeImportmap(): PluginOption {
         if (metafile && server) {
           setTimeout(() => {
             server.ws.send({ type: 'full-reload' })
-          }, 500)
+          }, 1000)
         }
       })
     },

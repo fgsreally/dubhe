@@ -1,0 +1,22 @@
+{
+  "name": "pub",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview "
+  },
+  "dependencies": {
+    "dubhe": "workspace:2.1.0-beta.8",
+    "element-plus": "^2.7.8",
+    "vue": "^3.4.21"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "typescript": "^5.2.2",
+    "vite": "^5.3.5",
+    "vue-tsc": "^2.0.6"
+  }
+}

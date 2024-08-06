@@ -1,0 +1,29 @@
+{
+  "name": "sub",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env REMOTE=http://localhost:4000 vite",
+    "prebuild": "vue-tsc -b",
+    "build": "npm run build:static && npm run build:dynamic",
+    "build:static": "cross-env REMOTE=http://localhost:4001 vite build",
+    "build:dynamic": "cross-env REMOTE=http://localhost:4001 DYNAMIC=true vite build",
+    "preview:static": "cross-env REMOTE=http://localhost:4001 vite preview",
+    "preview:dynamic": "cross-env REMOTE=http://localhost:4001 DYNAMIC=true vite preview",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@dubhe/pub": "link:.dubhe\\pub",
+    "dubhe": "workspace:2.1.0-beta.8",
+    "element-plus": "^2.7.8",
+    "vue": "^3.4.31"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.5",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.2.2",
+    "vite": "^5.3.5",
+    "vue-tsc": "^2.0.24"
+  }
+}

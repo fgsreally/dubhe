@@ -1,14 +1,12 @@
 import fs from 'fs'
 import type { PluginOption } from 'vite'
-import { createFilter } from 'vite'
 import { InjectStyle } from '../injectStyle'
+import { createDubhePkgJson, zipDubheDir } from '../share'
 import type { PubOptions, PubProdConfig } from './types'
-import { createDubhePkgJson, zipDubheDir } from './share'
 export function PubBundle(options: PubOptions) {
   const { version, external, entries, dir, name } = options
-  const filter = createFilter(external)
   const pkgJson = createDubhePkgJson(options)
-  const depSet = new Set<string>()
+  const usedExternal = new Set<string>()
   return [InjectStyle(), <PluginOption>{
     name: 'vite-plugin-dubhe-pub-bundle',
     enforce: 'pre',
@@ -28,8 +26,8 @@ export function PubBundle(options: PubOptions) {
     },
 
     resolveId(source) {
-      if (filter(source)) {
-        depSet.add(source)
+      if (external.includes(source)) {
+        usedExternal.add(source)
         return { id: source, external: true }
       }
     },
@@ -52,7 +50,7 @@ export function PubBundle(options: PubOptions) {
         const entriesMap = {} as Record<string, string>
         for (const key in data) {
           if (data[key].type === 'chunk' && entries[data[key].name])
-            entriesMap[key] = data[key].fileName
+            entriesMap[data[key].name] = data[key].fileName
         }
 
         this.emitFile({
@@ -61,10 +59,10 @@ export function PubBundle(options: PubOptions) {
           fileName: 'dubhe.json',
 
           source: JSON.stringify({
-            name,
+            name: `@dubhe/${name}`,
             version,
             timestamp: new Date().toLocaleString(),
-            dependences: [...depSet],
+            external: [...usedExternal],
             entries: entriesMap,
           } as PubProdConfig),
         })

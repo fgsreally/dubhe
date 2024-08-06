@@ -1,0 +1,1 @@
+export function myAlert(info: string): void

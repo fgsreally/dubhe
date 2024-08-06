@@ -18,7 +18,7 @@ export interface PubProdConfig {
   name: string
   version: string
   timestamp: string
-  dependences: string[]
+  external: string[]
   entries: Record<string, string>
 
 }

@@ -1,48 +1,46 @@
-import { join } from 'path'
+import { join, posix } from 'path'
 import type { PluginOption } from 'vite'
 import fetch from 'node-fetch'
 import fse from 'fs-extra'
 import JSZip from 'jszip'
+// import { installPackage } from '@antfu/install-pkg'
 import { OptimizeImportmap } from '../optimizeImportmap'
 import { DevExternal } from '../devExternal'
 import { log } from '../../utils'
 
 const STATIC_SYMBOL = '__DUBHE_STATIC__'
-export async function Sub({ remote, dir = '.dubhe' }: {
+export function Sub({ remote, dir = '.dubhe' }: {
   remote: {
     url: string
     dynamic?: boolean
   }[]
   dir?: string
-}): Promise<PluginOption> {
-  const pkg = fse.readJSONSync('./package.json')
+}): PluginOption {
   const externalSet = new Set<string>()
   const dynamicEntries = new Map<string, string>()
   const staticEntries = new Map<string, string>()
   const devUrlSet = new Set<string>()
+  // const destSet = new Set<string>()
 
   async function loadRemoteDubhe(url: string, dynamic = false) {
     try {
-      const { dev, version, externals, entries, name } = await (await fetch(new URL('dubhe.json', url).href)).json() as any
-      const dest = join(dir, name.replace(/^@dubhe\//, ''))
-      if (dev)
+      const { dev, version, external, entries, name } = await (await fetch(new URL('dubhe.json', url).href)).json() as any
+      const dest = posix.join(dir, name.replace(/^\@dubhe\//, ''))
+      if (dev) {
         devUrlSet.add(url)
-
+        log(`project '${name}' use Dev Mode`)
+      }
       let existDubheJSON: any
-      if (pkg.dependencies[name]) {
-        const dubheJSONPath = join(dest, 'dubhe.json')
-        if (await fse.pathExists(dubheJSONPath))
-          existDubheJSON = await fse.readJSON(dubheJSONPath)
-      }
-      else {
-        pkg.dependencies[name] = `file://./${dest}`
-      }
+
+      const dubheJSONPath = join(dest, 'dubhe.json')
+      if (await fse.pathExists(dubheJSONPath))
+        existDubheJSON = await fse.readJSON(dubheJSONPath)
 
       if (!existDubheJSON || Number(version) > Number(existDubheJSON.version)) {
         await fse.remove(dest)
         const arrayBuffer = await (await fetch(new URL('dubhe.zip', url).href)).arrayBuffer()
         const zip = await JSZip.loadAsync(arrayBuffer)
-        dynamic && externals.forEach((item: string) => externalSet.add(item))
+        dynamic && external.forEach((item: string) => externalSet.add(item))
 
         for (const entry in entries)
           (dynamic ? dynamicEntries : staticEntries).set(`${name}/${entry}`, new URL(entries[entry], url).href)
@@ -55,27 +53,26 @@ export async function Sub({ remote, dir = '.dubhe' }: {
         })
       }
       else {
-        dynamic && externals.forEach((item: string) => externalSet.add(item))
+        dynamic && external.forEach((item: string) => externalSet.add(item))
 
         for (const entry in entries)
           (dynamic ? dynamicEntries : staticEntries).set(`${name}/${entry}`, new URL(entries[entry], url).href)
       }
     }
     catch (e) {
-      log((e as Error).message, 'red')
+      // eslint-disable-next-line no-console
+      console.log(e)
     }
   }
 
-  await Promise.all(remote.map(({ url, dynamic }) => loadRemoteDubhe(url, dynamic)))
-
-  fse.outputJSON('package.json', pkg)
-
   let isDev = false
-  return [DevExternal([...externalSet]), OptimizeImportmap(), {
+  return [{
     name: 'vite-plugin-dubhe-sub',
     enforce: 'pre',
     async config(_, { command }) {
       isDev = command === 'serve'
+
+      await Promise.all(remote.map(({ url, dynamic }) => loadRemoteDubhe(url, dynamic)))
     },
 
     buildStart() {
@@ -84,8 +81,8 @@ export async function Sub({ remote, dir = '.dubhe' }: {
           this.emitFile({
             preserveSignature: 'strict',
             type: 'chunk',
+            fileName: `assets/${external}.js`,
             id: external,
-            fileName: `/assets/${external}.js`,
           })
         })
       }
@@ -105,7 +102,7 @@ export async function Sub({ remote, dir = '.dubhe' }: {
         return staticEntries.get(source)
 
       if (dynamicEntries.has(source))
-        return dynamicEntries.get(source)
+        return { id: dynamicEntries.get(source)!, external: true }
     },
 
     async load(id) {
@@ -155,5 +152,5 @@ export async function Sub({ remote, dir = '.dubhe' }: {
       }
     },
 
-  }]
+  }, DevExternal(externalSet), OptimizeImportmap()]
 }

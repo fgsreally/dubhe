@@ -27,7 +27,6 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@antfu/install-pkg": "^0.3.3",
     "@babel/core": "^7.21.0",
     "@babel/plugin-proposal-dynamic-import": "^7.18.6",
     "@babel/plugin-proposal-export-default-from": "^7.18.10",

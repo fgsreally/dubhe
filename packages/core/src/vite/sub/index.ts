@@ -4,6 +4,7 @@ import fetch from 'node-fetch'
 import fse from 'fs-extra'
 import JSZip from 'jszip'
 // import { installPackage } from '@antfu/install-pkg'
+import { compareVersions } from 'compare-versions'
 import { OptimizeImportmap } from '../optimizeImportmap'
 import { DevExternal } from '../devExternal'
 import { log } from '../../utils'
@@ -36,7 +37,7 @@ export function Sub({ remote, dir = '.dubhe' }: {
       if (await fse.pathExists(dubheJSONPath))
         existDubheJSON = await fse.readJSON(dubheJSONPath)
 
-      if (!existDubheJSON || Number(version) > Number(existDubheJSON.version)) {
+      if (!existDubheJSON || compareVersions(version, existDubheJSON.version) > 0) {
         await fse.remove(dest)
         const arrayBuffer = await (await fetch(new URL('dubhe.zip', url).href)).arrayBuffer()
         const zip = await JSZip.loadAsync(arrayBuffer)

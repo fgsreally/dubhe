@@ -4,7 +4,7 @@ import { InjectStyle } from '../injectStyle'
 import { createDubhePkgJson, zipDubheDir } from '../share'
 import type { PubOptions, PubProdConfig } from './types'
 export function PubBundle(options: PubOptions) {
-  const { version, external, entries, dir, name } = options
+  const { version = '0.0.0', external, entries, dir, name } = options
   const pkgJson = createDubhePkgJson(options)
   const usedExternal = new Set<string>()
   return [InjectStyle(), <PluginOption>{

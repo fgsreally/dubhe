@@ -1,28 +1,24 @@
 {
   "name": "dubhe-repo",
   "version": "1.0.0",
-  "description": "",
   "packageManager": "pnpm@7.21.0",
+  "description": "",
+  "author": "",
+  "license": "MIT",
+  "keywords": [],
   "scripts": {
     "dev": "turbo run dev --filter dubhe-* --filter dubhe",
     "build": "turbo run build --filter dubhe-* --filter dubhe",
     "publish": "changeset publish",
     "lint": "eslint . --ext .ts",
-    "test": "cross-env TEST=true DEBUG=dubhe* node test/before-test.mjs",
+    "test": "cross-env node test/before-test.mjs",
     "test:e2e": "playwright test e2e/",
     "test:unit": "vitest --run",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
-    "example:serve": "pnpm -r --parallel run serve ",
-    "example:pub": "pnpm --filter=pub-* run pub ",
-    "example:sub": "pnpm --filter=sub-* run dev",
-    "example:cold": "pnpm --filter sub-vuecli --filter sub-vite run cold",
-    "example:hot": "pnpm --filter sub-vuecli --filter sub-vite run hot"
+    "docs:preview": "vitepress preview docs"
+
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
   "devDependencies": {
     "@antfu/eslint-config": "^0.31.0",
     "@changesets/cli": "^2.25.2",

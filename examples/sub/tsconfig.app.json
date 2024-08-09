@@ -10,7 +10,7 @@
     "paths": {
       "*": [
         "./node_modules",
-        "./.dubhe/pub/*"
+        "./.dubhe/*"
       ]
     },
     /* Bundler mode */

@@ -12,5 +12,5 @@ test('sub files output in static mode', async () => {
   const files = await getDirFiles('sub/dist/static', ['**/*'])
   // remove virtual entry
   expect(files.length).toMatchSnapshot()
-  expect(getImportMap(await getFileContent('sub/dist/static/index.html'))).toMatchSnapshot()
+  expect(getImportMap(await getFileContent('sub/dist/static/index.html'))).toBeFalsy()
 })

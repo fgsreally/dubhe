@@ -10,6 +10,9 @@ export async function getDirFiles(p: string, files = ['**/*.js', '!/**/*.js.map'
 }
 
 export function getImportMap(html: string) {
-  const [,importmap] = html.match(/<script type="importmap">([^\<]*)<\/script>/)!
-  return Object.keys(JSON.parse(importmap).imports)
+  const ret = html.match(/<script type="importmap">([^\<]*)<\/script>/)!
+  if (ret)
+    return Object.keys(JSON.parse(ret[1]).imports)
+
+  else return false
 }

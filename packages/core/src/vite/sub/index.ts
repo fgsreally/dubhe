@@ -135,21 +135,23 @@ export function Sub({ remote, dir = '.dubhe' }: {
         for (const external of externalSet)
           imports[external] = `./assets/${normalizePkgName(external)}.js`
 
-        return {
-          html,
-          tags: [
-            {
-              tag: 'script',
-              attrs: {
-                type: 'importmap',
+        if (Object.keys(imports).length > 0) {
+          return {
+            html,
+            tags: [
+              {
+                tag: 'script',
+                attrs: {
+                  type: 'importmap',
+                },
+                injectTo: 'head-prepend',
+                children: JSON.stringify({
+                  imports,
+                }),
               },
-              injectTo: 'head-prepend',
-              children: JSON.stringify({
-                imports,
-              }),
-            },
 
-          ],
+            ],
+          }
         }
       }
     },

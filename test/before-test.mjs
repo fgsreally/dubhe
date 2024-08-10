@@ -23,8 +23,11 @@ async function start() {
     $`pnpm --filter=pub run dev`,
     $`pnpm --filter=pub run build`,
     $`pnpm --filter=pub run preview`,
-
   ])
+
+  //    $`pnpm --filter=pub run  '/(build|preview|dev)/'`,
+
+  //    $`pnpm --filter=sub run  '/^(dev|build:(dynamic|static)|preview:(dynamic|static))$/'`,
 
   await Promise.all([
     $`pnpm --filter=sub run dev`,

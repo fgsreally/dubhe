@@ -1,5 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`[vite] subscribe module > dist files output [cold mode] 1`] = `3`;
-
-exports[`[vite] subscribe module > dist files output [hot mode] 1`] = `6`;

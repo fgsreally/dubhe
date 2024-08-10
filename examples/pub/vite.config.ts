@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import { Pub } from 'dubhe'
 // https://vitejs.dev/config/
 export default defineConfig({
+  // base: '/aa',
   plugins: [vue(),
     Pub({
       version: '0.0.0',

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env REMOTE=http://localhost:4000 vite",
+    "dev": "cross-env REMOTE=http://localhost:4001 vite",
     "tsc": "vue-tsc -b",
     "build": "npm run build:static && npm run build:dynamic",
     "build:static": "cross-env REMOTE=http://localhost:4001 vite build",

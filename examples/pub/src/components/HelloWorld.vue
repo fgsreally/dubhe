@@ -22,6 +22,8 @@ const count = ref(0)
     </p>
   </div>
 
+  <img src="/vite.svg" class="logo" alt="Vite logo">
+
   <p>
     Check out
     <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank">create-vue</a>, the official Vue + Vite starter

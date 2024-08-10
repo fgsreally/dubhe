@@ -1,21 +1,31 @@
 import fs from 'fs'
 import type { PluginOption } from 'vite'
+import { dynamicBase } from 'vite-plugin-dynamic-base'
 import { InjectStyle } from '../injectStyle'
 import { createDubhePkgJson, createFilter, zipDubheDir } from '../share'
 import type { PubOptions, PubProdConfig } from './types'
+
 export function PubBundle(options: PubOptions) {
   const { version = '0.0.0', external, entries, dir, name } = options
   const pkgJson = createDubhePkgJson(options)
   const usedExternal = new Set<string>()
 
   const filter = createFilter(external)
-  return [InjectStyle(), <PluginOption>{
+  return [InjectStyle(),
+    dynamicBase({
+      publicPath: 'new URL(/**@dubhe */import.meta.url).host',
+
+    }),
+
+  <PluginOption>{
     name: 'vite-plugin-dubhe-pub-bundle',
     enforce: 'pre',
     apply: 'build',
 
-    config() {
+    config(config, { command }) {
       return {
+        // work for vite-plugin-dynamic-base
+        base: config.base || (command === 'build' ? '/__dynamic_base__/' : undefined),
         build: {
           lib: {
             entry: entries,

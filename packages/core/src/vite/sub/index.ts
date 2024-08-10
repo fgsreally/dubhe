@@ -117,6 +117,11 @@ export function Sub({ remote, dir = '.dubhe' }: {
       }
     },
 
+    transform(code, id) {
+      if (!isDev && id.startsWith(STATIC_SYMBOL))
+        return code.replace('new URL(/**@dubhe */import.meta.url).origin', `'${new URL(id.slice(STATIC_SYMBOL.length)).origin}'`)
+    },
+
     transformIndexHtml(html) {
       if (isDev) {
         return {

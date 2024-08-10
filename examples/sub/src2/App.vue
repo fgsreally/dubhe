@@ -7,22 +7,13 @@ const msg = ref('msg')
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo">
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo">
-    </a>
-    <div>
-      <ElButton id="btn_alert" @click="myAlert('invoke!')">
-        click to invoke alert
-      </ElButton>
-      <ElButton data-test-id="update-msg" @click="msg = 'new msg'">
-        click to update msg
-      </ElButton>
-    </div>
-  </div>
+  <ElButton id="btn_alert" @click="myAlert('invoke!')">
+    click to invoke alert
+  </ElButton>
+  <ElButton data-test-id="update-msg" @click="msg = 'new msg'">
+    click to update msg
+  </ElButton>
+
   <HelloWorld :msg="msg" />
 </template>
 

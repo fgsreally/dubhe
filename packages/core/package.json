@@ -38,9 +38,10 @@
     "colors": "^1.4.0",
     "compare-versions": "6.0.0-rc.1",
     "debug": "^4.3.4",
+    "es-module-lexer": "^1.5.4",
     "fs-extra": "^10.1.0",
     "jszip": "^3.10.1",
-    "magic-string": "^0.26.4",
+    "magic-string": "^0.26.7",
     "minimatch": "^10.0.1",
     "node-fetch": "^3.3.2"
   },

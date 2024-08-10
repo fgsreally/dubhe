@@ -1,12 +1,14 @@
 import fs from 'fs'
 import type { PluginOption } from 'vite'
 import { InjectStyle } from '../injectStyle'
-import { createDubhePkgJson, zipDubheDir } from '../share'
+import { createDubhePkgJson, createFilter, zipDubheDir } from '../share'
 import type { PubOptions, PubProdConfig } from './types'
 export function PubBundle(options: PubOptions) {
   const { version = '0.0.0', external, entries, dir, name } = options
   const pkgJson = createDubhePkgJson(options)
   const usedExternal = new Set<string>()
+
+  const filter = createFilter(external)
   return [InjectStyle(), <PluginOption>{
     name: 'vite-plugin-dubhe-pub-bundle',
     enforce: 'pre',
@@ -26,7 +28,7 @@ export function PubBundle(options: PubOptions) {
     },
 
     resolveId(source) {
-      if (external.includes(source)) {
+      if (filter(source)) {
         usedExternal.add(source)
         return { id: source, external: true }
       }

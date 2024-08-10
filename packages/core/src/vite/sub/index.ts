@@ -5,8 +5,7 @@ import fse from 'fs-extra'
 import JSZip from 'jszip'
 // import { installPackage } from '@antfu/install-pkg'
 import { compareVersions } from 'compare-versions'
-import { OptimizeImportmap } from '../optimizeImportmap'
-import { DevExternal } from '../devExternal'
+import { DevImportmap } from '../devImportmap'
 import { log } from '../../utils'
 import { normalizePkgName } from '../share'
 
@@ -23,6 +22,8 @@ export function Sub({ remote, dir = '.dubhe' }: {
   const staticEntries = new Map<string, string>()
   const devUrlSet = new Set<string>()
   // const destSet = new Set<string>()
+
+  let isDev = false
 
   async function loadRemoteDubhe(url: string, dynamic = false) {
     try {
@@ -67,7 +68,6 @@ export function Sub({ remote, dir = '.dubhe' }: {
     }
   }
 
-  let isDev = false
   return [{
     name: 'vite-plugin-dubhe-sub',
     enforce: 'pre',
@@ -75,6 +75,9 @@ export function Sub({ remote, dir = '.dubhe' }: {
       isDev = command === 'serve'
 
       await Promise.all(remote.map(({ url, dynamic }) => loadRemoteDubhe(url, dynamic)))
+
+      if (!isDev && devUrlSet.size > 0)
+        throw new Error('Can\'t use Dev mode in production')
     },
 
     buildStart() {
@@ -156,5 +159,5 @@ export function Sub({ remote, dir = '.dubhe' }: {
       }
     },
 
-  }, DevExternal(externalSet), OptimizeImportmap()]
+  }, DevImportmap(externalSet)]
 }

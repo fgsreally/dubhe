@@ -41,7 +41,7 @@ export function createDubhePkgJson({ dir, entries, name }: PubOptions) {
   return pkgJson
 }
 
-export function createFilter(globs: string[]) {
+export function createFilter(globs: Set<string> | string[]) {
   return (id: string) => {
     for (const glob of globs) {
       if (minimatch(id, glob))

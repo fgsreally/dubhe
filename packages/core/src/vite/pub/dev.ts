@@ -1,6 +1,5 @@
 import type { PluginOption } from 'vite'
-import { DevExternal } from '../devExternal'
-import { OptimizeImportmap } from '../optimizeImportmap'
+import { DevImportmap } from '../devImportmap'
 import { createDubhePkgJson, zipDubheDir } from '../share'
 import type { PubDevConfig, PubOptions } from './types'
 
@@ -8,8 +7,7 @@ export function PubDev(options: PubOptions): PluginOption {
   const { version, external, entries, dir, name } = options
   const pkgJson = createDubhePkgJson(options)
   return [
-    DevExternal(new Set(external)),
-    OptimizeImportmap(),
+    DevImportmap(new Set(external)),
     {
 
       name: 'vite-plugin-dubhe-pub-dev',

@@ -19,24 +19,14 @@ export function stop(timeout) {
 }
 
 async function start() {
-  await Promise.all([
-    $`pnpm --filter=pub run dev`,
-    $`pnpm --filter=pub run build`,
-    $`pnpm --filter=pub run preview`,
-  ])
+  $`pnpm --filter=pub run  '/(build|preview|dev)/'`
 
   //    $`pnpm --filter=pub run  '/(build|preview|dev)/'`,
+  await waitOn(createOpts([4000, 4001]))
 
-  //    $`pnpm --filter=sub run  '/^(dev|build:(dynamic|static)|preview:(dynamic|static))$/'`,
+  $`pnpm --filter=sub run  '/^(dev|build:(dynamic|static)|preview:(dynamic|static))$/'`
 
-  await Promise.all([
-    $`pnpm --filter=sub run dev`,
-    $`pnpm --filter=sub run build:dynamic`,
-    $`pnpm --filter=sub run build:static`,
-    $`pnpm --filter=sub run preview:dynamic`,
-    $`pnpm --filter=sub run preview:static`,
-  ])
-  await waitOn(createOpts([4000, 4001, 5000, 5001, 5002]))
+  await waitOn(createOpts([5000, 5001, 5002]))
 
   await stop(10000)
 

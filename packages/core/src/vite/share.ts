@@ -51,3 +51,7 @@ export function createFilter(globs: string[]) {
     return false
   }
 }
+
+export function normalizePkgName(name: string) {
+  return name.replaceAll('/', '_')
+}

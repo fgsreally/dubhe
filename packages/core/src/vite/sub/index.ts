@@ -8,6 +8,7 @@ import { compareVersions } from 'compare-versions'
 import { OptimizeImportmap } from '../optimizeImportmap'
 import { DevExternal } from '../devExternal'
 import { log } from '../../utils'
+import { normalizePkgName } from '../share'
 
 const STATIC_SYMBOL = '__DUBHE_STATIC__'
 export function Sub({ remote, dir = '.dubhe' }: {
@@ -82,7 +83,7 @@ export function Sub({ remote, dir = '.dubhe' }: {
           this.emitFile({
             preserveSignature: 'strict',
             type: 'chunk',
-            fileName: `assets/${external}.js`,
+            fileName: `assets/${normalizePkgName(external)}.js`,
             id: external,
           })
         })
@@ -132,7 +133,7 @@ export function Sub({ remote, dir = '.dubhe' }: {
         const imports: Record<string, string> = {}
 
         for (const external of externalSet)
-          imports[external] = `./assets/${external}.js`
+          imports[external] = `./assets/${normalizePkgName(external)}.js`
 
         return {
           html,

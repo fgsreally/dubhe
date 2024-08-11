@@ -1,6 +1,6 @@
 import { join, posix } from 'path'
 import type { PluginOption } from 'vite'
-import fetch from 'node-fetch'
+import { request } from 'undici'
 import fse from 'fs-extra'
 import JSZip from 'jszip'
 // import { installPackage } from '@antfu/install-pkg'
@@ -27,7 +27,9 @@ export function Sub({ remote, dir = '.dubhe' }: {
 
   async function loadRemoteDubhe(url: string, dynamic = false) {
     try {
-      const { dev, version, external, entries, name } = await (await fetch(new URL('dubhe.json', url).href)).json() as any
+      const { body } = await request(new URL('dubhe.json', url).href)
+
+      const { dev, version, external, entries, name } = await body.json() as any
       const dest = posix.join(dir, name.replace(/^\@dubhe\//, ''))
       if (dev) {
         devUrlSet.add(url)

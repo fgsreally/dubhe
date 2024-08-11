@@ -13,7 +13,7 @@ export function PubBundle(options: PubOptions) {
   const filter = createFilter(external)
   return [InjectStyle(),
     dynamicBase({
-      publicPath: 'new URL(/**@dubhe */import.meta.url).host',
+      publicPath: 'new URL(/**@dubhe */import.meta.url).origin',
 
     }),
 

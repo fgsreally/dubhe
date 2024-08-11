@@ -10,7 +10,7 @@ import babelPluginProposalExportDefaultFrom from '@babel/plugin-proposal-export-
 import babelPluginProposalExportNamespaceFrom from '@babel/plugin-transform-export-namespace-from'
 import babelPluginTransformModulesSystemJS from '@babel/plugin-transform-modules-systemjs'
 import babelPluginProposalDynamicImport from '@babel/plugin-proposal-dynamic-import'
-
+import type { TransformOptions } from '@babel/core'
 const plugins = [
   babelPluginProposalExportDefaultFrom,
   babelPluginProposalExportNamespaceFrom,
@@ -22,10 +22,9 @@ const plugins = [
 
 const stage3Syntax = ['asyncGenerators', 'classProperties', 'classPrivateProperties', 'classPrivateMethods', 'dynamicImport', 'importMeta', 'nullishCoalescingOperator', 'numericSeparator', 'optionalCatchBinding', 'optionalChaining', 'objectRestSpread', 'topLevelAwait']
 
-export function esmToSystemjs(source: string, filename: string): Promise<string> {
+export function handleESM(source: string, options?: Partial<TransformOptions>): Promise<string> {
   return new Promise((resolve, reject) => {
     babel.transform(source, {
-      filename,
       sourceMaps: 'inline',
       ast: false,
       compact: false,
@@ -35,6 +34,7 @@ export function esmToSystemjs(source: string, filename: string): Promise<string>
         errorRecovery: true,
       },
       plugins,
+      ...options,
     }, (err, result) => {
       if (err)
         return reject(err)

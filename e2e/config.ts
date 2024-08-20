@@ -6,5 +6,5 @@ export enum DEV_EXAMPLE {
 
 export enum PROD_EXAMPLE {
   STATIC = 'http://localhost:5002/',
-  DYNAMIC = 'http://localhost:5002/',
+  DYNAMIC = 'http://localhost:5001/',
 }

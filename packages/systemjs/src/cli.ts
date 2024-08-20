@@ -22,7 +22,7 @@ async function start() {
     const destPath = resolve(root, to, entry)
     if (filePath.endsWith('.js')) {
       const source = await fse.readFile(filePath, 'utf-8')
-      fse.outputFile(destPath, await handleESM(source, entry))
+      fse.outputFile(destPath, await handleESM(source, { filename: entry }))
     }
     else if (filePath.endsWith('.html')) {
       const source = await fse.readFile(filePath, 'utf-8')

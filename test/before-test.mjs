@@ -24,11 +24,13 @@ async function start() {
   //    $`pnpm --filter=pub run  '/(build|preview|dev)/'`,
   await waitOn(createOpts([4000, 4001]))
 
+  await stop(5000)
+
   $`pnpm --filter=sub run  '/^(dev|build:(dynamic|static)|preview:(dynamic|static))$/'`
 
   await waitOn(createOpts([5000, 5001, 5002]))
 
-  await stop(10000)
+  await stop(5000)
 
   await $`npm run test:unit`
   await $`npm run test:e2e`

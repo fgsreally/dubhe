@@ -10,7 +10,7 @@ const msg = ref('msg')
   <ElButton id="btn_alert" @click="myAlert('invoke!')">
     click to invoke alert
   </ElButton>
-  <ElButton data-test-id="update-msg" @click="msg = 'new msg'">
+  <ElButton data-testid="update-msg" @click="msg = 'new msg'">
     click to update msg
   </ElButton>
 

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-  
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -22,5 +21,5 @@
     "packages/**/*.ts",
     "packages/**/*.d.ts",
     "packages/core/vite.config.ts"
-  ],
+  ]
 }

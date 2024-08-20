@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`sub files output in dynamic mode 1`] = `6`;
+
+exports[`sub files output in dynamic mode 2`] = `
+[
+  "vue",
+  "element-plus/es",
+]
+`;
+
+exports[`sub files output in static mode 1`] = `3`;

@@ -14,7 +14,8 @@
   },
   "main": "./dist/index.js",
   "bin": {
-    "ds": "dist/cli/index.js"
+    "ds": "dist/cli/index.js",
+    "dubhe-systemjs": "dist/cli/index.js"
   },
   "files": [
     "dist"
@@ -33,7 +34,7 @@
     "@babel/plugin-transform-export-namespace-from": "^7.24.7",
     "@babel/plugin-transform-modules-systemjs": "^7.20.11",
     "@babel/plugin-transform-numeric-separator": "^7.24.7",
-    "dubhe": "workspace:2.1.0-beta.8",
+    "colors": "^1.4.0",
     "fast-glob": "^3.2.12",
     "fs-extra": "^10.1.0",
     "parse5": "^7.1.2"

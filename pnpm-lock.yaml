@@ -179,9 +179,9 @@ importers:
       '@babel/plugin-transform-numeric-separator':
         specifier: ^7.24.7
         version: 7.24.7(@babel/core@7.24.7)
-      dubhe:
-        specifier: workspace:2.1.0-beta.8
-        version: link:../core
+      colors:
+        specifier: ^1.4.0
+        version: 1.4.0
       fast-glob:
         specifier: ^3.2.12
         version: 3.2.12

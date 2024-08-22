@@ -195,6 +195,9 @@ importers:
       '@types/babel__core':
         specifier: ^7.20.5
         version: 7.20.5
+      '@types/fs-extra':
+        specifier: ^9.0.13
+        version: 9.0.13
       tsup:
         specifier: ^6.1.2
         version: 6.6.0(typescript@5.5.4)
@@ -1972,7 +1975,7 @@ packages:
     resolution: {integrity: sha512-MxObHvNl4A69ofaTRU8DFqvgzzv8s9yRtaPPm5gud9HDNvpB3GPQFvNuTWAI59B9huVGV5jXYJwbCsmBsOGYWA==}
     dependencies:
       '@types/jsonfile': 6.1.1
-      '@types/node': 17.0.45
+      '@types/node': 18.15.11
     dev: true
 
   /@types/fs-extra@9.0.13:
@@ -1984,7 +1987,7 @@ packages:
   /@types/jsonfile@6.1.1:
     resolution: {integrity: sha512-GSgiRCVeapDN+3pqA35IkQwasaCh/0YFH5dEF6S88iDvEn901DjOeH3/QPY+XYP1DFzDZPvIvfeEgk+7br5png==}
     dependencies:
-      '@types/node': 17.0.45
+      '@types/node': 18.15.11
     dev: true
 
   /@types/lodash-es@4.17.6:
@@ -2032,7 +2035,7 @@ packages:
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
     requiresBuild: true
     dependencies:
-      '@types/node': 17.0.45
+      '@types/node': 18.15.11
     dev: true
     optional: true
 

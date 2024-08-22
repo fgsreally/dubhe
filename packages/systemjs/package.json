@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "@types/babel__core": "^7.20.5",
+    "@types/fs-extra": "^9.0.13",
     "tsup": "^6.1.2"
   }
 }

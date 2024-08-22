@@ -19,14 +19,17 @@ export function stop(timeout) {
 }
 
 async function start() {
-  $`pnpm --filter=pub run  '/(build|preview|dev)/'`
+  await $`pnpm --filter=pub run build`
+  $`pnpm --filter=pub run  '/(preview|dev)/'`
 
   //    $`pnpm --filter=pub run  '/(build|preview|dev)/'`,
   await waitOn(createOpts([4000, 4001]))
 
   await stop(5000)
 
-  $`pnpm --filter=sub run  '/^(dev|build:(dynamic|static)|preview:(dynamic|static))$/'`
+  await $`pnpm --filter=pub run  '/build:(dynamic|static)/'`
+
+  $`pnpm --filter=sub run  '/^(dev|preview:(dynamic|static))$/'`
 
   await waitOn(createOpts([5000, 5001, 5002]))
 

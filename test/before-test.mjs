@@ -14,9 +14,9 @@ import { $ } from 'zx'
 //   },
 // })
 
-// export function stop(timeout) {
-//   return new Promise(resolve => setTimeout(() => resolve(), timeout))
-// }
+export function stop(timeout) {
+  return new Promise(resolve => setTimeout(() => resolve(), timeout))
+}
 
 async function start() {
   await $`pnpm --filter=pub run build`
